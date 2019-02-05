@@ -1,0 +1,57 @@
+django>2.0,<2.1
+django-model-utils
+ipython
+mysqlclient
+uwsgi
+
+# ImportError: No module named '_cffi_backend'
+cffi
+
+# SAML2
+# apt install xmlsec1
+git+https://github.com/knaperek/djangosaml2.git
+
+# Admin nested inlines
+git+https://github.com/peppelinux/django-nested-admin.git
+
+# advanced filters
+#git+https://github.com/modlinltd/django-advanced-filters.git
+git+https://github.com/brack3t/django-braces.git
+git+https://github.com/peppelinux/django-advanced-filters.git
+
+django_admin_multiple_choice_list_filter
+
+#adminactions
+git+https://github.com/peppelinux/django-adminactions.git
+
+# rangefilter
+git+https://github.com/silentsokolov/django-admin-rangefilter.git
+
+# Oracle CSA support
+cx_Oracle
+
+# SQL Alchemy
+sqlalchemy
+
+# sostituito con files
+#python-memcached
+
+# countries utility
+django_countries
+
+# Python Magic
+python-magic
+
+# wkhtmltopdf
+django-wkhtmltopdf
+pdfkit
+pypdf2
+
+# SOAP Client protocollazione
+zeep
+
+# auto serializer
+git+https://github.com/peppelinux/django-auto-serializer.git
+
+# pyWSArchiPRO
+git+https://github.com/peppelinux/pyWSArchiPRO.git

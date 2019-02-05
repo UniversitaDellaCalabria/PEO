@@ -1,0 +1,1 @@
+[{"model": "gestione_risorse_umane.tipoinvalidita", "pk": 1, "fields": {"nome": "P", "identificativo": "P", "descrizione": ""}}, {"model": "gestione_risorse_umane.tipoinvalidita", "pk": 2, "fields": {"nome": "H", "identificativo": "H", "descrizione": ""}}]

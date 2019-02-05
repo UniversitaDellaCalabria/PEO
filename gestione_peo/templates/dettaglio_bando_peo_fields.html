@@ -1,0 +1,121 @@
+<!--
+{% if bando.bando_url %}
+<p><a href="{{ bando.bando_url }}"><i class="mouse pointer icon"></i> Vai alle risorse online</a></p>
+{% endif %}
+-->
+        
+    {% if bando.descrizione %}
+    <div class="ui segment">
+        <div class="item">
+            <div class="content">
+                <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                    <i class="file alternate outline left icon"></i>
+                    Descrizione
+                </a>
+                <div class="description">{{ bando.descr_as_html|safe }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="ui basic segment" style="padding: 0;">
+        <div class="ui three column grid">
+            <div class="column">
+                <div class="ui item">
+                    <div class="ui segment">
+                        <div class="content">
+                            <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                                <i class="calendar alternate outline left icon"></i>
+                                Data Inizio
+                            </a>
+                            <div class="description">{{ bando.data_inizio|date:'l j N Y, H:i' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui item">
+                    <div class="ui segment">
+                        <div class="content">
+                            <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                                <i class="calendar alternate outline icon"></i>
+                                Data Fine
+                            </a>
+                            <div class="description">{{ bando.data_fine|date:'l j N Y, H:i' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui segment">
+                    <div class="item">
+                        <div class="content">
+                            <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                                <i class="hand paper outline icon"></i>
+                                Termine presentazione
+                            </a>
+                            <div class="description">{{ bando.data_fine_presentazione_domande|date:'l j N Y, H:i' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if bando.bando_url %}
+    <div class="ui segment">
+        <div class="item">
+            <div class="content">
+                <a class="header" href="{{ bando.bando_url }}">
+                    <i class="linkify left icon"></i>
+                    Clicca qui per accedere all'URL del Bando
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% comment %}
+    <div class="three column row" style="padding:0.5rem 0">
+        <div class="column">
+            <div class="ui segment">
+                <div class="item">
+                    <div class="content">
+                        <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                            <i class="clock outline icon"></i>
+                            Num. minimo anni di servizio
+                        </a>
+                        <div class="description">
+                            {{ bando.anni_servizio_minimi }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="item">
+                    <div class="content">
+                        <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                            <i class="calendar alternate outline icon"></i>
+                            Ultima progressione utile
+                        </a>
+                        <div class="description">{{ bando.ultima_progressione }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="item">
+                    <div class="content">
+                        <a class="header" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                            <i class="file alternate outline icon"></i>
+                            Titoli e incarichi fino a
+                        </a>
+                        <div class="description">{{ bando.data_validita_titoli_fine|date:'l j N Y' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endcomment %}    
+    

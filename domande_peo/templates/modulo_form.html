@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js_head %}
+    <script type="text/javascript" src="{% static '/js/textarea-autosize_legacy.js' %}"></script>
+    <script type="text/javascript" src="{% static '/js/jquery-ui-django.js' %}"></script>
+    <link href="{% static '/js/jquery-ui/jquery-ui.css' %}" rel="stylesheet">
+    <script type="text/javascript">
+    $(function ($) {
+        $( ".datepicker" ).
+            datepicker({
+                inline: true,
+                dateFormat: 'dd/mm/yy',
+                changeMonth: true,
+                changeYear: true,
+                isRTL: false,
+                /* 
+                Imposta il limite max del calendario alla data 
+                di validità dei titoli definita nel bando
+                */
+                maxDate: '{{ bando.data_validita_titoli_fine|date:"d/m/Y" }}'
+            });
+                                     
+        $.datepicker.regional['it'] = {
+            closeText: 'Chiudi',
+            prevText: 'Prec',
+            nextText: 'Succ',
+            currentText: 'Oggi',
+            monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno', 'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+            monthNamesShort: ['Gen','Feb','Mar','Apr','Mag','Giu', 'Lug','Ago','Set','Ott','Nov','Dic'],
+            dayNames: ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'],
+            dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+            dayNamesMin: ['Do','Lu','Ma','Me','Gio','Ve','Sa'],
+            firstDay: 1,
+        };
+    
+        $.datepicker.
+            setDefaults(
+                $.datepicker.regional['it']
+            );
+    
+    });
+    </script>
+{% endblock js_head %}
+
+{% block extra_head %}
+    <style>
+        .field {margin-bottom: 13px;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% block  modulo_head %}
+        <h2 class="ui header">Partecipazione Bando {{ bando }} </h2>
+        <p><span style="color: grey;">{{ dipendente }}</span></p>
+        {{ breadcrumbs.as_html|safe }}
+        <h3 class="ui">{{ page_title }}</h3>
+    {% endblock modulo_head %}
+
+    {% block info_bando %}{% endblock info_bando%}
+
+    {% block descrizione_indicatore %}
+        {% if descrizione_indicatore.note %}
+            <div class="ui">
+                {{ descrizione_indicatore.note_as_html|safe }}
+            </div>
+        {% endif %}
+    {% endblock descrizione_indicatore %}
+
+    <div class="ui section divider white"></div>
+
+    {% block messages %}
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
+                        {{ message }}
+                        {% block add_another %}{% endblock add_another %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endblock messages %}
+
+    {% if form.is_bound %}
+        {% if not form.is_valid %}
+            <div class="ui error message">
+                <div class="header">
+                    ATTENZIONE, Sono stati riscontrati i seguenti errori di compilazione:
+                </div>
+                <ul class="list">
+                    {% if form.get_labeled_errors %}
+                        {% for k,v in form.get_labeled_errors.items %}                
+                                <li>{{ k }}</li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <form action='#' method='post'  enctype="multipart/form-data" class="ui form">
+    
+        {% for field in form %}
+            <div class="field">
+                {{ field.label_tag }}
+                {{ field.errors }}
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="ui">
+                        <p class="help" style="color: grey;">
+                            <i>{{ field.help_text|safe }}</i>
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        {% block allegati %}{% endblock allegati %}
+    
+        {% block formbuttons %}
+            {% block formbuttons_back %}
+                <a href="{% url 'domande_peo:dashboard_domanda' bando.slug %}#{{ bando.slug }}">
+                    <div class="ui button">
+                        <i class="home icon"></i>
+                        Torna alla Domanda
+                    </div>
+                </a>
+                <a href="{% url 'domande_peo:scelta_titolo_da_aggiungere' bando.slug %}">
+                    <div class="ui button">
+                        <i class="reply icon"></i>
+                        Torna indietro
+                    </div>
+                </a>
+            {% endblock formbuttons_back %}
+    
+            {% block formbuttons_pdf %}{% endblock formbuttons_pdf %}
+        
+            {% block submit_button %}
+                <input class="ui button green" type="submit" value="Inserisci" />
+            {% endblock submit_button %}
+        {% endblock formbuttons%}
+
+        {% csrf_token %}
+    </form>
+{% endblock %}

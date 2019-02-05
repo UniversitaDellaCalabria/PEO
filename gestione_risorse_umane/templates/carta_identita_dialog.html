@@ -1,0 +1,35 @@
+{% load static %}
+
+<div class="image card" id="carta_identita">
+    {% if dipendente.carta_identita_front and dipendente.carta_identita_retro  %}
+    <div class="front">
+        <a href="{% url 'risorse_umane:upload_carta_identita' %}">
+            <img class="ui fluid image" src="{{ MEDIA_URL }}/{{ dipendente.carta_identita_front }}">
+        </a>
+    </div>
+    <div class="back">
+        <a href="{% url 'risorse_umane:upload_carta_identita' %}">
+            <img class="ui fluid image" src="{{ MEDIA_URL }}/{{ dipendente.carta_identita_retro }}">
+        </a>
+    </div>
+    {% else %}
+    <!-- CI Template backfault -->
+    <div class="front">
+        <a href="{% url 'risorse_umane:upload_carta_identita' %}">
+            <img class="ui fluid image" src="{% static 'images/ci_fronte.jpg' %}">
+        </a>
+    </div>
+    <div class="back">
+        <a href="{% url 'risorse_umane:upload_carta_identita' %}">
+            <img class="ui fluid image" src="{% static 'images/ci_retro.jpg' %}">
+        </a>
+    </div>
+    {% endif %}
+
+    <div style="width:100%;text-align: center; margin-top: 10px;">
+        <div class="ui small buttons">
+            <button class="left attached ui button" id="retro">Fronte</button>
+            <button class="ui right attached button" id="fronte">Retro</button>
+        </div>
+    </div>
+</div>

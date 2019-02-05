@@ -1,0 +1,24 @@
+{% block top_notify %}
+
+{% if not dipendente.carta_identita_front or not dipendente.carta_identita_retro  %}
+<div class="ui error message">
+    <div class="ui grid">
+        <div class="thirteen wide column">
+            <div class="header">
+                Carta di Identità mancante
+            </div>
+            <p>
+                Senza aver registrato la tua Carta di Identità non è
+                possibile utilizzare i servizi offerti dalla piattaforma
+            </p>
+        </div>
+        <div class="three wide column">
+            <a href="{% url 'risorse_umane:upload_carta_identita' %}">
+                <button class="ui negative button">Esegui ora l'upload</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif  %}
+
+{% endblock %}

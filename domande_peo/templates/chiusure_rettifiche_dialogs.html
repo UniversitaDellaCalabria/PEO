@@ -1,0 +1,64 @@
+{% if domanda_peo.data_chiusura %}
+<div class="ui segment">
+    <div class="item">
+        <div class="content">
+            <div class="description">
+                <i class="hand point right outline icon"></i>
+                Questa Domanda di Partecipazione è stata completata e consegnata:
+                <ol class="ui list" style="padding-left: 23px;">
+                    <li value="*">
+                        Giorno: <b>{{ domanda_peo.data_chiusura }}</b>
+                    </li>
+                    {% if domanda_peo.numero_protocollo %}
+                        <li value="*">
+                            <i>Numero Protocollo</i>: {{ domanda_peo.numero_protocollo }}
+                        </li>
+                        <li value="*">
+                            <i>Data Protocollo</i>: {{ domanda_peo.data_protocollazione }}
+                        </li>
+                    {% else %}
+                        <li value="*">
+                            <i>Numero</i>: <b>{{ domanda_peo.pk }}</b>
+                        </li>
+                    {% endif %}
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if domanda_peo.rettificadomandabando_set.all  %}
+<div style="margin-top: 13px; margin-bottom: 13px;" class="ui fluid styled accordion">
+    <div class="title" style="color: #000000;">
+        <i class="dropdown icon"></i>
+        <i class="eraser icon"></i>
+        Storico delle Rettifiche
+    </div>
+    <div class="content">
+        <div class="ui relaxed divided list">
+            {% for rett in domanda_peo.rettificadomandabando_set.all %}
+                <div class="item" style="">
+                    <div class="content">
+                        <div class="description">
+                            <ol class="ui list" style="padding-left: 23px;">
+                                <li value="*">
+                                    {{ rett.created }}
+                                </li>
+                                {% if rett.numero_protocollo %}
+                                    <li value="*">
+                                        <i>Numero Protocollo</i>: {{ rett.numero_protocollo }}
+                                    </li>
+                                    <li value="*">
+                                        <i>Data Protocollo</i>: {{ rett.data_protocollazione }}
+                                    </li>
+                                {% endif %}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>   
+</div>
+{% endif %}

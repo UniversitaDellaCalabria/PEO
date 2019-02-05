@@ -1,0 +1,40 @@
+{% extends 'modulo_form.html' %}
+
+{% block extra_head %}
+    <style>
+
+        .help { visibility: hidden; }
+
+    </style>
+{% endblock %}
+
+{% block  modulo_head %}
+<h1 class="ui header">Partecipazione Bando {{ bando }} </h1>
+<p><span style="color: grey;">{{ dipendente }}</span></p>
+
+<h3>{{ modulo_domanda_bando.descrizione_indicatore.nome }}</h3>
+{% endblock modulo_head %}
+
+{% block info_bando %}{% endblock info_bando%}
+
+    {% block descrizione_indicatore %}
+        {% if modulo_domanda_bando.descrizione_indicatore.note %}
+            <div class="ui">
+                {{ modulo_domanda_bando.descrizione_indicatore.note_as_html|safe }}
+            </div>
+        {% endif %}
+    {% endblock descrizione_indicatore %}
+
+{% block allegati %}
+    {% if allegati %}
+        <h5>Allegati:</h5>
+
+        {% for k,v in allegati.items %}
+            <p><b>{{k}}</b>: <i>{{v}}</i></p>
+        {% endfor %}
+
+    {% endif %}
+{% endblock allegati %}
+
+{% block formbuttons %}
+{% endblock %}

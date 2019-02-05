@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% load domande_peo_tags %}
+{% load indicatori_ponderati_tags %}
+
+{% block content %}
+
+<h2 class="ui header">Partecipazione Bando {{ bando }} </h2>
+<p><span style="color: grey;">{{ dipendente }}</span></p>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+
+        {% comment %}
+            {% include "dettaglio_bando_peo_fields.html" %}
+        {% endcomment %}
+        
+        <h2 class="ui" id="{{ bando.slug }}">Selezione Modulo di Inserimento</h2>
+        
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if indicatori_ponderati %}
+            <h5>Titolo, Certificato, Esperienza Professionale o Formativa</h5>
+            <p>Segui i passaggi in basso per la corretta compilazione di {{ bando }}</p>
+        
+            <div class="ui tiny tablet stackable fluid steps">
+                <div class="step">
+                    <i class="list ul icon blue"></i>
+                    <div class="content">
+                        <div class="title">Scelta Indicatore</div>
+                        <div class="description">Clicca sul titolo che desideri</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <i class="plus icon blue"></i>
+                    <div class="content">
+                        <div class="title">Click su Aggiungi</div>
+                        <div class="description">Per accedere al modulo</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <i class="wpforms icon blue"></i>
+                    <div class="content">
+                        <div class="title">Compilazione</div>
+                        <div class="description">Redazione del modulo</div>
+                    </div>
+                </div>
+                <div class="completed step">
+                    <i class="goal icon blue"></i>
+                    <div class="content">
+                        <div class="title">Fatto</div>
+                    </div>
+                </div>
+            </div>
+    
+            <div style="margin-top: 33px;" class="ui fluid styled accordion">
+        
+                {% for indicatore_ponderato in indicatori_ponderati %}
+                    <div class="title {% if indicatori_ponderati|length == 1 %}active{% endif %}" style="color: #000000;">
+                        <i class="dropdown icon"></i>
+                        ({{ indicatore_ponderato.id_code }}) {{ indicatore_ponderato.nome }}
+                    </div>
+                    <div class="content {% if indicatori_ponderati|length == 1 %}active{% endif %}">
+                        {% if indicatore_ponderato.note %}
+                            <p>{{ indicatore_ponderato.note }}</p>
+                        {% endif %}
+                        <div class="ui relaxed divided list">
+                            {% for descrizione_indicatore in indicatore_ponderato.descrizioneindicatore_set.all %}
+            
+                            {% comment %}
+                            Solo se di fatto il modulo di compilazione (form) esiste, altrimenti non visualizzare!
+                            {% endcomment %}
+            
+                            {% if descrizione_indicatore.get_form %}
+                            <div class="item" style="margin-bottom: 15px;">
+                                
+                                {% domanda_bando_num_max_descrind domanda_peo descrizione_indicatore as max_inserimenti %}
+                                {% descrizione_indicatore_available descrizione_indicatore dipendente.livello.posizione_economica dipendente.ruolo as available_descrind %}
+            
+                                <div class="content">
+                                    <p>
+                                        {% if max_inserimenti or not available_descrind %}
+                                        <p class="header">
+                                            ({{ descrizione_indicatore.id_code }}) {{ descrizione_indicatore.nome }}
+                                        </p>
+                                        {% else %}
+                                        <a href="{% url 'domande_peo:aggiungi_titolo' bando_id=bando.slug descrizione_indicatore_id=descrizione_indicatore.id %}"
+                                           class="header">({{ descrizione_indicatore.id_code }}) {{ descrizione_indicatore.nome }}
+                                        </a>
+                                        {% endif %}
+                                    </p>
+                                    <div class="description">{{ descrizione_indicatore.note_as_html|safe }}</div>
+                                </div>
+                                <br>
+            
+                                {% if max_inserimenti %}
+                                    <button class="ui right floated grey button">
+                                        <i class="ban icon"></i>
+                                        Hai raggiunto il numero di inserimenti 
+                                        consentiti per questo modulo
+                                    </button>
+                                {% elif available_descrind %}
+                                    <a href="{% url 'domande_peo:aggiungi_titolo' bando_id=bando.slug descrizione_indicatore_id=descrizione_indicatore.id %}">
+                                        <button class="ui right floated blue button">
+                                            <i class="plus square outline icon"></i>
+                                            Aggiungi
+                                        </button>
+                                    </a>
+                                {% else %}
+                                    <button class="ui right floated grey button">
+                                        <i class="ban icon"></i>
+                                        Disabilitato per la tua categoria/ruolo
+                                    </button>
+                                {% endif %}
+                            </div>
+                            {% else %}
+            
+                            <div class="item" style="margin-bottom: 15px;">
+                                <div class="content">
+                                    <h5>{{ descrizione_indicatore.nome }}</h5>
+                                    <p>
+                                        Non risultano essere stati configurati dei moduli di inserimento per questo Indicatore. Consultare Area Risorse Umane per maggiori chiarimenti.
+                                    </p>
+                                </div>
+            
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+            
+                        </div>
+                    </div>   
+                {% endfor %}
+            </div>
+        {% endif %}
+    
+        {% comment %}
+            end if bando.indicatoreponderato_set.all
+        {% endcomment %}
+        <br>
+        
+        <div class="ui red button" id="but_cancella_domanda_{{domanda_peo.pk}}">
+            <i class="delete icon"></i> Distruggi la tua Domanda
+        </div>
+        <a href="{% url 'risorse_umane:dashboard' %}">
+            <button class="ui button">
+                <i class="home icon"></i> Torna alla Pagina Principale
+            </button>
+        </a>
+        <a href="{% url 'domande_peo:dashboard_domanda' bando_id=bando.slug %}#{{ bando.slug }}">
+            <button class="ui button">
+                <i class="reply icon"></i> Torna alla Domanda
+            </button>
+        </a>
+    </div>
+
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+
+{% block modal_dialogs %}
+    {% include "modal_dialogs_domanda.html" %}
+{% endblock modal_dialogs %}
+
+{% endblock content %}
+    
+{% block bottom_scripts %}
+<script>
+$('.ui.accordion').accordion();
+    
+// Mostra il pannello modal 
+// per la conferma di cancellazione della domanda    
+$(function(){
+    $("#but_cancella_domanda_{{ domanda_peo.pk }}").click(function(){
+        $('#cancella_domanda_{{ domanda_peo.pk }}')
+            .modal('show');
+    });
+});
+</script>
+{% endblock bottom_scripts %}

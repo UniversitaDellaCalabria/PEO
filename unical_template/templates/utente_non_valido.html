@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2 class="ui error">Errore di Riconoscimento</h2>
+
+    <h4>Il tuo utente non è stato riconosciuto come un dipendente abilitato.</h4>
+
+    <p>Parrebbe che dagli attributi acquisiti dal Gestore delle Identità di Ateneo (IDP) manchi uno tra i seguenti:</p>
+
+    <div class="ui bulleted list">
+        <div class="item">
+            Nome
+        </div>
+        <div class="item">
+            Cognome
+        </div>
+    </div>
+
+    <div>
+    Oppure che la tua Matricola non risulti nel Database CSA dei dipendenti strutturati e abilitati ad accedere a questo servizio.
+    <br>
+    Contatta l'Area Risorse Umane fornendo <i>accuratamente</i> le seguenti informazioni, potrebbero tornare utili per una verifica del tuo stato all'interno del Database CINECA CSA:
+    </div>
+
+    <div class="ui card">
+        <div class="content">
+          Nome, Cognome, <b>Matricola</b>
+        </div>
+        <div class="content">
+          <b>Username</b> utilizzato per accedere al sistema. Attualmente risulti autenticato come:
+
+            <div class="ui bulleted list">
+                <div class="item">
+                    Nome: <b>{{ request.user.first_name|default_if_none:"Nessun nome rilevato." }}</b>
+                </div>
+                <div class="item">
+                    Cognome: <b>{{ request.user.last_name|default_if_none:"Nessun cognome rilevato." }}</b>
+                </div>
+                <div class="item">
+                    Matricola: <b>{{ request.user.matricola|default_if_none:"Nessuna matricola rilevata." }}</b>
+                </div>
+            </div>
+
+        </div>
+        <div class="content">
+          Stato contrattuale: <br><b>Se in servizio o meno e che genere di contratto.</b>
+        </div>
+        <div class="content">
+          Data e orario dell'accesso
+        </div>
+    </div>
+
+{% endblock %}

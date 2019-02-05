@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js_head %}
+<script type="text/javascript" src="{% static 'js/flip.minified.js' %}"></script>
+{% endblock js_head %}
+
+{% block content %}
+<h2 class="ui header">{{ page_title }}</h2>
+<h3 class="ui">{{ dipendente }}</h3>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+
+{% if dipendente.carta_identita_front and dipendente.carta_identita_retro  %}
+<div class="ui medium images" style="text-align: center">
+    <a href="#">
+        <img class="ui image" src="{{ MEDIA_URL }}/{{ dipendente.carta_identita_front }}" id="fronte">
+    </a>
+    <a href="#">
+        <img class="ui image" src="{{ MEDIA_URL }}/{{ dipendente.carta_identita_retro }}" id="retro">
+    </a>
+</div>
+
+<div class="ui basic modal coupled" id="big_fronte">
+  <div class="header" style="text-align: center">Fronte</div>
+  <div class="image content">
+    <img class="image" style="margin: auto; max-height:50vh;" src="{{ MEDIA_URL }}/{{ dipendente.carta_identita_front }}">
+  </div>
+  <div style="text-align: center" class="actions">
+      <div class="ui primary button next_button">
+        <i class="step forward icon"></i>
+        Vedi retro
+    </div>
+    <div class="ui red basic cancel inverted button">
+      <i class="remove icon"></i>
+      Chiudi
+    </div>
+  </div>
+</div>
+
+<div class="ui basic modal coupled" id="big_retro">
+  <div class="header" style="text-align: center">Retro</div>
+  <div class="image content">
+    <img class="image" style="margin: auto; max-height:50vh;" src="{{ MEDIA_URL }}/{{ dipendente.carta_identita_retro }}">
+  </div>
+  <div style="text-align: center" class="actions">
+    <div class="ui primary button prev_button">
+        <i class="step backward icon"></i>
+        Vedi fronte
+    </div>
+    <div class="ui red basic cancel inverted button">
+      <i class="remove icon"></i>
+      Chiudi
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+<div class="ui warning message">
+  <i class="close icon"></i>
+  <div class="header">
+    Attenzione
+  </div>
+  <ul class="list">
+    <li>Formati accettati: immagini ({{ IMAGE_TYPES }})</li>
+    <li>Dimensione massima: {{ IMAGE_MAX_SIZE }}</li>
+  </ul>
+</div>
+
+<form method='post' class="ui form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="field">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+        <div class="ui">
+            <p class="help" style="color: grey;">
+                <i>{{ field.help_text|safe }}</i>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+        <a href="{% url 'risorse_umane:dashboard' %}">
+          <div class="ui button">
+            <i class="home icon"></i>
+                Annulla e torna indietro
+          </div>
+        </a>
+
+    <input class="ui button green" type="submit" value="Inserisci" />
+</form>
+{% endblock %}
+
+{% block bottom_scripts %}
+<script type="text/javascript">
+
+$(function () {
+    $("#fronte").click(function () {
+        $('#big_fronte')
+            .modal('show')
+        ;
+    });
+    $("#retro").click(function () {
+        $('#big_retro')
+            .modal('show');
+    });
+    $(".next_button").click(function () {
+        $('#big_retro')
+            .modal('show');
+    });
+    $(".prev_button").click(function () {
+        $('#big_fronte')
+            .modal('show');
+    });
+});
+
+$('.message .close')
+    .on('click', function() {
+        $(this)
+            .closest('.message')
+            .transition('fade')
+        ;
+    }
+);
+
+</script>
+{% endblock %}

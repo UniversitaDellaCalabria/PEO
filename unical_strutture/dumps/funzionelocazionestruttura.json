@@ -1,0 +1,1 @@
+[{"model": "unical_strutture.funzionelocazionestruttura", "pk": 1, "fields": {"nome": "Attivit\u00e0 sportiva", "descrizione": "", "data_inserimento": "2018-05-24T23:19:44Z"}}, {"model": "unical_strutture.funzionelocazionestruttura", "pk": 2, "fields": {"nome": "Residenze", "descrizione": "", "data_inserimento": "2018-05-24T23:19:51Z"}}]

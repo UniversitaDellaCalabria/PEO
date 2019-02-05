@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <style>
+        .help { display: none; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+{% block  modulo_head %}
+<h1 class="ui header">{{ page_title }}</h1>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+{% endblock modulo_head %}
+
+{% block dati_istanza %}
+<div class="ui list" style="color: grey;">
+        <div class=""><i>Istanza</i>: {{ domanda_peo.bando }}</div>
+    {% if domanda_peo.numero_protocollo %}
+        <div class=""><i>Numero Protocollo</i>: {{ domanda_peo.numero_protocollo }}</div>
+        <div class=""><i>Data Protocollo</i>: {{ domanda_peo.data_protocollazione }}</div>
+    {% else %}
+        <div class=""><i>Numero</i>: {{ domanda_peo.pk }}</div>
+    {% endif %}
+    <div class=""><i>Creazione</i>: {{ domanda_peo.created|date:"j F Y H:i" }}</div>
+    <div class=""><i>Ultima modifica</i>: {{ domanda_peo.modified|date:"j F Y H:i" }}</div>
+</div>
+{% endblock %}
+
+<h2>{{ dipendente.nome|title }} {{ dipendente.cognome|title }}</h2>
+<!--
+<h3>Carta di Identità</h3>
+-->
+<div class="ui raised segment">
+<div class="ui medium images" style="text-align: left;">
+      <img src="{{ MEDIA_URL }}{{ dipendente.carta_identita_front }}" id="fronte">
+      <img src="{{ MEDIA_URL }}{{ dipendente.carta_identita_retro }}" id="retro">
+</div>
+    {% include 'dati_personali.html' %}
+</div>
+
+<div class="ui section divider" style="border-color: white;"></div>
+{% if domanda_peo.bando.clausolebando_set.all %}
+<div class="content">
+    {% if domanda_peo.bando.accettazione_clausole_text %}
+        <h2>{{ domanda_peo.bando.accettazione_clausole_text }}</h2>
+    {% else %}
+        <h2>Dichiara di aver preso visione e accettato le seguenti modalità</h2>
+    {% endif %}
+    {% for cl in domanda_peo.bando.clausolebando_set.all %}
+        <div class="ui raised segment">
+            <h5>{{ cl.titolo }}</h5>
+            <p>{{ cl.corpo_as_html|safe }}</p>
+            {% if cl.allegato %}
+                <p>
+                    <i class="angle right icon"></i><a href="{{ MEDIA_URL }}{{ cl.allegato }}">Allegato: {{ cl.allegato }}</a>
+                </p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% block preview_table %}
+
+{% comment %}
+{% if domanda_peo.bando.indicatore_con_anzianita %}
+<h2 class="">Punteggio anzianità di servizio calcolata</h2>
+    <p="ui header" style="color: grey;">
+        Questo valore verrà sommato, se presente, al punteggio assegnato a
+        <i>{{ domanda_peo.bando.indicatore_con_anzianita }}</i>,
+        tenendo conto delle soglie da rispettare
+    </p>
+    <form class="ui form">
+        <div class="field">
+            <input value="{{ domanda_peo.get_punteggio_anzianita }}" readonly="">
+        </div>
+    </form>
+<div class="ui section divider" ></div>
+{% endif %}
+{% endcomment %}
+
+<div class="ui section divider" style="border-color: white;"></div>
+<h2>Moduli compilati</h2>
+{% for ins in domanda_peo.modulodomandabando_set.all %}
+<div class="ui raised segment">
+    <h5>{{ ins.get_identificativo_veloce|upper }}</h3>
+    <p><i>{{ ins.descrizione_indicatore.indicatore_ponderato }}: ({{ ins.descrizione_indicatore.id_code }}) {{ ins.descrizione_indicatore.nome }}</i></p>
+    <p>{{ ins.descrizione_indicatore.note_as_html|safe }}</p>
+    <form class="ui form">
+        {% for field in ins.compiled_form_readonly %}
+        <div class="field">
+            {{ field.label_tag }}
+            {{ field.errors }}
+            {{ field }}
+            {% if field.help_text %}
+            <div class="ui help">
+                <p style="color: grey;">
+                    <i>{{ field.help_text|safe }}</i>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </form>
+    {% block allegati %}
+{% if ins.get_allegati %}
+<div class="ui section divider" ></div>
+<div>
+    <label>Allegati</label>
+    {% for k,v in ins.get_allegati %}
+        <div class="field">
+            <p style="margin-bottom: 3px; margin-top: 7px;">{{k}}</p>
+            <a style="color: #4183c4;" href="{% url 'domande_peo:download_allegato' bando_id=bando.slug modulo_compilato_id=ins.id allegato=k  %}">{{v}}</a>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock allegati %}
+</div>
+
+
+
+{% endfor %}
+
+{% endblock preview_table %}
+
+{% block submit_button %}
+<a href="javascript:history.back()">
+    <div class="ui button">
+        <i class="reply icon"></i>
+        Torna indietro
+    </div>
+</a>
+
+<a href="{% url 'domande_peo:dashboard_domanda' bando.slug %}#{{ bando.slug }}">
+    <div class="ui button">
+        <i class="file icon"></i>
+        Vai alla domanda
+    </div>
+</a>
+
+<a href="{% url 'domande_peo:download_domanda_pdf' bando.id domanda_peo.id %}" class="lockbutton_single">
+    <div class="ui primary button">
+        <i class="print icon"></i>
+        Scarica in formato PDF
+    </div>
+</a>
+
+{% endblock submit_button %}{% endblock %}
+
+{% block bottom_scripts %}
+<script type="text/javascript" src="{% static 'js/lockbutton.js' %}"></script>
+{% endblock bottom_scripts %}

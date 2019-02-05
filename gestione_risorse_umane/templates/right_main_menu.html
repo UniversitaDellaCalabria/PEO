@@ -1,0 +1,84 @@
+<div class="ui sticky">
+    <div class="ui fluid vertical menu">
+        {% if bandi %}
+        <div class="item">
+            <div class="header">Bandi attivi</div>
+            {% for bando in bandi %}
+            <div class="menu">
+                <a class="active item green">
+                    {{ bando }}
+                </a>
+                <a class="item" href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug %}">
+                    Descrizione
+                </a>
+                {% if bando.bando_url %}
+                <a class="item"  href="{{ bando.bando_url }}">
+                    Vai alle risorse online
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="item">
+            <div class="header">Tutti i Bandi</div>
+            <div class="menu">
+                <a class="item" href="{% url 'gestione_peo:bandi_peo' %}">
+                    Vedi lista
+                </a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="header">Account</div>
+            <div class="menu">
+                <a class="item" href="/">
+                    Pagina principale
+                </a>
+
+                <a class="item" href="{% url 'risorse_umane:upload_carta_identita' %}">
+                    Modifica Documento di identità
+                </a>
+
+                {% if request.user.is_superadministrator or request.user.is_staff %}
+                <a class="active item green" href="{% url 'admin:index' %}">
+                    Gestione avanzata
+                </a>
+                {% endif %}
+
+                <a class="item" href="{% url 'logout' %}?next={{ request.path }}">
+                    Logout / Esci
+                </a>
+            </div>
+
+        </div>
+        <div class="item">
+            <div class="header">Link utili</div>
+            <div class="menu">
+                <a class="item" href="http://www.unical.it/portale/ateneo/amministrazione/aree/arrisumane/">Area Risorse Umane</a>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">Supporto Tecnico</div>
+            <div class="menu">
+                <a class="item" href="mailto:supporto.peo@unical.it" >Scrivi a supporto.peo@unical.it</a>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">Documentazione</div>
+            <div class="menu">
+                <a class="item" href="/docs">Guida all'utilizzo</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% block bottom_scripts %}
+<script>
+    $('.ui.sticky')
+            .sticky({
+                context: '#sticky_reference_panel'
+            })
+            ;
+</script>
+{% endblock %}

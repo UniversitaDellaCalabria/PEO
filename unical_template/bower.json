@@ -1,0 +1,18 @@
+{
+  "name": "django_peo",
+  "authors": [
+    "Giuseppe <giuseppe.demarco@unical.it>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "peo.unical.it",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
