@@ -1,0 +1,3 @@
+# restore dump previously done with
+# ./manage.py dumpdata gestione_risorse_umane gestione_risorse_umane/dumps/posizioni_economiche.json
+./manage.py loaddata --app gestione_risorse_umane gestione_risorse_umane/dumps/posizioni_economiche.json

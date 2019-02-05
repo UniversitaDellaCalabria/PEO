@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% load lista_bandi_tags %}
+
+{% block content %}
+
+<h2 class="ui header">Bando {{ bando.nome }}
+    <span style="font-size:0.5em;font-weight:normal">
+        {% include "stato_bando.html" %}
+    </span>
+</h2>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+{% include "top_notify.html" %}
+
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+
+        {% include "dettaglio_bando_peo_fields.html" %}
+
+        {% with bando.indicatoreponderato_set.all as indicatori_ponderati %}
+        {% if indicatori_ponderati %}
+
+        <div class="ui horizontal inverted divider"></div>
+
+        <div class="ui fluid styled accordion">
+
+            {% for indicatore_ponderato in indicatori_ponderati %}
+            <div class="title {% if indicatori_ponderati|length == 1 %}active{% endif %}" style="color: #000000;">
+                <i class="dropdown icon"></i>
+                {{ indicatore_ponderato.nome }}
+            </div>
+            <div class="content {% if indicatori_ponderati|length == 1 %}active{% endif %}">
+                <div class="ui relaxed divided list">
+                    {% for descrizione_indicatore in indicatore_ponderato.descrizioneindicatore_set.all %}
+                    <div class="item">
+                        <div class="content">
+                            <p>
+                                <a class="header" onclick="window.open('/bando/{{ descrizione_indicatore.indicatore_ponderato.bando.id }}/anteprima-utente/{{ descrizione_indicatore.pk }}/','winname','directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=890,height=600');">
+                                    {{ descrizione_indicatore.nome }}
+                                </a>
+                            </p>
+                            <div class="description">{{ descrizione_indicatore.note_as_html|safe }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% show_domanda_button bando dipendente as dipendente_abilitato %}
+        {% if dipendente_abilitato %}
+            <div class="row " style="margin:20px 0;">
+                <a href="{% url 'domande_peo:accetta_condizioni_bando' bando_id=bando.pk%}">
+                    <div class="ui right floated labeled icon positive button">
+                        <i class="arrow right icon"></i> Partecipa
+                    </div>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+{% block bottom_scripts %}
+<script>
+    $('.ui.accordion').accordion();
+</script>
+{% endblock bottom_scripts%}
+{% endblock content%}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% load lista_bandi_tags %}
+
+{% block content %}
+
+<h2 class="ui header">Tutti i Bandi PEO</h2>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+{% include "top_notify.html" %}
+
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+
+        {% if bandi_lista %}
+
+        <table class="ui single line celled table">
+            <thead>
+                <tr>
+                    <th>Bando</th>
+                    <th>Data Inizio</th>
+                    <th>Data Fine</th>
+                    <th></th>
+                    <th></th>
+                </tr></thead>
+            <tbody>
+
+                {% for bando in bandi_lista %}
+                <tr>
+                    <td><b>{{ bando.nome }}</b></td>
+                    <td>{{ bando.data_inizio|date:"j b Y"  }}</td>
+                    <td>{{ bando.data_fine|date:"j b Y"  }}</td>
+                    <td>
+                        {% show_domanda_button bando dipendente as dipendente_abilitato %}
+                        {% if dipendente_abilitato %}
+                            <a style="margin-bottom:20px;" href="{% url 'domande_peo:accetta_condizioni_bando' bando_id=bando.pk%}">
+                                <div class="ui right fluid labeled icon green button tiny">
+                                    <i class="arrow right icon"></i> Partecipa
+                                </div>
+                            </a>
+                        {% else %}
+                            {% include "stato_bando.html" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=bando.slug%}">
+                            <div class="ui right fluid labeled icon blue button tiny">
+                                <i class="eye icon"></i> Descrizione
+                            </div>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        {% else %}
+
+        Nessun bando attualmente pubblicato
+
+        {% endif %}
+
+    </div>
+
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+{% endblock %}

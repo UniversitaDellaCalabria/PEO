@@ -1,0 +1,212 @@
+<!--
+Modal Inserimento delete
+-->
+{% for ins in domanda_peo.modulodomandabando_set.all %}
+<div class="ui basic modal" id="modal_ind_{{ ins.pk }}">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Cancellazione indicatore
+        <h5>
+            <b>{{ ins.get_identificativo_veloce }}</b>
+            <br>
+            {{ ins.descrizione_indicatore.nome }}
+        </h5>
+    </div>
+    <div class="content">
+        <p>Stai per cancellare definitamente questo
+            indicatore, creato da
+            te giorno {{ ins.created }},
+            dalla tua domanda {{ ins.domanda_bando.bando }}.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" href="{% url 'domande_peo:cancella_titolo' bando_id=ins.domanda_bando.bando.pk modulo_compilato_id=ins.pk  %}">
+            <div class="ui red ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: CANCELLA
+            </div>
+        </a>
+
+    </div>
+</div>
+{% endfor %}
+
+<!--
+Modal Domanda delete
+-->
+<div class="ui basic modal" id="cancella_domanda_{{ domanda_peo.pk}}">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Cancellazione Domanda {{ bando }}
+        <h5>{{ domanda_peo }}</h5>
+    </div>
+    <div class="content">
+        <p>Stai per cancellare per intero la tua domanda {{ bando }},
+            creata da te giorno {{ domanda_peo.created }}.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" href="{% url 'domande_peo:cancella_domanda' bando_id=domanda_peo.bando.pk domanda_bando_id=domanda_peo.pk %}">
+            <div class="ui red ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: CANCELLA
+            </div>
+        </a>
+
+    </div>
+</div>
+
+
+<!--
+Modal Domanda chiusura
+-->
+<div class="ui basic modal" id="chiudi_domanda_{{ domanda_peo.pk}}">
+    <div class="ui icon header">
+        <i class="envelope outline icon"></i>
+        Presentazione Domanda {{ bando }}
+        <h5>{{ domanda_peo }}</h5>
+    </div>
+    <div class="content">
+        <p>Stai per <i>concludere e presentare ufficialmente</i> la tua domanda {{ bando }},
+            creata da te giorno {{ domanda_peo.created }}.
+        </p>
+        <p>
+            Questo significa che hai completato la tua redazione
+            {% if bando.protocollo_required %}
+            , 
+            <u>
+            inoltre
+            ti appresti a presentare la domanda mediante protocollo informatico.
+            </u>
+            {% endif %}
+        </p>
+
+        <p>
+            Se in seguito vorrai rettificare la tua Domanda di partecipazione
+            potrai riaprirla e modificarla a condizione che i termini della sua consegna non siano scaduti.
+            Il sistema terrà traccia della rettifica memorizzando lo storico delle tue azioni.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" class="lockbutton_trigger" id="but_confirm_chiudi_domanda_{{ domanda_peo.pk }}" href="{% url 'domande_peo:chiudi_apri_domanda' bando_id=domanda_peo.bando.pk domanda_bando_id=domanda_peo.pk azione='chiudi' %}">
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: La domanda è completa e posso marcarla come conclusa.
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<!--
+Modal Domanda check moduli mancanti
+-->
+<div class="ui basic modal" id="check_domanda_{{ domanda_peo.pk}}">
+    <div class="ui icon header">
+        <i class="hand point right outline icon"></i>
+        Correzione Domanda {{ bando }}
+        <h5>{{ domanda_peo }}</h5>
+    </div>
+    <div class="content">
+        <p>Risulta che la tua Domanda sia da completare o richieda una correzione prima della chiusura.
+        </p>
+
+        {% if domanda_peo.indicatori_richiesti %}
+        <p>I seguenti Indicatori sono richiesti ma non risultano essere stati ancora caricati. Clicca su di essi per accedere velocemente alla loro compilazione:</p>
+        <p>Clicca su di essi per accedere velocemente alla loro compilazione.</p>
+        <div class="ui relaxed divided list" style="padding: 1%;">
+            {% for i in domanda_peo.indicatori_richiesti %}
+                <div class="item">
+                    <a style="color: orange;" href="{% url 'domande_peo:aggiungi_titolo' bando_id=bando.slug descrizione_indicatore_id=i.id %}">
+                        - {{ i }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if domanda_peo.moduli_non_validi %}
+        <p>I seguenti Moduli risultano essere stati compilati in maniera non valida:</p>
+        <div class="ui relaxed divided list" style="padding: 1%;">
+            {% for mod in domanda_peo.moduli_non_validi %}
+                <div class="item">
+                    <a  style="color: orange;"  href="{% url 'domande_peo:modifica_titolo' bando_id=bando.slug modulo_compilato_id=mod.id %}">
+                        - {{ mod.descrizione_indicatore }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <h5>
+            Ti preghiamo di correggere la domanda prima di concluderla e consegnarla.
+        </h5>
+    </div>
+    <div class="actions">
+        <a style="color: white;" href="{% url 'domande_peo:dashboard_domanda' bando_id=domanda_peo.bando.pk %}">
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Ho capito
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<!--
+Modal Rettifica Domanda
+-->
+<div class="ui basic modal" id="rettifica_domanda_{{ domanda_peo.pk}}">
+    <div class="ui icon header">
+        <i class="redo icon"></i>
+        Rettifica Domanda {{ bando }}
+        <h5>{{ domanda_peo }}</h5>
+    </div>
+    <div class="content">
+        <p>Stai per <i>riaprire e rettificare</i> la tua domanda {{ bando }},
+            creata da te giorno {{ domanda_peo.created }} e chiusa da te giorno {{ domanda_peo.data_chiusura }}.
+        </p>
+        <p> Ricordati di chiudere e presentare la tua domanda nuovamente altrimenti questa non verrà ritenuta valida.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" class="lockbutton_trigger" id="but_confirm_rettifica_domanda_{{ domanda_peo.pk }}" href="{% url 'domande_peo:chiudi_apri_domanda' bando_id=domanda_peo.bando.pk domanda_bando_id=domanda_peo.id azione='riapri' %}">
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: Desidero rettificare la mia Domanda di Partecipazione.
+            </div>
+        </a>
+
+    </div>
+</div>

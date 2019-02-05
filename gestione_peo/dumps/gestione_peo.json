@@ -1,0 +1,2522 @@
+[
+{
+  "model": "gestione_peo.bando",
+  "pk": 3,
+  "fields": {
+    "created": "2018-03-30T13:46:07Z",
+    "modified": "2018-07-14T11:14:22.680Z",
+    "nome": "PEO 2015",
+    "slug": "peo-2015",
+    "data_inizio": "2017-11-15T11:00:00Z",
+    "data_fine": "2018-12-14T11:00:00Z",
+    "data_fine_presentazione_domande": "2018-12-01T11:00:00Z",
+    "descrizione": "bando PEO riferito all'anno 2015",
+    "ultima_progressione": "2014-12-31",
+    "anni_servizio_minimi": 3,
+    "data_validita_titoli_fine": "2017-12-31",
+    "agevolazione_soglia_anni": 3,
+    "agevolazione_fatmol": 3,
+    "bando_pdf": "",
+    "protocollo_required": true,
+    "is_active": true,
+    "collaudo": true,
+    "pubblicato": false
+  }
+},
+{
+  "model": "gestione_peo.bando",
+  "pk": 4,
+  "fields": {
+    "created": "2018-07-16T09:40:31.016Z",
+    "modified": "2018-07-18T14:02:35.773Z",
+    "nome": "PEO 2017",
+    "slug": "peo_2017",
+    "data_inizio": "2017-01-01T07:00:00Z",
+    "data_fine": "2018-12-31T22:59:00Z",
+    "data_fine_presentazione_domande": "2018-11-30T11:00:00Z",
+    "descrizione": "",
+    "ultima_progressione": "2015-01-01",
+    "anni_servizio_minimi": 2,
+    "data_validita_titoli_fine": "2016-12-31",
+    "agevolazione_soglia_anni": 3,
+    "agevolazione_fatmol": 3,
+    "bando_pdf": "",
+    "protocollo_required": true,
+    "is_active": true,
+    "collaudo": true,
+    "pubblicato": false
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 7,
+  "fields": {
+    "created": "2018-03-30T13:49:43Z",
+    "modified": "2018-03-30T13:49:43Z",
+    "bando": 3,
+    "nome": "Formazione certificata e pertinente",
+    "id_code": "A",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 8,
+  "fields": {
+    "created": "2018-03-30T13:50:38Z",
+    "modified": "2018-03-30T13:50:38Z",
+    "bando": 3,
+    "nome": "Arricchimento professionale",
+    "id_code": "B",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 9,
+  "fields": {
+    "created": "2018-03-30T13:51:23Z",
+    "modified": "2018-03-30T13:51:24Z",
+    "bando": 3,
+    "nome": "Qualit\u00e0 delle prestazioni individuali",
+    "id_code": "C",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 10,
+  "fields": {
+    "created": "2018-03-30T14:21:50Z",
+    "modified": "2018-07-27T10:45:18.949Z",
+    "bando": 3,
+    "nome": "Anzianit\u00e0 di servizio prestato senza essere incorsi negli ultimi anni in sanzioni disciplinari pi\u00f9 gravi del rimprovero scritto",
+    "id_code": "D",
+    "note": "",
+    "add_punteggio_anzianita": true,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 11,
+  "fields": {
+    "created": "2018-03-30T15:25:14Z",
+    "modified": "2018-03-30T15:25:14Z",
+    "bando": 3,
+    "nome": "Titoli culturali e professionali",
+    "id_code": "E",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 12,
+  "fields": {
+    "created": "2018-07-16T09:55:43.078Z",
+    "modified": "2018-07-16T10:33:00.386Z",
+    "bando": 4,
+    "nome": "Formazione certificata e pertinente (2017)",
+    "id_code": "A",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 13,
+  "fields": {
+    "created": "2018-07-16T09:56:20.524Z",
+    "modified": "2018-07-16T10:13:35.007Z",
+    "bando": 4,
+    "nome": "Arricchimento professionale (2017)",
+    "id_code": "B",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 14,
+  "fields": {
+    "created": "2018-07-16T09:58:31.351Z",
+    "modified": "2018-07-16T10:14:17.869Z",
+    "bando": 4,
+    "nome": "Anzianit\u00e0 di servizio prestato senza essere incorsi negli ultimi due anni in sanzioni disciplinari pi\u00f9 gravi del rimprovero scritto (2017)",
+    "id_code": "D",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 15,
+  "fields": {
+    "created": "2018-07-16T09:59:32.915Z",
+    "modified": "2018-07-17T09:42:00.926Z",
+    "bando": 4,
+    "nome": "Titoli culturali e professionali (2017)",
+    "id_code": "E",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.indicatoreponderato",
+  "pk": 16,
+  "fields": {
+    "created": "2018-07-16T10:01:17.429Z",
+    "modified": "2018-07-16T10:13:50.954Z",
+    "bando": 4,
+    "nome": "Qualit\u00e0 delle prestazioni individuali (2017)",
+    "id_code": "C",
+    "note": "",
+    "add_punteggio_anzianita": false,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 21,
+  "fields": {
+    "indicatore_ponderato": 7,
+    "posizione_economica": 2,
+    "punteggio_max": 25,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 22,
+  "fields": {
+    "indicatore_ponderato": 7,
+    "posizione_economica": 3,
+    "punteggio_max": 20,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 23,
+  "fields": {
+    "indicatore_ponderato": 7,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 24,
+  "fields": {
+    "indicatore_ponderato": 7,
+    "posizione_economica": 5,
+    "punteggio_max": 20,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 25,
+  "fields": {
+    "indicatore_ponderato": 8,
+    "posizione_economica": 2,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 26,
+  "fields": {
+    "indicatore_ponderato": 8,
+    "posizione_economica": 3,
+    "punteggio_max": 25,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 27,
+  "fields": {
+    "indicatore_ponderato": 8,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 28,
+  "fields": {
+    "indicatore_ponderato": 8,
+    "posizione_economica": 5,
+    "punteggio_max": 15,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 29,
+  "fields": {
+    "indicatore_ponderato": 9,
+    "posizione_economica": 2,
+    "punteggio_max": 25,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 30,
+  "fields": {
+    "indicatore_ponderato": 9,
+    "posizione_economica": 3,
+    "punteggio_max": 25,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 31,
+  "fields": {
+    "indicatore_ponderato": 9,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 32,
+  "fields": {
+    "indicatore_ponderato": 9,
+    "posizione_economica": 5,
+    "punteggio_max": 20,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 33,
+  "fields": {
+    "indicatore_ponderato": 10,
+    "posizione_economica": 2,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 34,
+  "fields": {
+    "indicatore_ponderato": 10,
+    "posizione_economica": 3,
+    "punteggio_max": 15,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 35,
+  "fields": {
+    "indicatore_ponderato": 10,
+    "posizione_economica": 4,
+    "punteggio_max": 15,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 36,
+  "fields": {
+    "indicatore_ponderato": 10,
+    "posizione_economica": 5,
+    "punteggio_max": 10,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 37,
+  "fields": {
+    "indicatore_ponderato": 11,
+    "posizione_economica": 2,
+    "punteggio_max": 15,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 38,
+  "fields": {
+    "indicatore_ponderato": 11,
+    "posizione_economica": 3,
+    "punteggio_max": 20,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 39,
+  "fields": {
+    "indicatore_ponderato": 11,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 40,
+  "fields": {
+    "indicatore_ponderato": 11,
+    "posizione_economica": 5,
+    "punteggio_max": 30,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 41,
+  "fields": {
+    "indicatore_ponderato": 12,
+    "posizione_economica": 2,
+    "punteggio_max": 25,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 42,
+  "fields": {
+    "indicatore_ponderato": 12,
+    "posizione_economica": 3,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 43,
+  "fields": {
+    "indicatore_ponderato": 12,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 44,
+  "fields": {
+    "indicatore_ponderato": 12,
+    "posizione_economica": 5,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 45,
+  "fields": {
+    "indicatore_ponderato": 15,
+    "posizione_economica": 2,
+    "punteggio_max": 15,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 46,
+  "fields": {
+    "indicatore_ponderato": 15,
+    "posizione_economica": 3,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 47,
+  "fields": {
+    "indicatore_ponderato": 15,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_indicatoreponderato_poseconomica",
+  "pk": 48,
+  "fields": {
+    "indicatore_ponderato": 15,
+    "posizione_economica": 5,
+    "punteggio_max": 30,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 11,
+  "fields": {
+    "created": "2018-03-30T14:28:03Z",
+    "modified": "2018-07-17T13:03:09.401Z",
+    "indicatore_ponderato": 7,
+    "nome": "Corsi formazione certificati con superamento esame finale",
+    "id_code": "A",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "In questa categoria dovranno essere caricati i titoli relativi a .....",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 12,
+  "fields": {
+    "created": "2018-03-30T14:29:19Z",
+    "modified": "2018-07-17T13:03:13.115Z",
+    "indicatore_ponderato": 7,
+    "nome": "Corsi di formazione certificati senza superamento di esame finale",
+    "id_code": "B",
+    "calcolo_punteggio_automatico": false,
+    "is_required": false,
+    "note": "Non saranno valutati corsi/esami/moduli superati nell'ambito del percorso formativo/ordinamento di un corso di studio utilizzati per il conseguimento del relativo titolo",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 13,
+  "fields": {
+    "created": "2018-03-30T14:34:10Z",
+    "modified": "2018-07-17T13:03:06.028Z",
+    "indicatore_ponderato": 8,
+    "nome": "Arricchimento professionale derivante dall'esperienza lavorativa",
+    "id_code": "A",
+    "calcolo_punteggio_automatico": false,
+    "is_required": false,
+    "note": "Esperienza lavorativa desumibile dal curriculum e dalla documentazione dell'interessato.\r\nIl punteggio sar\u00e0 assegnato a cura del Responsabile della struttura mediante l'utilizzo della scheda (Tabella 1) riportata nel bando.",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 14,
+  "fields": {
+    "created": "2018-03-30T14:36:08Z",
+    "modified": "2018-06-13T14:21:24Z",
+    "indicatore_ponderato": 9,
+    "nome": "Qualit\u00e0 delle prestazioni invididuali",
+    "id_code": "A",
+    "calcolo_punteggio_automatico": false,
+    "is_required": true,
+    "note": "Attestata dal Responsabile della struttura a cui si afferisce.\r\nTabella 2 del bando.",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 15,
+  "fields": {
+    "created": "2018-03-30T14:39:26Z",
+    "modified": "2018-07-27T11:19:17.128Z",
+    "indicatore_ponderato": 10,
+    "nome": "Anni di servizio di lavoro dipendente in una P.A.",
+    "id_code": "A",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "Compresi gli anni prestati come servizio militare e/o civile",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 16,
+  "fields": {
+    "created": "2018-03-30T14:42:12Z",
+    "modified": "2018-07-17T13:03:02.375Z",
+    "indicatore_ponderato": 10,
+    "nome": "Anni di servizio presso Consorzi Universitari",
+    "id_code": "B",
+    "calcolo_punteggio_automatico": false,
+    "is_required": false,
+    "note": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 17,
+  "fields": {
+    "created": "2018-07-16T10:15:55.577Z",
+    "modified": "2018-07-18T14:03:55.132Z",
+    "indicatore_ponderato": 12,
+    "nome": "Corsi di formazione certificati con superamento di esame finale",
+    "id_code": "Aa",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "In questa sezione vanno caricati solo i corsi di formazione che prevedono il superamento di un esame finale con relativa valutazione.",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 18,
+  "fields": {
+    "created": "2018-07-16T10:46:19.491Z",
+    "modified": "2018-07-18T13:52:33.663Z",
+    "indicatore_ponderato": 12,
+    "nome": "Corsi di formazione certificati senza superamento di esame finale",
+    "id_code": "Ab",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "inserisci solo i corsi di formazione che non hanno previsto il superamento di un esame finale",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 19,
+  "fields": {
+    "created": "2018-07-16T11:02:42.665Z",
+    "modified": "2018-07-16T11:07:50.052Z",
+    "indicatore_ponderato": 13,
+    "nome": "Punteggio assegnato",
+    "id_code": "Ba",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "Inserire la valutazione conclusiva presente sulla scheda (Tabella 1)",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 20,
+  "fields": {
+    "created": "2018-07-16T11:14:16.042Z",
+    "modified": "2018-07-16T11:16:10.348Z",
+    "indicatore_ponderato": 16,
+    "nome": "Punteggio assegnato",
+    "id_code": "Ca",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "Inserire il punteggio della valutazione riportato nella scheda della valutazione delle prestazioni individuali (Tabella 2)",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 21,
+  "fields": {
+    "created": "2018-07-16T11:39:48.136Z",
+    "modified": "2018-07-16T11:39:48.163Z",
+    "indicatore_ponderato": 15,
+    "nome": "Pubblicazioni pertinenti alle attivit\u00e0 dell'Ufficio",
+    "id_code": "Ea",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 23,
+  "fields": {
+    "created": "2018-07-17T09:36:52.710Z",
+    "modified": "2018-07-17T09:37:15.024Z",
+    "indicatore_ponderato": 15,
+    "nome": "Ulteriore titolo di studio",
+    "id_code": "Eb",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "Inserire il titolo di studio superiore rispetto a quello richiesto per l'accesso dal'esterno per la propria categoria",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 24,
+  "fields": {
+    "created": "2018-07-17T09:41:00.009Z",
+    "modified": "2018-07-17T09:41:00.035Z",
+    "indicatore_ponderato": 15,
+    "nome": "Corsi di perfezionamento o specializzazione",
+    "id_code": "Ec",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 25,
+  "fields": {
+    "created": "2018-07-17T09:43:48.498Z",
+    "modified": "2018-07-17T09:45:00.844Z",
+    "indicatore_ponderato": 15,
+    "nome": "Dottorato di ricerca",
+    "id_code": "Ed",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "inserire il dottorato di ricerca pertinente al lavoro svolto",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 26,
+  "fields": {
+    "created": "2018-07-17T09:47:00.628Z",
+    "modified": "2018-07-17T10:08:05.175Z",
+    "indicatore_ponderato": 15,
+    "nome": "Master",
+    "id_code": "Ee",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "inserire Master pertinente al lavoro svolto",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 27,
+  "fields": {
+    "created": "2018-07-17T10:11:04.210Z",
+    "modified": "2018-07-17T10:11:04.233Z",
+    "indicatore_ponderato": 15,
+    "nome": "Abilitazione professionale con 2 anni di tirocinio pertinente al lavoro svolto e con certificazione finale",
+    "id_code": "Ef",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 28,
+  "fields": {
+    "created": "2018-07-17T10:12:47.808Z",
+    "modified": "2018-07-17T10:12:47.829Z",
+    "indicatore_ponderato": 15,
+    "nome": "Abilitazione professionale pertinente al lavoro svolto",
+    "id_code": "Eg",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 29,
+  "fields": {
+    "created": "2018-07-17T10:22:01.292Z",
+    "modified": "2018-07-17T10:22:10.210Z",
+    "indicatore_ponderato": 15,
+    "nome": "Incarichi conferiti da Organi di Governo, Direttore Generale o dal Responsabile della Struttura",
+    "id_code": "Eh",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "es: Responsabile Area, US, UOC, Settore, Ufficio, Centro, Laboratori....",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 30,
+  "fields": {
+    "created": "2018-07-17T10:26:04.186Z",
+    "modified": "2018-07-17T10:26:04.209Z",
+    "indicatore_ponderato": 15,
+    "nome": "Incarichi di cui al Codice dei contratti",
+    "id_code": "Ei",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "es: progettazione e direzione opere, RUP",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.descrizioneindicatore",
+  "pk": 31,
+  "fields": {
+    "created": "2018-07-17T10:32:12.509Z",
+    "modified": "2018-07-17T10:32:12.538Z",
+    "indicatore_ponderato": 15,
+    "nome": "Altri incarichi non compresi nelle precedenti tipologie",
+    "id_code": "Hj",
+    "calcolo_punteggio_automatico": true,
+    "is_required": false,
+    "note": "es: amministratore di sistema, responsabile procedimento amministrativo, partecipazione a commissioni di concorso, gare di appalto, commissioni elettorali, seminari e convegni, incarichi di docenza, componente di gruppo di lavoro",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 9,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "posizione_economica": 2,
+    "punteggio_max": 13,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 10,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "posizione_economica": 3,
+    "punteggio_max": 10,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 11,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "posizione_economica": 4,
+    "punteggio_max": 10,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 12,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "posizione_economica": 5,
+    "punteggio_max": 10,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 13,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "posizione_economica": 2,
+    "punteggio_max": 12,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 14,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "posizione_economica": 3,
+    "punteggio_max": 10,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 15,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "posizione_economica": 4,
+    "punteggio_max": 10,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 16,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "posizione_economica": 5,
+    "punteggio_max": 10,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 17,
+  "fields": {
+    "descrizione_indicatore": 13,
+    "posizione_economica": 2,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 18,
+  "fields": {
+    "descrizione_indicatore": 13,
+    "posizione_economica": 3,
+    "punteggio_max": 25,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 19,
+  "fields": {
+    "descrizione_indicatore": 13,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 20,
+  "fields": {
+    "descrizione_indicatore": 13,
+    "posizione_economica": 5,
+    "punteggio_max": 15,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 21,
+  "fields": {
+    "descrizione_indicatore": 14,
+    "posizione_economica": 2,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 22,
+  "fields": {
+    "descrizione_indicatore": 14,
+    "posizione_economica": 3,
+    "punteggio_max": 20,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 23,
+  "fields": {
+    "descrizione_indicatore": 14,
+    "posizione_economica": 4,
+    "punteggio_max": 25,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 24,
+  "fields": {
+    "descrizione_indicatore": 14,
+    "posizione_economica": 5,
+    "punteggio_max": 25,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 25,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "posizione_economica": 2,
+    "punteggio_max": 13,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 26,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "posizione_economica": 3,
+    "punteggio_max": 10,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 27,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "posizione_economica": 4,
+    "punteggio_max": 10,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 28,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "posizione_economica": 5,
+    "punteggio_max": 10,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 29,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "posizione_economica": 2,
+    "punteggio_max": 12,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 30,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "posizione_economica": 3,
+    "punteggio_max": 10,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 31,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "posizione_economica": 4,
+    "punteggio_max": 10,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 32,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "posizione_economica": 5,
+    "punteggio_max": 10,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 33,
+  "fields": {
+    "descrizione_indicatore": 19,
+    "posizione_economica": 2,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 34,
+  "fields": {
+    "descrizione_indicatore": 19,
+    "posizione_economica": 3,
+    "punteggio_max": 25,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 35,
+  "fields": {
+    "descrizione_indicatore": 19,
+    "posizione_economica": 4,
+    "punteggio_max": 20,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 36,
+  "fields": {
+    "descrizione_indicatore": 19,
+    "posizione_economica": 5,
+    "punteggio_max": 12,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 37,
+  "fields": {
+    "descrizione_indicatore": 20,
+    "posizione_economica": 2,
+    "punteggio_max": 20,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 38,
+  "fields": {
+    "descrizione_indicatore": 20,
+    "posizione_economica": 3,
+    "punteggio_max": 15,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 39,
+  "fields": {
+    "descrizione_indicatore": 20,
+    "posizione_economica": 4,
+    "punteggio_max": 15,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggiomax_descrizioneindicatore_poseconomica",
+  "pk": 40,
+  "fields": {
+    "descrizione_indicatore": 20,
+    "posizione_economica": 5,
+    "punteggio_max": 10,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 18,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "nome": "Fascia 1",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 1,
+    "durata_massima": 4,
+    "punteggio": 0.15,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 19,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "nome": "Fascia 2",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 5,
+    "durata_massima": 8,
+    "punteggio": 0.3,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 20,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "nome": "Fascia 3",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 9,
+    "durata_massima": 16,
+    "punteggio": 0.5,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 21,
+  "fields": {
+    "descrizione_indicatore": 11,
+    "nome": "Fascia 4",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 17,
+    "durata_massima": 1000,
+    "punteggio": 0.6,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 22,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "nome": "Fascia 1",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 1,
+    "durata_massima": 4,
+    "punteggio": 0.1,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 23,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "nome": "Fascia 2",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 5,
+    "durata_massima": 8,
+    "punteggio": 0.2,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 24,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "nome": "Fascia 3",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 9,
+    "durata_massima": 16,
+    "punteggio": 0.3,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 25,
+  "fields": {
+    "descrizione_indicatore": 12,
+    "nome": "Fascia 4",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 17,
+    "durata_massima": 1000,
+    "punteggio": 0.4,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 26,
+  "fields": {
+    "descrizione_indicatore": 15,
+    "nome": "Punteggio per ogni mese (anno in 12mi)",
+    "pos_eco": null,
+    "unita_temporale": "m",
+    "durata_minima": 1,
+    "durata_massima": 1000,
+    "punteggio": 0.02,
+    "operatore": "x",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 27,
+  "fields": {
+    "descrizione_indicatore": 16,
+    "nome": "Punteggio per ogni mese (anno in 12mi)",
+    "pos_eco": null,
+    "unita_temporale": "m",
+    "durata_minima": 1,
+    "durata_massima": 1000,
+    "punteggio": 0.0083,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 28,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 1,
+    "durata_massima": 4,
+    "punteggio": 0.15,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 29,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 5,
+    "durata_massima": 8,
+    "punteggio": 0.3,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 30,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 9,
+    "durata_massima": 16,
+    "punteggio": 0.5,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 31,
+  "fields": {
+    "descrizione_indicatore": 17,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 17,
+    "durata_massima": 10000,
+    "punteggio": 0.6,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 32,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 1,
+    "durata_massima": 4,
+    "punteggio": 0.1,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 33,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 5,
+    "durata_massima": 8,
+    "punteggio": 0.2,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 34,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 9,
+    "durata_massima": 16,
+    "punteggio": 0.3,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_descrizioneindicatore_timedelta",
+  "pk": 35,
+  "fields": {
+    "descrizione_indicatore": 18,
+    "nome": "Durata corso (ore)",
+    "pos_eco": null,
+    "unita_temporale": "h",
+    "durata_minima": 17,
+    "durata_massima": 10000,
+    "punteggio": 0.4,
+    "operatore": "a",
+    "note": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 1,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 4,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 2,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 5,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 3,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 8,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 4,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 9,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 5,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 10,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 6,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 12,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 5
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 7,
+  "fields": {
+    "created": "2018-03-30T14:45:52Z",
+    "modified": "2018-03-30T14:45:52Z",
+    "titolo": 16,
+    "bando": 3,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 6
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 8,
+  "fields": {
+    "created": "2018-03-30T14:46:10Z",
+    "modified": "2018-03-30T14:46:10Z",
+    "titolo": 20,
+    "bando": 3,
+    "punteggio": 2,
+    "cumulabile": false,
+    "ordinamento": 7
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 9,
+  "fields": {
+    "created": "2018-03-30T14:46:10Z",
+    "modified": "2018-03-30T14:46:10Z",
+    "titolo": 19,
+    "bando": 3,
+    "punteggio": 3,
+    "cumulabile": false,
+    "ordinamento": 8
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 10,
+  "fields": {
+    "created": "2018-07-16T09:44:01.111Z",
+    "modified": "2018-07-16T09:44:01.120Z",
+    "titolo": 8,
+    "bando": 4,
+    "punteggio": 1,
+    "cumulabile": false,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 11,
+  "fields": {
+    "created": "2018-07-16T09:46:19.071Z",
+    "modified": "2018-07-16T09:46:19.098Z",
+    "titolo": 20,
+    "bando": 4,
+    "punteggio": 2,
+    "cumulabile": false,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggio_titolostudio",
+  "pk": 12,
+  "fields": {
+    "created": "2018-07-16T09:50:06.097Z",
+    "modified": "2018-07-16T09:50:06.132Z",
+    "titolo": 19,
+    "bando": 4,
+    "punteggio": 3,
+    "cumulabile": false,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 1,
+  "fields": {
+    "created": "2018-03-30T13:57:15Z",
+    "modified": "2018-03-30T14:12:22Z",
+    "bando": 3,
+    "posizione_economica": 2,
+    "unita_temporale": "m",
+    "punteggio": 0.0417,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 2,
+  "fields": {
+    "created": "2018-03-30T13:57:15Z",
+    "modified": "2018-03-30T14:12:22Z",
+    "bando": 3,
+    "posizione_economica": 3,
+    "unita_temporale": "m",
+    "punteggio": 0.0333,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 3,
+  "fields": {
+    "created": "2018-03-30T13:57:15Z",
+    "modified": "2018-03-30T14:12:22Z",
+    "bando": 3,
+    "posizione_economica": 4,
+    "unita_temporale": "m",
+    "punteggio": 0.0333,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 4,
+  "fields": {
+    "created": "2018-03-30T13:57:15Z",
+    "modified": "2018-03-30T14:12:22Z",
+    "bando": 3,
+    "posizione_economica": 5,
+    "unita_temporale": "m",
+    "punteggio": 0.0208,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 5,
+  "fields": {
+    "created": "2018-07-16T09:52:38.062Z",
+    "modified": "2018-07-16T09:52:38.091Z",
+    "bando": 4,
+    "posizione_economica": 2,
+    "unita_temporale": "m",
+    "punteggio": 0.042,
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 6,
+  "fields": {
+    "created": "2018-07-16T09:52:38.063Z",
+    "modified": "2018-07-16T09:52:38.092Z",
+    "bando": 4,
+    "posizione_economica": 3,
+    "unita_temporale": "m",
+    "punteggio": 0.03,
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 7,
+  "fields": {
+    "created": "2018-07-16T09:52:38.063Z",
+    "modified": "2018-07-16T09:52:38.092Z",
+    "bando": 4,
+    "posizione_economica": 4,
+    "unita_temporale": "m",
+    "punteggio": 0.03,
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.punteggio_anzianita_servizio",
+  "pk": 8,
+  "fields": {
+    "created": "2018-07-16T09:52:38.064Z",
+    "modified": "2018-07-16T09:52:38.104Z",
+    "bando": 4,
+    "posizione_economica": 5,
+    "unita_temporale": "m",
+    "punteggio": 0.021,
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 1,
+  "fields": {
+    "titolo_studio": 1,
+    "bando": 3,
+    "ordinamento": 0,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 4,
+  "fields": {
+    "titolo_studio": 2,
+    "bando": 3,
+    "ordinamento": 1,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 7,
+  "fields": {
+    "titolo_studio": 3,
+    "bando": 3,
+    "ordinamento": 2,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 10,
+  "fields": {
+    "titolo_studio": 4,
+    "bando": 3,
+    "ordinamento": 3,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 13,
+  "fields": {
+    "titolo_studio": 5,
+    "bando": 3,
+    "ordinamento": 4,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 16,
+  "fields": {
+    "titolo_studio": 6,
+    "bando": 3,
+    "ordinamento": 5,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 19,
+  "fields": {
+    "titolo_studio": 7,
+    "bando": 3,
+    "ordinamento": 6,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 22,
+  "fields": {
+    "titolo_studio": 8,
+    "bando": 3,
+    "ordinamento": 7,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 25,
+  "fields": {
+    "titolo_studio": 9,
+    "bando": 3,
+    "ordinamento": 8,
+    "posizione_economica": []
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 26,
+  "fields": {
+    "titolo_studio": 8,
+    "bando": 4,
+    "ordinamento": 0,
+    "posizione_economica": [
+      3,
+      4,
+      5
+    ]
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 27,
+  "fields": {
+    "titolo_studio": 20,
+    "bando": 4,
+    "ordinamento": 1,
+    "posizione_economica": [
+      4,
+      5
+    ]
+  }
+},
+{
+  "model": "gestione_peo.categoriedisabilitate_titolostudio",
+  "pk": 28,
+  "fields": {
+    "titolo_studio": 19,
+    "bando": 4,
+    "ordinamento": 2,
+    "posizione_economica": [
+      4,
+      5
+    ]
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 1,
+  "fields": {
+    "nome": "Titolo",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 11,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 2,
+  "fields": {
+    "nome": "Allegato",
+    "tipo": "FileField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 11,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 3,
+  "fields": {
+    "nome": "Allegato 2",
+    "tipo": "FileField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 11,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 4,
+  "fields": {
+    "nome": "erwrwer",
+    "tipo": "FileField",
+    "valore": "",
+    "is_required": false,
+    "descrizione_indicatore": 14,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 5,
+  "fields": {
+    "nome": "rrrr",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 14,
+    "aiuto": "ewrwer",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 6,
+  "fields": {
+    "nome": "Titolo Corso",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 17,
+    "aiuto": "inserire il titolo del corso come riportato sull'attestato",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 7,
+  "fields": {
+    "nome": "Ente Erogatore",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 17,
+    "aiuto": "inserire il nome dell'ente erogatore (es. UNICAL, Maggioli etc..)",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 8,
+  "fields": {
+    "nome": "Durata",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 17,
+    "aiuto": "inserire data inizio e fine del corso di formazione",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 9,
+  "fields": {
+    "nome": "Numero ore",
+    "tipo": "DurataComeInteroField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 17,
+    "aiuto": "durata complessiva del corso",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 10,
+  "fields": {
+    "nome": "Titolo Corso",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 18,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 11,
+  "fields": {
+    "nome": "Ente Erogatore",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 18,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 12,
+  "fields": {
+    "nome": "Durata",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 18,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 13,
+  "fields": {
+    "nome": "Numero ore",
+    "tipo": "DurataComeInteroField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 18,
+    "aiuto": "",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 15,
+  "fields": {
+    "nome": "Valutazione",
+    "tipo": "IntegerField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 19,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 16,
+  "fields": {
+    "nome": "Valutazione",
+    "tipo": "IntegerField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 20,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 17,
+  "fields": {
+    "nome": "Nome e Cognome degli autori",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 21,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 18,
+  "fields": {
+    "nome": "Tipologia",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 21,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 19,
+  "fields": {
+    "nome": "Titolo",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 21,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 20,
+  "fields": {
+    "nome": "Pubblicato su",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 21,
+    "aiuto": "",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 21,
+  "fields": {
+    "nome": "Anno pubblicazione",
+    "tipo": "IntegerField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 21,
+    "aiuto": "",
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 23,
+  "fields": {
+    "nome": "Titolo di studio superiore",
+    "tipo": "_TitoloStudioField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 23,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 24,
+  "fields": {
+    "nome": "Descrizione corso",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 24,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 25,
+  "fields": {
+    "nome": "Rilasciato da",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 24,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 26,
+  "fields": {
+    "nome": "Durata",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 24,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 27,
+  "fields": {
+    "nome": "Descrizione",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 25,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 28,
+  "fields": {
+    "nome": "Rilasciato da",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 25,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 29,
+  "fields": {
+    "nome": "Anno",
+    "tipo": "IntegerField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 25,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 30,
+  "fields": {
+    "nome": "Descrizione corso",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 26,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 31,
+  "fields": {
+    "nome": "Rilasciato da",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 26,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 32,
+  "fields": {
+    "nome": "Durata",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 26,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 33,
+  "fields": {
+    "nome": "Valutazione finale",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 26,
+    "aiuto": "",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 34,
+  "fields": {
+    "nome": "Descrizione",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 27,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 35,
+  "fields": {
+    "nome": "Conseguita il",
+    "tipo": "DateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 27,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 36,
+  "fields": {
+    "nome": "Tirocinio effettuato negli anni",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 27,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 37,
+  "fields": {
+    "nome": "Descrizione",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 28,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 38,
+  "fields": {
+    "nome": "Conseguita il",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 28,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 39,
+  "fields": {
+    "nome": "Area o Struttura",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 29,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 40,
+  "fields": {
+    "nome": "Descrizione incarico",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 29,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 41,
+  "fields": {
+    "nome": "Conferito da",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 29,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 42,
+  "fields": {
+    "nome": "Estremi dell\u2019atto di conferimento (protocollo e data)",
+    "tipo": "ProtocolloField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 29,
+    "aiuto": "",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 43,
+  "fields": {
+    "nome": "Ricoperto nel periodo",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 29,
+    "aiuto": "",
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 44,
+  "fields": {
+    "nome": "Area o Struttura",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 30,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 45,
+  "fields": {
+    "nome": "Descrizione incarico",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 30,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 46,
+  "fields": {
+    "nome": "Conferito da",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 30,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 47,
+  "fields": {
+    "nome": "Estremi dell\u2019atto di conferimento (protocollo e data)",
+    "tipo": "ProtocolloField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 30,
+    "aiuto": "",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 48,
+  "fields": {
+    "nome": "Ricoperto nel periodo",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 30,
+    "aiuto": "",
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 49,
+  "fields": {
+    "nome": "Area o Struttura",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 31,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 50,
+  "fields": {
+    "nome": "Descrizione incarico",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 31,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 51,
+  "fields": {
+    "nome": "Conferito da",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 31,
+    "aiuto": "",
+    "ordinamento": 2
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 52,
+  "fields": {
+    "nome": "Estremi dell\u2019atto di conferimento (protocollo e data)",
+    "tipo": "ProtocolloField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 31,
+    "aiuto": "",
+    "ordinamento": 3
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 53,
+  "fields": {
+    "nome": "Ricoperto nel periodo",
+    "tipo": "StartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 31,
+    "aiuto": "",
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 54,
+  "fields": {
+    "nome": "Superato?",
+    "tipo": "CheckBoxField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 17,
+    "aiuto": "",
+    "ordinamento": 4
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 55,
+  "fields": {
+    "nome": "Ente",
+    "tipo": "CharField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 15,
+    "aiuto": "",
+    "ordinamento": 0
+  }
+},
+{
+  "model": "gestione_peo.moduloinserimentocampi",
+  "pk": 56,
+  "fields": {
+    "nome": "Data",
+    "tipo": "OutStartEndDateField",
+    "valore": "",
+    "is_required": true,
+    "descrizione_indicatore": 15,
+    "aiuto": "",
+    "ordinamento": 1
+  }
+},
+{
+  "model": "gestione_peo.clausolebando",
+  "pk": 1,
+  "fields": {
+    "created": "2018-06-08T08:08:50Z",
+    "modified": "2018-07-14T11:14:22.695Z",
+    "bando": 3,
+    "titolo": "Privacy",
+    "corpo_del_testo": "Clausole e indicazioni sul trattamento dei dati e la privacy.",
+    "ordinamento": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "gestione_peo.clausolebando",
+  "pk": 2,
+  "fields": {
+    "created": "2018-06-13T14:12:13Z",
+    "modified": "2018-07-14T11:14:22.690Z",
+    "bando": 3,
+    "titolo": "Condizioni di utilizzo",
+    "corpo_del_testo": "Clausole e indicazioni sull' utilizzo della piattaforma.",
+    "ordinamento": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "gestione_peo.clausolebando",
+  "pk": 3,
+  "fields": {
+    "created": "2018-06-13T14:13:37Z",
+    "modified": "2018-07-14T11:14:22.686Z",
+    "bando": 3,
+    "titolo": "Condizioni generali di adesione al Bando",
+    "corpo_del_testo": "Clausole e indicazioni di carattere legale riguardanti la partecipazione al Bando.",
+    "ordinamento": 0,
+    "is_active": true
+  }
+},
+{
+  "model": "gestione_peo.clausolebando",
+  "pk": 4,
+  "fields": {
+    "created": "2018-07-16T09:41:01.928Z",
+    "modified": "2018-07-16T09:41:01.932Z",
+    "bando": 4,
+    "titolo": "Modalit\u00e0 della presentazione dei titoli e veridicit\u00e0 delle dichiarazioni",
+    "corpo_del_testo": "I titoli valutabili  di cui all'art. 7 del bando  dovranno essere prodotti attraverso questa piattaforma ed avranno valore di dichiarazione sostitutiva di certificazione e di atto di notoriet\u00e0 di cui al DPR 28 dicembre 2000, n. 445. Qualora nella fase di controllo dovesse emergere la non veridicit\u00e0 del contenuto delle dichiarazioni, il dichiarante decade dai benefici conseguiti sulla basa della dichiarazine non veritiera, anche attraverso l'esclusione dalle graduatorie, ferma restando l'attivazione di procedure disciplinari nonch\u00e8 l'applicazione delle disposizioni dell'art.  76 del suddwetto DPR 445/2000, in merito alle sanzioni previste dal codice penale e dalle leggi speciali in materia.",
+    "ordinamento": 0,
+    "is_active": true
+  }
+}
+]

@@ -1,0 +1,31 @@
+<ol class="ui list">
+    <li value="*">Matricola: <b>{{ dipendente.matricola }}</b></li>
+    <li value="*">
+        E-mail: <b>{{ dipendente.utente.email|lower|default_if_none:"Nessuna e-mail presente" }}</b>
+    </li>
+    {% comment %}
+    <li value="*">Sede: {{ dipendente.sede }}</li>
+    <li value="*">In servizio presso: {{ dipendente.affinita_organizzativa }}</li>
+    <li value="*">Posizione economica: <b>{{ dipendente.livello }}</b></li>
+    <li value="*">Categoria: <b>{{ dipendente.profilo }}</b></li>
+
+        {% if dipendente.data_cessazione_contratto %}
+        al {{dipendente.data_cessazione_contratto|date:"j F Y"}}
+        {% endif %}
+
+    {% endcomment %}
+
+    {% comment %}
+    <li value="*">
+        In servizio dal: {{dipendente.data_presa_servizio|date:"j F Y"}}
+        ({{ dipendente.get_anzianita_repr }}) come {{ dipendente.ruolo }}
+    </li>
+    {% with dipendente.get_data_progressione as data_progressione %}
+    {% if data_progressione %}
+        <li value="*">
+            Ultima progressione: {{ data_progressione }}
+        </li>
+    {% endif %}
+    {% endwith %}
+    {% endcomment %}
+</ol>

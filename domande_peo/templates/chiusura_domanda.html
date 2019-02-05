@@ -1,0 +1,42 @@
+{% extends 'riepilogo_domanda.html' %}
+{% load static %}
+
+{% block  modulo_head %}
+<h2 class="ui header">Consegna Domanda di partecipazione {{ domanda_peo.bando }}</h2>
+<div class="ui blue segment">
+    <h3>Domanda trasmessa con successo</h3>
+</div>
+{% endblock modulo_head %}
+
+{% block dati_istanza %}
+<div class="ui segments">
+    <div class="ui segment"><i>Istanza</i>: {{ domanda_peo.bando }}</div>
+    {% if domanda_peo.numero_protocollo %}
+        <div class="ui segment"><i>Numero Protocollo</i>: {{ domanda_peo.numero_protocollo }}</div>
+        <div class="ui segment"><i>Data Protocollo</i>: {{ domanda_peo.data_protocollazione }}</div>
+    {% else %}
+        <div class="ui segment"><i>Numero</i>: {{ domanda_peo.pk }}</div>
+    {% endif %}
+    <div class="ui segment"><i>Creazione</i>: {{ domanda_peo.created|date:"j F Y H:i" }}</div>
+    <div class="ui segment"><i>Ultima modifica</i>: {{ domanda_peo.modified|date:"j F Y H:i" }}</div>
+</div>
+{% endblock dati_istanza %}
+
+{% block submit_button %}
+<a href="{% url 'domande_peo:dashboard_domanda' domanda_peo.bando.slug %}">
+    <div class="ui button">
+        <i class="file icon"></i> Torna alla domanda
+    </div>
+</a>
+
+<a href="{% url 'domande_peo:download_domanda_pdf' domanda_peo.bando.id domanda_peo.id %}" class="lockbutton_single">
+    <div class="ui primary button">
+        <i class="print icon"></i> Scarica in formato PDF
+    </div>
+</a>
+
+{% endblock submit_button %}
+
+{% block bottom_scripts %}
+<script type="text/javascript" src="{% static 'js/lockbutton.js' %}"></script>
+{% endblock bottom_scripts %}

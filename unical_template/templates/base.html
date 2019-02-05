@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% load static %}
+<head>
+    <title>{{ title | default_if_none:"Servizi di rete Ospiti di Ateneo - Universitá della Calabria"}}</title>
+    <meta name="description" content="Universitá della Calabria">
+    <meta charset="UTF-8">
+    
+    <link rel="shortcut icon" href="https://www.unical.it/portale/images/favicon.ico">
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    {% block jquery_head %}
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    {% endblock jquery_head %}
+
+    {% block semantic_head %}
+    <link href="{% static 'semantic/semantic.min.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'semantic/semantic.min.js' %}"></script>
+    {% endblock semantic_head %}
+
+    <script type="text/javascript" src="{% static 'js/scripts.js' %}"></script>
+    {% block js_head %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+
+</head>
+
+<body>
+
+    {% block top_nav %}
+        {% include "top_nav.html" %}
+    {% endblock top_nav %}
+
+    <div class="container">
+        {% block top_bar_icons %}
+            {% include "top_bar_icons.html" %}
+        {% endblock top_bar_icons %}
+
+        {% block body_content %}
+        <div class="row clearfix" style="padding-top:0px;">
+            <div class="col-xs-12 column">
+                <div class="contenitore_body" style="margin-top: -10px;">
+                    <div style="padding: 33px;">
+                        {% block content %}
+                        <h2 style="">Servizio in allestimento</h2>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock body_content %}
+
+        <div class="row clearfix" style="padding-top:0px;"></div>
+    </div> <!-- fine container -->
+    {% block bottom_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,160 @@
+{% extends 'modulo_form.html' %}
+{% load domande_peo_tags %}
+
+{% block add_another %}
+    {% domanda_bando_num_max_descrind modulo_domanda_bando.domanda_bando modulo_domanda_bando.descrizione_indicatore as max_inserimenti %}
+    {% if "success" in message.tags and not max_inserimenti %}
+        <div style="padding-top: 13px;">
+            <a href="{% url 'domande_peo:aggiungi_titolo' bando_id=bando.slug descrizione_indicatore_id=modulo_domanda_bando.descrizione_indicatore.pk %}">
+            <div class="ui button green">
+                <i class="plus square outline icon icon"></i>
+                Aggiungi un altro modulo dello stesso tipo
+            </div>
+            </a>
+        </div>
+    {% endif %}
+{% endblock add_another %}
+
+    {% block descrizione_indicatore %}
+        {% if modulo_domanda_bando.descrizione_indicatore.note %}
+            <div class="ui">
+                {{ modulo_domanda_bando.descrizione_indicatore.note_as_html|safe }}
+            </div>
+        {% endif %}
+    {% endblock descrizione_indicatore %}
+
+{% block formbuttons_back %}
+    <a href="{% url 'domande_peo:dashboard_domanda' bando.slug %}#{{ bando.slug }}">
+        <div class="ui button">
+            <i class="reply icon"></i>
+            Torna alla Domanda
+        </div>
+    </a>
+{% endblock formbuttons_back %}
+
+{% block formbuttons_pdf %}
+    <a href="{% url 'domande_peo:download_modulo_inserito_pdf' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id %}">
+        <div class="ui button">
+            <i class="print icon"></i>
+            Scarica PDF
+        </div>
+    </a>
+{% endblock formbuttons_pdf %}
+
+
+<!--
+Se la domanda è modificabile,
+il pulsante Salva e gli script 'modal' per
+la cancellazione degli allegati vengono prodotti
+-->
+{% block submit_button %}
+    {% if modulo_domanda_bando.domanda_bando.modificabile %}
+        <input class="ui button green" type="submit" value="Salva" />
+    {% endif %}
+{% endblock submit_button %}
+
+{% block bottom_scripts %}
+    {% if modulo_domanda_bando.domanda_bando.modificabile %}
+        <script type="text/javascript">
+            $(function () {
+                {% for k,v in allegati.items %}
+                $("#cancella_allegato_{{ k }}").click(function () {
+                    $('#modal_allegato_{{ k }}')
+                        .modal('show');
+                });
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+
+
+{% block allegati %}
+    <!--
+    Se ci sono allegati inseriti
+    -->
+    {% if allegati %}
+        <h3>Allegati:</h3>
+        <table class="ui compact single line striped table">
+            <tbody>
+                <tr>
+                    <th>Nome Allegato</th>
+                    <th>Nome File</th>
+                    <th></th>
+                    {% if modulo_domanda_bando.domanda_bando.modificabile %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+                {% for k,v in allegati.items %}
+                    <tr>
+                        <td class="collapsing">
+                            <b>{{k}}</b>
+                        </td>
+                        <td>{{v}}</td>
+                        <td class="right aligned collapsing">
+                            <a download href="{% url 'domande_peo:download_allegato' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id allegato=k  %}">
+                                <div class="ui small button">
+                                    <i class="icon download"></i>
+                                    Vedi allegato
+                                </div>
+                            </a>
+                        </td>
+                        {% if modulo_domanda_bando.domanda_bando.modificabile %}
+                        <!--
+                        Se la domanda è modificabile,
+                        il pulsante Rimuovi allegato viene mostrato
+                        -->
+                            <td class="right aligned collapsing">
+                                <a id="cancella_allegato_{{ k }}" href="#">
+                                    <div class="ui negative small button">
+                                        <i class="icon trash"></i>
+                                        Rimuovi allegato
+                                    </div>
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!--
+        Modal delete (solo se la domanda è modificabile)
+        -->
+        {% if modulo_domanda_bando.domanda_bando.modificabile %}
+            {% for k,v in allegati.items %}
+                <div class="ui basic modal" id="modal_allegato_{{ k }}">
+                    <div class="ui icon header">
+                        <i class="trash icon"></i>
+                        Cancellazione allegato
+                        <h5>{{ k }}: {{ v }}</h5>
+                    </div>
+                    <div class="content">
+                        <p>Stai per cancellare definitamente questo
+                            allegato, creato da
+                            te giorno {{ modulo_domanda_bando.created }},
+                            dalla tua domanda {{ modulo_domanda_bando.domanda_bando.bando }}.
+                        </p>
+                        <h5>
+                            Sei veramente sicuro di questa scelta?
+                        </h5>
+                    </div>
+                    <div class="actions">
+                        <div class="ui white basic cancel inverted button">
+                            <i class="remove icon"></i>
+                            No
+                        </div>
+
+                        <a style="color: white;" href="{% url 'domande_peo:elimina_allegato' allegato=k bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id  %}">
+                            <div class="ui red ok inverted button">
+                                <i class="checkmark icon"></i>
+                                Si, sono sicuro: CANCELLA
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock allegati %}

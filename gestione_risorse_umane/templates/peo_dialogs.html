@@ -1,0 +1,61 @@
+{% if bandi %}
+    <h3 class="ui dividing header item">Domande di Partecipazione</h3>
+    {% for bando in bandi %}
+        {% if bando.is_in_corso and not bando.presentazione_domande_scaduta %}
+            <div class="ui middle aligned divided segment" style="background: #f7f7f7">
+                <div class="item ">
+                    <div class="content" style="padding-bottom: 40px;">
+                        <h3 class="ui header" style="margin-top: auto;">
+                            Presentazione Domanda <i>{{ bando }}</i>
+                        </h3>
+                        {% include "dettaglio_bando_peo_fields.html" %}
+
+                        <!--
+                        <div class="ui section divider" style="margin-top: 1em; margin-bottom: 1em;"></div>
+                        <p>Sulla base della tua ultima progressione/presa di servizio risulti idoneo a partecipare.</p>
+                        <p>Termine presentazione domande: {{ bando.data_fine_presentazione_domande }}</p>
+                        -->
+                        
+                        {% if bando.collaudo and request.user.is_staff %}
+                            <div class="ui middle aligned divided list warning message">
+                                <div class="item ">
+                                    <div class="content">
+                                        <div class="">
+                                            <h3 class="ui header" style="margin-top: 9px;">
+                                                <i class="wrench icon"></i> Collaudo in corso
+                                            </h3>
+                                            <div class="ui section divider" style="margin-top: 1em; margin-bottom: 1em;"></div>
+                                            <p>
+                                                Stai operando come utente con privilegi di Staff (is_staff=True).
+                                                Solo i colleghi con questo privilegio potranno vedere in fase di collaudo quello che gli utenti
+                                                ordinari vedranno quando il bando verrà pubblicato. Conduci i tuoi test, dopodichè manda in produzione
+                                                il bando compiendo le seguenti azioni in Gestione Bando PEO:
+                                            </p>
+                                            <ol>
+                                                <li class='*'>Deseleziona la voce Redazione (attualmente {{ bando.redazione }})  </li>
+                                                <li class='*'>Deseleziona la voce Collaudo (attualmente {{ bando.collaudo }}) </li>
+                                                <li class='*'>Seleziona la voce Pubblicato (attualmente {{ bando.pubblicato }}) </li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <a href="{% url 'domande_peo:accetta_condizioni_bando' bando_id=bando.slug %}">
+                            <button class="ui right floated labeled icon positive button">
+                                {% if bando.iniziato_dipendente %}
+                                    Modifica la Domanda di partecipazione
+                                    <i class="edit icon"></i>
+                                {% else %}
+                                    Compila la Domanda di partecipazione
+                                    <i class="arrow right icon"></i>
+                                {% endif %}
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}

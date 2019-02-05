@@ -1,0 +1,1 @@
+[{"model": "unical_strutture.tipostruttura", "pk": 1, "fields": {"nome": "Dipartimento", "descrizione": "", "data_inserimento": "2018-05-24T23:14:32Z"}}, {"model": "unical_strutture.tipostruttura", "pk": 2, "fields": {"nome": "Amministrazione Centrale", "descrizione": "", "data_inserimento": "2018-05-24T23:38:21Z"}}]

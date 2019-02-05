@@ -1,0 +1,93 @@
+# This repository adheres to the publiccode.yml standard by including this
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+name: Procedura Elettronica Online - Bandi e Progressioni Economiche Dipendenti
+releaseDate: '2019-02-05'
+url: 'https://github.com/UniversitaDellaCalabria/PEO'
+isBasedOn: 'https://www.djangoproject.com/'
+landingURL: peo.unical.it
+developmentStatus: stable
+softwareType: standalone/backend
+roadmap: 'https://github.com/UniversitaDellaCalabria/PEO/issues'
+platforms:
+  - linux
+  - web
+usedBy:
+  - 'https://www.unical.it'
+categories:
+  - employee-management
+maintenance:
+  type: community
+  contacts:
+    - name: Giuseppe De Marco
+      email: giuseppe.demarco@unical.it
+      affiliation: unical.it
+    - name: Francesco Filicetti
+      email: francesco.filicetti@unical.it
+      affiliation: unical.it
+legal:
+  license: AGPL-3.0-only
+  mainCopyrightOwner: Università della Calabria
+  authorsFile: AUTHORS
+intendedAudience:
+  scope:
+    - employment
+localisation:
+  availableLanguages:
+    - it
+it:
+  countryExtensionVersion: '0.2'
+  conforme:
+    gdpr: true
+    misureMinimeSicurezza: true
+  riuso:
+    codiceIPA: unical
+description:
+  it:
+    features:
+      - Protocollazione automatizzata
+      - Form dinamici per creazione moduli di inserimento da backend
+      - calcolo punteggio automatico
+      - Cineca CSA - Integrazione mediante repliche dati (cache o sql)
+      - SSO SAML2
+    screenshots:
+      - >-
+        https://github.com/UniversitaDellaCalabria/PEO/blob/master/data/gallery/home.png
+      - >-
+        https://github.com/UniversitaDellaCalabria/PEO/blob/master/data/gallery/domanda1.png
+    documentation: 'https://peo.unical.it/docs'
+    genericName: PEO
+    shortDescription: Procedura Elettronica Online - Bandi e Progressioni Economiche Dipendenti
+    longDescription: >
+      ## **PEO - Procedura elettronica On-line**
+
+
+      La piattaforma peo.unical.it è il sistema sviluppato dall’Università della
+      Calabria per informatizzare la gestione dei Bandi e delle procedure di
+      valutazione del personale. Gli utenti possono compilare i moduli di
+      partecipazione in corrispondenza dell’apertura di una procedura
+      elettronica di valutazione e selezione, quale il bando PEO. Il sistema
+      consente di:
+
+
+      - Interfacciarsi a CINECA CSA mediante connessione su DB nativa (con cache
+      locale) oppure mediante uno script personalizzato di replica dati (SQL);
+
+      - Protocollare mediante WebService;
+
+      - Autenticare mediante SSO (Saml2) i partecipanti;
+
+      - Costruire Moduli di inserimento dati via Admin backend;
+
+
+      La piattaforma è composta da diversi moduli indipendenti e da due
+      interfacce:
+
+
+      - Frontend, dedicato agli utenti partecipanti;
+
+      - Backend, dedicato agli utenti staff e amministratori, ovvero coloro i
+      quali configureranno i bandi e valuteranno i moduli protocollati dai
+      partecipanti;

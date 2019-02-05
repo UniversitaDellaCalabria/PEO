@@ -1,0 +1,3 @@
+# restore dump previously done with
+# ./manage.py dumpdata gestione_peo --indent 2 > gestione_peo/dumps/gestione_peo.json
+./manage.py loaddata --app gestione_peo gestione_peo/dumps/gestione_peo.json

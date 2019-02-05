@@ -1,0 +1,19 @@
+.. Procedura Elettronica Online (PEO) documentation master file, created by
+   sphinx-quickstart on Tue Sep 11 08:57:06 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Problemi tecnici
+================
+
+.. include:: browser.rst
+
+Nell'utilizzo della piattaforma *peo.unical.it* l'utente potrebbe imbattersi in una schermata come la seguente
+
+.. thumbnail:: images/500.png
+
+Ciò significa che si è verificato un problema di carattere tecnico.
+
+In questo caso, lo staff di supporto viene immediatamente allertato al fine di effettuare le opportune verifiche.
+
+**Nella maggior parte dei casi, se l'evento si verifica durante l'orario lavorativo, il ripristino delle normali condizioni di funzionamento dei servizi non impiega più di un'ora.**

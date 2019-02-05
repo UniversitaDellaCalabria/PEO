@@ -1,0 +1,31 @@
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user	command
+17 *	* * *	root    cd / && run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+
+# updates
+0 5 * * * root apt update && apt upgrade -y
+
+# django per csa sync
+52 0 * * * wert /opt/django_peo/uwsgi_setup/csa_sync.sh
+
+# django peo encrypted dumps
+0 0 * * * wert bash /opt/django_peo/uwsgi_setup/dump_db_json_7z.sh
+#0 0 * * * wert /opt/django_peo/uwsgi_setup/dump_db_json.sh
+
+# django peo media files sync
+0 10 * * * wert rsync -avu --delete /opt/django_peo/data/media /opt/django_peo_dumps/media
+
+# rinnovo certificati
+0 0 5,12,18,27 * * root /usr/local/bin/certbot --nginx renew

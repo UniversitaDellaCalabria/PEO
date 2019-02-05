@@ -1,0 +1,1 @@
+[{"model": "gestione_risorse_umane.tipocontratto", "pk": 1, "fields": {"nome": "determinato", "descrizione": ""}}, {"model": "gestione_risorse_umane.tipocontratto", "pk": 2, "fields": {"nome": "indeterminato", "descrizione": ""}}]

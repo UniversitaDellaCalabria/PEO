@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2 class="ui header">{{ page_title }}</h2>
+<p><span style="color: grey;">{{ dipendente }}</span></p>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+        {% include "dettaglio_bando_peo_fields.html" %}
+        
+        <h2 class="ui" id="{{ bando.slug }}">Presentazione Domanda</h2>
+        
+        {% include "chiusure_rettifiche_dialogs.html" %}
+
+        {% if domanda_peo.modulodomandabando_set.all or domanda_peo.bando.indicatore_con_anzianita %}
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <br>
+    
+            {% comment %}
+                {% if domanda_peo.modulodomandabando_set.all|length > 5 %}
+                    {% include "buttons_domanda_peo.html" %}
+                {% endif %}
+            {% endcomment %}
+    
+            <div class="content" style="overflow-x: auto;">
+                
+                {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
+                    <div class="ui info message" style="padding-bottom:0">
+                        <div class="header">
+                            Punteggio calcolato
+                        </div>
+                        <div class="ui grid">
+                            <div class="fourteen wide column">
+                                Il "punteggio calcolato" deriva dalla somma di 
+                                tutti i singoli punteggi attribuiti a ciascun 
+                                inserimento, tenendo conto dei <b>limiti massimi</b> 
+                                previsti dal Bando per ogni singolo Indicatore ponderato.
+                            </div>
+                            <div class="two wide column" style="text-align:right">
+                                <b>{{ domanda_peo.punteggio_calcolato }}</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if domanda_peo.bando.indicatore_con_anzianita %}
+                        <div class="ui message" style="padding-bottom:0; background:#fff">
+                            <div class="header">
+                                Punteggio anzianità di servizio presso
+                                l'Università della Calabria (o altre Università)
+                            </div>
+                            <div class="ui grid">
+                                <div class="fourteen wide column">
+                                    Il punteggio relativo al servizio prestato presso
+                                    l'Univeristà della Calabria (o altre Università) è attribuito
+                                    direttamente dall'Area Risorse Umane
+                                </div>
+                                <div class="two wide column" style="text-align:right">
+                                    <b>{{ domanda_peo.get_punteggio_anzianita }}</b>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                
+                {% if domanda_peo.modulodomandabando_set.all %}
+                <p>
+                    Di seguito sono riportati i moduli che hai compilato 
+                    per la presentazione della tua Domanda {{ bando }}.
+                </p>
+                <table class="ui celled striped selectable table visible">
+                    <thead>
+                        <tr>
+                            <th>
+                                Titolo
+                            </th>
+                            <th>
+                                Indicatore Ponderato
+                            </th>
+                            {% if domanda_peo.modificabile %}
+                                <th class="center aligned">  
+                                    Azione
+                                </th>
+                            {% endif %}
+                            {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
+                                <th class="right aligned">  
+                                    Punteggio calcolato
+                                </th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ins in domanda_peo.modulodomandabando_set.all %}
+                            <tr>
+                                <td>
+                                    {% if not ins.is_valid %}
+                                        <div class="ui red ribbon label error_ribbon">
+                                            <i class="warning icon"></i>
+                                            Non Valido!
+                                        </div>
+                                        <br>
+                                    {% endif %}
+                                    <a class="header" href="{% url 'domande_peo:modifica_titolo' bando_id=ins.domanda_bando.bando.slug modulo_compilato_id=ins.pk  %}">
+                                        {{ ins.get_identificativo_veloce }}
+                                    </a>
+                                    <div class="ui list" style="color: grey;">
+                                        <div class=""><i>Creato</i>: {{ ins.created|date:"j F Y H:i" }}</div>
+                                        <div class=""><i>Modificato</i>: {{ ins.modified|date:"j F Y H:i" }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5>({{ ins.descrizione_indicatore.indicatore_ponderato.id_code }}) {{ ins.descrizione_indicatore.indicatore_ponderato }}</h5>
+                                    <i>({{ ins.descrizione_indicatore.id_code }}) {{ ins.descrizione_indicatore.nome }}</i>
+                                </td>
+                                {% if domanda_peo.modificabile %}
+                                    <td class="right aligned">
+                                        {% if ins.descrizione_indicatore.non_cancellabile %}
+                                            <a style="color: white;" href="{% url 'domande_peo:modifica_titolo' bando_id=ins.domanda_bando.bando.slug modulo_compilato_id=ins.pk  %}">
+                                                <button class="ui button primary">Modifica</button>
+                                            </a>
+                                        {% else %}  
+                                            <div class="ui buttons">
+                                                <button class="ui negative button" id="cancella_ind_{{ ins.pk }}">Cancella</button>
+                                                <div class="or" data-text="o"></div>
+                                                <a style="color: white;" href="{% url 'domande_peo:modifica_titolo' bando_id=ins.domanda_bando.bando.slug modulo_compilato_id=ins.pk  %}">
+                                                    <button style="border-top-left-radius:0;border-bottom-left-radius:0" class="ui button primary">Modifica</button>
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+
+                                {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
+                                    <td class="right aligned"> 
+                                        {% if ins.disabilita %}  
+                                            <div class="ui error message">
+                                                <div class="header">Inserimento non valutato</div>
+                                                <p>{{ ins.motivazione }}</p>
+                                            </div>
+                                        {% elif ins.punteggio_calcolato %}
+                                            {{ ins.punteggio_calcolato }}
+                                        {% else %}  
+                                            --
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif%}
+            
+            {% include "buttons_domanda_peo.html" %}
+            
+            </div>
+
+        {% endif %}
+    
+        {% comment %}
+            end if domanda_peo.modulodomandabando_set.all
+        {% endcomment %}
+    
+        <br>
+        <a href="{% url 'risorse_umane:dashboard' %}">
+            <button class="ui button">
+                <i class="home icon"></i>
+                Torna alla Pagina Principale
+            </button>
+        </a>
+    </div>
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+
+{% block modal_dialogs %}
+    {% include "modal_dialogs_domanda.html" %}
+{% endblock modal_dialogs %}
+
+{% endblock %}
+    
+{% block bottom_scripts %}
+<script type="text/javascript" src="{% static 'js/lockbutton.js' %}"></script>
+<script>
+$('.ui.accordion').accordion();
+
+// Mostra il pannello modal 
+// per la conferma di cancellazione di un inserimento
+$(function(){
+    {% for ins in domanda_peo.modulodomandabando_set.all %}
+        $("#cancella_ind_{{ ins.pk }}").click(function(){
+            $('#modal_ind_{{ ins.pk }}')
+                .modal('show');
+        });
+    {% endfor %}
+});
+
+// Mostra il pannello modal 
+// per la conferma di cancellazione della domanda    
+$(function(){
+    $("#but_cancella_domanda_{{ domanda_peo.pk }}").click(function(){
+        $('#cancella_domanda_{{ domanda_peo.pk }}')
+            .modal('show');
+    });
+});
+
+// Mostra il pannello modal 
+// per la conferma di chiusura di un inserimento
+$(function(){
+    $("#but_chiudi_domanda_{{ domanda_peo.pk }}").click(function(){
+        $('#chiudi_domanda_{{ domanda_peo.pk }}')
+            .modal('show');
+    });
+});
+
+// Mostra il pannello modal 
+// per la visualizzazione dei moduli non compilati che impediscono
+// la chiusura della domanda
+$(function(){
+    $("#check_chiudi_domanda_{{ domanda_peo.pk }}").click(function(){
+        $('#check_domanda_{{ domanda_peo.pk }}')
+            .modal('show');
+    });
+});
+
+// Mostra il pannello modal 
+// per la conferma di riapertura della domanda
+$(function(){
+    $("#but_rettifica_domanda_{{ domanda_peo.pk }}").click(function(){
+        $('#rettifica_domanda_{{ domanda_peo.pk }}')
+            .modal('show');
+    });
+});
+</script>
+{% endblock bottom_scripts%}

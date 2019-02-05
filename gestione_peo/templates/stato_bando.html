@@ -1,0 +1,9 @@
+{% if bando.is_scaduto %}
+<i class="ban icon" style="color:red"></i>Scaduto
+{% elif bando.non_ancora_iniziato %}
+<i class="ban icon" style="color:red"></i>Non ancora iniziato
+{% elif bando.non_ancora_iniziato %}
+<i class="wrench icon" style="color:grey"></i>In fase di collaudo...
+{% else %}
+<i class="loading spinner icon" style="color:green"></i>In corso...
+{% endif %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="ui error">Attenzione</h2>
+<h5>{{ avviso|safe }}</h5>
+    
+<a href="javascript:history.back()">
+    <div class="ui button">
+        <i class="reply icon"></i>
+            Torna indietro
+    </div>
+</a>
+        
+<a href="{% url 'risorse_umane:dashboard' %}">
+    <div class="ui button">
+        <i class="home icon"></i>
+        Torna alla Pagina Principale
+    </div>
+</a>
+
+{% endblock %}

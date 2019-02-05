@@ -1,0 +1,55 @@
+{% if not domanda_peo.bando.presentazione_domande_scaduta and domanda_peo.is_aperta %}
+<div class="row " style="margin:20px 0;">
+    <a href="{% url 'domande_peo:scelta_titolo_da_aggiungere' bando_id=domanda_peo.bando.slug%}">
+        <div class="ui right floated labeled icon positive button">
+            <i class="plus circle icon"></i> 
+            Aggiungi Modulo
+        </div>
+    </a>
+</div>
+{% endif %}
+
+<div style="margin:20px 0;">
+    {% if not domanda_peo.bando.presentazione_domande_scaduta and domanda_peo.is_aperta and not domanda_peo.descr_ind_non_cancellabili %}
+        <div class="ui red button" id="but_cancella_domanda_{{domanda_peo.pk}}">
+            <i class="delete icon"></i> Distruggi la tua Domanda
+        </div>
+    {% endif %}
+        
+    <a href="{% url 'domande_peo:riepilogo_domanda' bando_id=domanda_peo.bando.pk domanda_bando_id=domanda_peo.pk  %}">
+        <div class="ui button">
+            <i class="print icon"></i> Riepilogo
+        </div>
+    </a>
+
+    {% if not domanda_peo.bando.presentazione_domande_scaduta and domanda_peo.is_aperta %}
+    
+        {% if domanda_peo.valida %}
+         <div class="ui right floated labeled icon positive button lockbutton" id="but_chiudi_domanda_{{domanda_peo.pk}}">
+            <i class="arrow alternate envelope outline icon"></i> 
+            {% if domanda_peo.bando.protocollo_required %}
+                Concludi e Protocolla
+            {% else %}
+                Concludi
+            {% endif %}
+        </div>
+        
+        {% else %}
+        <div class="ui right floated orange button" id="check_chiudi_domanda_{{domanda_peo.pk}}">
+            <i class="pencil alternate icon"></i> 
+            Domanda non completa
+        </div>
+        {% endif %}
+
+    {% elif not domanda_peo.bando.presentazione_domande_scaduta %}
+
+        {% if domanda_peo.rettificabile %}
+        <div class="ui right floated orange button lockbutton" id="but_rettifica_domanda_{{domanda_peo.pk}}">
+            <i class="pencil alternate icon"></i> 
+            Riapri la domanda per una Rettifica
+        </div>
+        {% endif %}
+
+    {% endif %}
+
+</div>

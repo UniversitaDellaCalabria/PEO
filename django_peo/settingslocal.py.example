@@ -1,0 +1,124 @@
+import os
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# you can generate a valid one issuing the command:
+#       manage.py generate_secret_key
+SECRET_KEY = 'y-=_s@k0lgvexa!w9c)qun(!*@t8cwoffopvfv8sv3fj#&wwsp'
+
+# gittest
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+PRODUCTION = False
+MANTEINANCE = False
+
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_peo',
+        'HOST': 'localhost',
+        'USER': 'USERNAMEHERE',
+        'PASSWORD': 'PASSWDHERE',
+        'PORT': ''
+    }
+}
+
+DATABASE_CSA = {
+                # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+                'ENGINE': 'django.db.backends.oracle', 
+                'NAME': 'xe',
+                'USER': 'USERNAME',
+                'PASSWORD': 'PASSWD',
+                'HOST': 'SERVER_HOST',
+                'PORT': '1521',
+                }
+
+LANGUAGE_CODE = 'it-it'
+TIME_ZONE = 'Europe/Rome'
+
+DEFAULT_FROM_EMAIL = 'peo-noreply@DOMAIN'
+EMAIL_HOST = 'smtpservizi.unical.it'
+# EMAIL_HOST_USER = 'myemail@hotmail.com'
+# EMAIL_HOST_PASSWORD = 'mypassword'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
+ADMINS = [('name surname', 'giuseppe.demarco@DOMAIN'),
+          ('name surnale', 'francesco.filicetti@DOMAIN'),]
+
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+        'verbose': {
+            'format': '%(levelname)s [%(asctime)s] %(module)s %(message)s'
+            },
+        },
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            }
+        },
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            },
+            'console': {
+                'level': 'INFO',
+                'class': 'logging.StreamHandler',
+            },
+            'file': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                #'filters': ['require_debug_false'],
+                'formatter': 'verbose',
+                'filename': '/tmp/peo.unical.it-error-handler.log',
+                'maxBytes': 1024000,
+                'backupCount': 3,
+                },
+        },
+        'loggers': {
+            # disables Invalid HTTP_HOST header emails
+            'django.security.DisallowedHost': {
+                    'handlers': ['mail_admins'],
+                    'level': 'CRITICAL',
+                    'propagate': False,
+            },
+            # 'django.request': {
+                # 'handlers': ['mail_admins'],
+                # 'level': 'ERROR',
+                # 'propagate': True,
+            # },
+            # 'djangosaml2': {
+                # 'handlers': ['console'],
+                # 'level': 'DEBUG',
+            # },
+            'django': {
+                'handlers': ['file', 'console','mail_admins'],
+                'propagate': True,
+                'level': 'ERROR',
+            },
+        }
+    }
+
+# PROTOCOLLO, questi valori possono variare sulla base di come
+# vengono istruite le pratiche all'interno del sistema di protocollo di riferimento
+PROTOCOLLO_FASCICOLO_DEFAULT = '3'
+PROTOCOLLO_TITOLARIO_DEFAULT = '9095'
+PROTOCOLLO_CODICI_TITOLARI = (
+                               ('9095','7.1'),
+                             )
+PROTOCOLLO_AOO = 'AOO55'
+
+# PRODUCTION
+PROT_URL = 'http://PROT_URL?wsdl'
+PROT_LOGIN = 'PROT_USERNAME'
+PROT_PASSW = 'PROT_PASSW'
+
+# TEST
+PROT_TEST_URL = 'http://PROT_URL?wsdl'
+PROT_TEST_LOGIN = 'PROT_USERNAME'
+PROT_TEST_PASSW = 'PROT_PASSW'
