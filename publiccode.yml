@@ -1,17 +1,11 @@
-# Full documentation for the schema is accessible at the URL
-#   http://w3id.org/publiccode/version/0.1
-
-publiccode-yaml-version: "http://w3id.org/publiccode/version/0.1"
+publiccodeYmlVersion: "0.2"
 
 name: Peo
-url: "https://github.com/italia/django-peo.git"
-landingURL: "https://github.com/italia/django-peo"
+url: "https://github.com/UniversitaDellaCalabria/PEO.git"
+landingURL: "https://github.com/UniversitaDellaCalabria/PEO"
 
-#isBasedOn: "https://github.com/italia/otello.git"
 softwareVersion: "1.0"
 releaseDate: "2019-02-15"
-#logo: img/logo.svg
-#monochromeLogo: img/logo-mono.svg
 
 inputTypes:
   - text/plain
@@ -21,113 +15,67 @@ outputTypes:
 platforms:
   - GNU/Linux
 
-# For a list of allowed values, check out w3id.org/publiccode/version/0.1/tags.html
-#
-# Only stick to these tags! If you need additional tags (localised),
-# you have the chance of adding them under the description/freeTags key
-tags:
-  - concorsi personale tecnico amministrativo e docenti
-  - bandi
+categories:
+  - procurement
+  - hr
 
 usedBy:
   - Università della Calabria
 
-# roadmap: "https://github.com/italia/django-peo/roadmap"
-
 developmentStatus: stable
-softwareType: "standalone"
-
+softwareType: standalone/web
 
 description:
-  eng:
+  en:
     localisedName: Peo
     genericName: Django peo
-    shortDescription: >
+    shortDescription: |- 
           Gestione, redazione e pubblicazione Bandi e Concorsi per
           personale Tecnico Amministrativo e personale Docente.
 
-    longDescription: >
+    longDescription: |- 
           Gestione, redazione e pubblicazione Bandi e Concorsi per
           personale Tecnico Amministrativo e personale Docente.
 
     documentation: "https://peo.unical.it/docs"
-    apiDocumentation: "https://docs.djangoproject.com/en/2.1/"
 
-    featureList:
+    features:
        - Integrazione in Cineca CSA (customizzabile o standalone)
        - Integrazione con protocollo informatico WSArchiPRO (customizzabile)
        - Autenticazione SAML2
-    # screenshots:
-       # - img_git/sshot1.jpg
-       # - img_git/sshot2.jpg
-       # - img_git/sshot3.jpg
-    # videos:
-       # - https://youtube.com/xxxxxxxx
-    # awards:
-       # - 1st Price Software of the year
+    screenshots:
+       - data/gallery/home.png
+       - data/gallery/domanda1.png
+       - data/gallery/modulo.png
+       - data/gallery/costruzione_modulo.png
 
 legal:
-  license: GPL-3.0-or-later        # SPDX expression of license
+  license: GPL-3.0-or-later
   mainCopyrightOwner: Università della Calabria
   repoOwner: Università della Calabria
   authorsFile: AUTHORS
 
 maintenance:
-  type: "contract"
-
-  contractors:
-    - name: "Fornitore Privato SPA"
-      website: "https://privatecompany.com"
-      until: "2019-01-01"
+  type: "internal"
 
   contacts:
     - name: Unical ICT
       email: "ict@unical.it"
       affiliation: Università della Calabria
 
-
 localisation:
   localisationReady: no
   availableLanguages:
-    - ita
-
-# dependsOn:
-  # open:
-    # - name: MySQL
-      # versionMin: "1.1"
-      # versionMax: "1.3"
-      # optional: yes
-    # - name: PostgreSQL
-      # version: "3.2"
-      # optional: yes
-  # proprietary:
-    # - name: Oracle
-      # versionMin: "11.4"
-    # - name: IBM SoftLayer
-  # hardware:
-    # - name: NFC Reader
-      # optional: yes
+    - it
 
 it:
 
+  countryExtensionVersion: "0.2"
   conforme:
-    accessibile: yes
-    interoperabile: yes
-    sicuro: yes
-    privacy: yes
+    lineeGuidaDesign: yes
+    modelloInteroperabilita: yes
+    misureMinimeSicurezza: yes
+    gdpr: yes
 
-  # riuso:
-    # codiceIPA: c_h501
-
-  # spid: yes
-  # pagopa: yes
-  # cie: yes
-  # anpr: yes
-  # ecosistemi:
-    # - scuola
-
-  # designKit:
-    # seo: no
-    # ui: yes
-    # web: yes
-    # content: no
+  riuso:
+    codiceIPA: unical
