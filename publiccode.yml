@@ -7,7 +7,7 @@ name: Procedura Elettronica Online - Bandi e Progressioni Economiche Dipendenti
 releaseDate: '2019-02-05'
 url: 'https://github.com/UniversitaDellaCalabria/PEO'
 isBasedOn: 'https://www.djangoproject.com/'
-landingURL: peo.unical.it
+landingURL: 'https://peo.unical.it'
 developmentStatus: stable
 softwareType: standalone/backend
 roadmap: 'https://github.com/UniversitaDellaCalabria/PEO/issues'
@@ -35,6 +35,7 @@ intendedAudience:
   scope:
     - employment
 localisation:
+  localisationReady: false
   availableLanguages:
     - it
 it:
@@ -90,4 +91,4 @@ description:
 
       - Backend, dedicato agli utenti staff e amministratori, ovvero coloro i
       quali configureranno i bandi e valuteranno i moduli protocollati dai
-      partecipanti;
+      partecipanti.
