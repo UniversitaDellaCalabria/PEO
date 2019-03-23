@@ -3,13 +3,12 @@
 # More info at https://github.com/italia/publiccode.yml
 
 publiccodeYmlVersion: '0.2'
-name: Procedura Elettronica Online - Bandi e Progressioni Economiche Dipendenti
+name: Procedura Elettronica Online
 releaseDate: '2019-02-05'
 url: 'https://github.com/UniversitaDellaCalabria/PEO'
-isBasedOn: 'https://www.djangoproject.com/'
 landingURL: 'https://peo.unical.it'
 developmentStatus: stable
-softwareType: standalone/backend
+softwareType: standalone/web
 roadmap: 'https://github.com/UniversitaDellaCalabria/PEO/issues'
 platforms:
   - linux
@@ -19,7 +18,7 @@ usedBy:
 categories:
   - employee-management
 maintenance:
-  type: community
+  type: internal
   contacts:
     - name: Giuseppe De Marco
       email: giuseppe.demarco@unical.it
@@ -38,6 +37,10 @@ localisation:
   localisationReady: false
   availableLanguages:
     - it
+dependsOn:
+  open:
+    - name: MariaDB
+    - name: Python
 it:
   countryExtensionVersion: '0.2'
   conforme:
@@ -59,12 +62,9 @@ description:
       - >-
         https://github.com/UniversitaDellaCalabria/PEO/blob/master/data/gallery/domanda1.png
     documentation: 'https://peo.unical.it/docs'
-    genericName: PEO
-    shortDescription: Procedura Elettronica Online - Bandi e Progressioni Economiche Dipendenti
+    genericName: applicazione web
+    shortDescription: Applicazione web per gestione bandi e progressioni economiche dipendenti
     longDescription: >
-      ## **PEO - Procedura elettronica On-line**
-
-
       La piattaforma peo.unical.it è il sistema sviluppato dall’Università della
       Calabria per informatizzare la gestione dei Bandi e delle procedure di
       valutazione del personale. Gli utenti possono compilare i moduli di
