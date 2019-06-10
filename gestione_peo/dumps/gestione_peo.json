@@ -16,9 +16,9 @@
     "data_validita_titoli_fine": "2017-12-31",
     "agevolazione_soglia_anni": 3,
     "agevolazione_fatmol": 3,
-    "bando_pdf": "",
+    "bando_url": "",
     "protocollo_required": true,
-    "is_active": true,
+    "redazione": true,
     "collaudo": true,
     "pubblicato": false
   }
@@ -40,9 +40,9 @@
     "data_validita_titoli_fine": "2016-12-31",
     "agevolazione_soglia_anni": 3,
     "agevolazione_fatmol": 3,
-    "bando_pdf": "",
+    "bando_url": "",
     "protocollo_required": true,
-    "is_active": true,
+    "redazione": true,
     "collaudo": true,
     "pubblicato": false
   }
