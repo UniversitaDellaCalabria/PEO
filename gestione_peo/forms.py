@@ -20,21 +20,21 @@ def format_field_name(field_name):
 
 
 class PeoDynamicForm(forms.Form):
-    def __init__(self, 
-                 constructor_dict, 
-                 domanda_bando=None, 
+    def __init__(self,
+                 constructor_dict,
+                 domanda_bando=None,
                  descrizione_indicatore=None,
-                 *args, 
+                 *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
-          
-        # HiddenField con riferimento alla domanda                            
+
+        # HiddenField con riferimento alla domanda
         if domanda_bando:
             constructor_dict['Domanda Bando ID'] = ('CustomHiddenField',
                                                     {'label': ''},
                                                     domanda_bando.pk)
         self.domanda_bando = domanda_bando
-            
+
         # Inserimento manuale del field ETICHETTA
         etichetta_id = format_field_name(ETICHETTA_INSERIMENTI_ID)
         etichetta_data = {'required' : True,
@@ -44,7 +44,7 @@ class PeoDynamicForm(forms.Form):
                                   'CustomCharField')(**etichetta_data)
         self.fields[etichetta_id] = etichetta_field
         self.fields[etichetta_id].initial = descrizione_indicatore
-        
+
         for key, value in constructor_dict.items():
             field_id = format_field_name(key)
             data_kwargs = {'label': key.title()}
@@ -73,7 +73,7 @@ class PeoDynamicForm(forms.Form):
             if not field.value():
                 to_be_removed.append(field.name)
         for i in to_be_removed:
-            del self.fields[i] 
+            del self.fields[i]
 
     def remove_files(self, allegati = None):
         """
@@ -89,9 +89,9 @@ class PeoDynamicForm(forms.Form):
             elif isinstance(self.fields[field], FileField):
                 # rimuove tutti i fields  allegati/files
                 to_be_removed.append(field)
-        
+
         for i in to_be_removed:
-            del self.fields[i]  
+            del self.fields[i]
 
     @staticmethod
     def validate_attachment(content):
@@ -99,16 +99,16 @@ class PeoDynamicForm(forms.Form):
             msg_tmpl = ("Per favore esegui l'upload di soli file in "
                         "formato PDF. Attualmente questo è '{}'")
             return msg_tmpl.format(content.content_type)
-        elif content._size > int(settings.MAX_UPLOAD_SIZE):
+        elif content.size > int(settings.MAX_UPLOAD_SIZE):
             msg_tmpl = ("Per favore mantieni la dimensione del file "
                         "entro {}. Attualmente questo è {}")
-            return msg_tmpl.format(filesizeformat(settings.MAX_UPLOAD_SIZE), 
-                                   filesizeformat(content._size))
+            return msg_tmpl.format(filesizeformat(settings.MAX_UPLOAD_SIZE),
+                                   filesizeformat(content.size))
         elif len(content._name) > settings.ATTACH_NAME_MAX_LEN:
             msg_tmpl = ("Per favore usa una lunghezza massima del nome "
                         "dell'allegato inferiore a {}. Attualmente hai "
                         "inserito un nome di {} caratteri")
-            return msg_tmpl.format(settings.ATTACH_NAME_MAX_LEN, 
+            return msg_tmpl.format(settings.ATTACH_NAME_MAX_LEN,
                                    len(content._name))
 
     def check_file(self, content):
@@ -135,7 +135,7 @@ class PeoDynamicForm(forms.Form):
                 self.add_error(fname, errors)
                 continue
 
-            # Check sui files (FileField)    
+            # Check sui files (FileField)
             if isinstance(self.fields[fname], FileField):
                 content = self.cleaned_data[fname]
                 if content:
