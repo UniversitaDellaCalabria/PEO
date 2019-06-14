@@ -25,11 +25,11 @@ class CartaIdentitaForm(forms.Form):
                 msg_tmpl = "Per favore esegui l'upload di soli file nel seguente formato: '{}'"
                 msg = msg_tmpl.format(', '.join(settings.IMG_PERMITTED_UPLOAD_FILETYPE))
                 self.add_error(field_name, msg)
-            elif content._size > int(settings.IMG_MAX_UPLOAD_SIZE):
+            elif content.size > int(settings.IMG_MAX_UPLOAD_SIZE):
                 msg_tmpl = "Per favore mantieni la dimensione del file entro {}. {} è {}"
                 msg = msg_tmpl.format(filesizeformat(settings.MAX_UPLOAD_SIZE),
                                       content._name,
-                                      filesizeformat(content._size))
+                                      filesizeformat(content.size))
                 self.add_error(field_name, msg)
             elif len(content._name) > settings.ATTACH_NAME_MAX_LEN:
                 msg_tmpl = ("Per favore usa una lunghezza massima "
