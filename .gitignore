@@ -22,6 +22,6 @@ Documentazione/*
 !Documentazione/source/
 !Documentazione/make.bat
 !Documentazione/Makefile
-csa/migrations*
+csa/migrations/*
 !csa/migrations/__init__.py
 saml2_sp/saml2_config/certificates/*
