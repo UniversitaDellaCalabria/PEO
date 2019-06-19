@@ -11,6 +11,19 @@ DEBUG = True
 PRODUCTION = False
 MANTEINANCE = False
 
+# ALLOWED_HOSTS
+if PRODUCTION:
+    SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+    SESSION_COOKIE_AGE=60*120
+    # TODO: fare detect della socket hostname
+    HOSTNAME = 'peo.unical.it'
+    URL = 'https://{}'.format(HOSTNAME)
+    ALLOWED_HOSTS = [ HOSTNAME ]
+else:
+    HOSTNAME = 'localhost'
+    URL = 'http://{}:8000'.format('localhost')
+    ALLOWED_HOSTS = [ 'localhost', HOSTNAME, '*',]
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
@@ -23,6 +36,15 @@ DATABASES = {
         'PORT': ''
     }
 }
+
+# CSA conf
+CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
+CSA_V_CARRIERA = 'V_CARRIERA'
+CSA_V_CARRIERA_DOCENTI = 'V_CARRIERA_DOCENTI'
+CSA_V_INCARICO_DIP = 'V_INCARICO_DIP'
+CSA_V_RUOLO = 'V_RUOLO'
+
+CSA_SQL_QUERY = 'SELECT * FROM {} where matricola={} ORDER BY {} DESC'
 
 DATABASE_CSA = {
                 # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

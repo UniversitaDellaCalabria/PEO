@@ -39,19 +39,6 @@ CACHED = False
 # installazione da sorgenti o da repository DEV per eludere bug not headless
 WKHTMLTOPDF_CMD = '/usr/local/bin/wkhtmltopdf'
 
-if PRODUCTION:
-    SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-    SESSION_COOKIE_AGE=60*120
-    # TODO: fare detect della socket hostname
-    HOSTNAME = 'peo.unical.it'
-    URL = 'https://{}'.format(HOSTNAME)
-    ALLOWED_HOSTS = [ HOSTNAME ]
-else:
-    HOSTNAME = 'localhost'
-    URL = 'http://{}:8000'.format('localhost')
-    ALLOWED_HOSTS = [ 'localhost', HOSTNAME, ]
-
-
 # Application definition
 INSTALLED_APPS = [
     # customizzazione gestione degli utenti
@@ -79,8 +66,8 @@ INSTALLED_APPS = [
     # our apps
     'unical_template',
 
-    # oracle dblink for cineca CSA if CSA_MODE == 'native'
-    # if CSA_MODE == 'replica' data will be copied in default DB
+    # oracle dblink for cineca CSA if CSA_MODE == CSA_NATIVE
+    # if CSA_MODE == CSA_REPLICA data will be copied in default DB
     'csa',
 
     # se un giorno dovessimo interrompere con cineca qui la gestione delle strutture/sedi
@@ -137,18 +124,6 @@ WSGI_APPLICATION = 'django_peo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 # DATABASES = settingslocal.DATABASES
-
-if 'csa' in INSTALLED_APPS:
-    # if replica a scheduled sqlscript must replicate datas in default DB
-    CSA_MODE = 'replica' # or 'native'
-
-    if CSA_MODE == 'native':
-        DATABASES['csa'] = DATABASE_CSA
-        DATABASE_ROUTERS = ['csa.routers.ReadOnlyDbRouter',]
-    elif CSA_MODE == 'replica':
-        CSA_REPL_SCRIPT = 'csa.sqlalchemy_repl'
-    else:
-        raise Exception('CSA_MODE non configured in settings.py')
 
 AUTH_USER_MODEL = 'unical_accounts.User'
 
@@ -266,7 +241,22 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # quale classe utilizzare per instanziare un oggetto, può dunque essere customizzato
 CLASSE_PROTOCOLLO = 'protocollo_ws.protocollo'
 
+# CSA conf
+if 'csa' in INSTALLED_APPS:
+    CSA_REPLICA = 'replica'
+    CSA_NATIVE = 'native'
+    # if replica a scheduled sqlscript must replicate datas in default DB
+    CSA_MODE = CSA_REPLICA # or CSA_NATIVE
 
+    if CSA_MODE == CSA_NATIVE:
+        DATABASES['csa'] = DATABASE_CSA
+        DATABASE_ROUTERS = ['csa.routers.ReadOnlyDbRouter',]
+    elif CSA_MODE == CSA_REPLICA:
+        CSA_REPL_SCRIPT = 'csa.sqlalchemy_repl'
+    else:
+        raise Exception('CSA_MODE non configured in settings.py')
+
+# DjangoSAML2 conf
 if 'djangosaml2'  in INSTALLED_APPS:
     # from . import sp_pysaml2
     from . import sp_pysaml2_shibidp as sp_pysaml2

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 from django.core.management.base import BaseCommand, CommandError
 
-from csa.models import V_ANAGRAFICA, _get_matricola
+from csa.models import V_ANAGRAFICA
 from gestione_risorse_umane.models import Dipendente
 
 import os
@@ -11,7 +11,7 @@ CACHE_DIR='django_peo_cache/'
 
 class Command(BaseCommand):
     help = 'CSA sync with Dipendenti'
-    
+
     def add_arguments(self, parser):
         parser.add_argument('-debug', required=False, default=True, action="store_true")
         parser.add_argument('-email', required=False,
@@ -24,7 +24,7 @@ class Command(BaseCommand):
             print('... Running: {}'.format(settings.CSA_REPL_SCRIPT))
             import importlib
             importlib.import_module(settings.CSA_REPL_SCRIPT)
-            
+
         # if in native mode it will run cached sync
         # clean previous
         cached = [CACHE_DIR+i for i in os.listdir(CACHE_DIR) if i != 'README.md' and i != 'tmp']
@@ -53,7 +53,7 @@ class Command(BaseCommand):
                 # ## invia una email
                 print('ERRORE csa_sync {}: {}'.format(dcsa, e))
                 failed.append(dip)
-        
+
         self.stdout.write(self.style.SUCCESS('Successfully processed %d Dipendenti' \
                                              % (V_ANAGRAFICA.objects.count() - len(failed))))
 

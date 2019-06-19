@@ -1,8 +1,8 @@
 import inspect
 import operator
 
-from csa.models import RUOLI
 from collections import OrderedDict
+from csa.models import RUOLI
 from django.apps import apps
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
