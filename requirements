@@ -28,7 +28,7 @@ git+https://github.com/peppelinux/django-adminactions.git
 git+https://github.com/silentsokolov/django-admin-rangefilter.git
 
 # CINECA CSA Interface
-https://github.com/UniversitaDellaCalabria/csa.git
+git+https://github.com/UniversitaDellaCalabria/django-cineca-csa.git
 
 # Oracle CSA support
 cx_Oracle
