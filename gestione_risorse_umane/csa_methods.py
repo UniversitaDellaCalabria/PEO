@@ -15,11 +15,11 @@ class CSAMethods(object):
     """
     Classe con i metodi di interrogazione carriere dipendenti
     """
-    def get_anagrafica_csa(self):        
+    def get_anagrafica_csa(self):
         cache_name = '{}_{}'.format(_get_matricola(self.matricola), 'anagrafica_csa')
         csa_cache = cache.get(cache_name)
         if csa_cache: return csa_cache
-        
+
         csa_model = apps.get_model(app_label='csa', model_name='V_ANAGRAFICA')
         anagrafica_csa = csa_model.objects.filter(matricola=_get_matricola(self.matricola)).first()
         if not anagrafica_csa:
@@ -72,7 +72,7 @@ class CSAMethods(object):
                 if i[field] > ultimo_evento[field]:
                     ultimo_evento = i
             return ultimo_evento
-    
+
     def get_profilo_csa(self):
         c = self.get_last_carriera_csa()
         profilo = c.get('descr_profilo') or c.get('ds_ruolo')
@@ -80,13 +80,13 @@ class CSAMethods(object):
 
     def get_afforg_csa(self):
         c = self.get_last_carriera_csa()
-        if c: 
+        if c:
             return c.get('descr_aff_org') or c.get('descr_sede')
 
     def get_sede_csa(self):
         c = self.get_last_carriera_csa()
         if c: return c['descr_sede']
-    
+
     def get_ruolo_csa(self):
         c = self.get_anagrafica_csa()
         if c: return self.get_last_carriera_csa()['ruolo']
@@ -113,7 +113,7 @@ class CSAMethods(object):
                 break
         if not v: raise Exception("extract_inquadramento_csa cannot extract: {}".format(inq))
         v["descr"] = inq[1]
-        return v        
+        return v
 
     def set_inquadramento_from_csa(self):
         """
@@ -145,8 +145,8 @@ class CSAMethods(object):
     def get_data_presa_servizio_csa(self):
         if self.data_presa_servizio_manuale:
             return self.data_presa_servizio_manuale
-        
-        c = self.get_first_carriera_csa() 
+
+        c = self.get_first_carriera_csa()
         # trovo la prima presa di servizio scartando le eventuali cessazioni
         v =  c['data_inizio']
         # v =  c[0][CARRIERA_FIELDS_MAP['data_inizio_rapporto']]
@@ -181,7 +181,7 @@ class CSAMethods(object):
         """
         c = self.get_carriera_csa()
         if not c: return False
-        
+
         self.set_inquadramento_from_csa()
         self.sede = self.get_sede_csa()
 
@@ -191,11 +191,11 @@ class CSAMethods(object):
         # print(self.get_afforg_csa())
         # print(self.get_profilo_csa())
         afforg_model = apps.get_model(app_label='gestione_risorse_umane',
-                                      model_name='AffinitaOrganizzativa')
+                                      model_name='AfferenzaOrganizzativa')
         afforg = afforg_model.objects.filter(nome=self.get_afforg_csa()).first()
         if not afforg and self.get_afforg_csa():
             afforg = afforg_model.objects.create(nome=self.get_afforg_csa())
-        self.affinita_organizzativa = afforg
+        self.afferenza_organizzativa = afforg
         tipoprofilo_model = apps.get_model(app_label='gestione_risorse_umane',
                                            model_name='TipoProfiloProfessionale')
         profilo = tipoprofilo_model.objects.filter(nome=self.get_profilo_csa()).first()

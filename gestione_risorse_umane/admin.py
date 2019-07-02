@@ -65,7 +65,7 @@ class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
     list_display = ('matricola', 'nome', 'cognome', 'livello',
                     # 'profilo',
                     'ruolo',
-                    'affinita_organizzativa',
+                    'afferenza_organizzativa',
                     # 'sede',
                     # 'get_in_servizio', 'idoneita_peo'
                     )
@@ -89,7 +89,7 @@ class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
                      'cognome')
 
     advanced_filter_fields = ('sede',
-                              'affinita_organizzativa__nome',
+                              'afferenza_organizzativa__nome',
                               'ruolo',
                               'livello__nome',
                               'livello__posizione_economica__nome',
@@ -99,7 +99,7 @@ class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
 
     readonly_fields = ('livello', 'ruolo',
                        'sede',
-                       'affinita_organizzativa',
+                       'afferenza_organizzativa',
                        'data_presa_servizio',
                        'data_cessazione_contratto',
                        'profilo',
@@ -120,7 +120,7 @@ class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
                              # 'profilo', 'invalidita'),
                             ('invalidita',),
                             'profilo',
-                            ('affinita_organizzativa', 'sede',),
+                            ('afferenza_organizzativa', 'sede',),
                              'motivo_cessazione_contratto',
                             ('carta_identita_front', 'carta_identita_retro'),
                              'descrizione',

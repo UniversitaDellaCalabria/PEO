@@ -130,17 +130,17 @@ class TitoloStudio(models.Model):
         return self.nome
 
 
-class AffinitaOrganizzativa(TimeStampedModel):
+class AfferenzaOrganizzativa(TimeStampedModel):
     """
     aff_org replicate da CSA
     """
-    nome = models.CharField('Affinita organizzativa', max_length=255, blank=False, null=False,
+    nome = models.CharField('Afferenza organizzativa', max_length=255, blank=False, null=False,
                             help_text="")
     descrizione = models.TextField(blank=True, default='')
     class Meta:
         ordering = ['nome',]
-        verbose_name = _('Affinità Organizzativa')
-        verbose_name_plural = _('Affinità Organizzative')
+        verbose_name = _('Afferenza Organizzativa')
+        verbose_name_plural = _('Afferenza Organizzative')
 
     def shortname(self):
         return re.sub(r'(?:\ -\ )|[\:,\.\ ]', '', self.nome[0:33].title())
@@ -173,7 +173,7 @@ class Dipendente(TimeStampedModel, PeoMethods, CSAMethods):
     profilo = models.ForeignKey(TipoProfiloProfessionale,
                                 on_delete=models.SET_NULL,
                                 null=True, blank=True)
-    affinita_organizzativa = models.ForeignKey(AffinitaOrganizzativa,
+    afferenza_organizzativa = models.ForeignKey(AfferenzaOrganizzativa,
                                                null=True, blank=True,
                                                on_delete=models.SET_NULL)
     sede = models.CharField(max_length=254,

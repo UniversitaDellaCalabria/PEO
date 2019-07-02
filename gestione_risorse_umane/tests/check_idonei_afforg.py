@@ -11,9 +11,9 @@ for i in reader:
     if not d:
         print('MANCA: {}'.format(row))
         continue
-    check = i[3] == d.affinita_organizzativa.nome.replace('Dipartimento di ', '')
+    check = i[3] == d.afferenza_organizzativa.nome.replace('Dipartimento di ', '')
     if not check:
-        print('Failed: {}, {} <- {}'.format(d, d.affinita_organizzativa, row))
+        print('Failed: {}, {} <- {}'.format(d, d.afferenza_organizzativa, row))
         failed.append(i)
 
 len(failed)
