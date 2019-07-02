@@ -6,7 +6,7 @@ from django.utils import timezone
 from django_admin_multiple_choice_list_filter.list_filters import MultipleChoiceListFilter
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
-from csa.models import _get_matricola, RUOLI
+from csa.models import RUOLI
 from . models import *
 from .peo_methods import bando_redazione
 

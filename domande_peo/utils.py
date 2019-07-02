@@ -1,6 +1,5 @@
 import csv
 import magic
-import json
 import os
 import shutil
 
@@ -11,12 +10,6 @@ from django.http.response import HttpResponse
 from gestione_peo.models import Bando, IndicatorePonderato, DescrizioneIndicatore
 from gestione_risorse_umane.models import Dipendente, PosizioneEconomica, LivelloPosizioneEconomica
 
-def get_POST_as_json(request):
-    d = {k:v for k,v in request.POST.items()}
-    d.pop("csrfmiddlewaretoken")
-    json_data = json.dumps(d)
-    return json_data
-
 def get_fname_allegato(domanda_bando_id, bando_id):
     return "domanda_{}-{}.pdf".format(domanda_bando_id, bando_id)
 
@@ -26,47 +19,47 @@ def get_path_allegato(matricola, slug_bando, id_modulo_inserito):
     """
     path = '{}/{}/{}/bando-{}/domanda-id-{}'.format(settings.MEDIA_ROOT,
                                                     settings.DOMANDE_PEO_FOLDER,
-                                                    matricola, 
+                                                    matricola,
                                                     slug_bando,
                                                     id_modulo_inserito)
     return path
 
 def salva_file(f, path, nome_file):
     file_path = '{}/{}'.format(path,nome_file)
-    
+
     if not os.path.exists(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path,'wb') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
-            
+
 def download_file(path, nome_file):
     """
         Effettua il download di un file
     """
     mime = magic.Magic(mime=True)
     file_path = '{}/{}'.format(path,nome_file)
-    content_type = mime.from_file(file_path)   
-                                 
+    content_type = mime.from_file(file_path)
+
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type=content_type)
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     return None
-    
+
 def elimina_file(path, nome_file):
     """
         Elimina un file allegato a una domanda dal disco
     """
-    
+
     file_path = '{}/{}'.format(path,nome_file)
     try:
         os.remove(file_path)
         return path
     except:
         return False
-    
+
 def elimina_directory(matricola, bando_slug, modulo_compilato_id = None):
     """
         Rimuove dal disco ricorsivamente una cartella.
@@ -76,12 +69,12 @@ def elimina_directory(matricola, bando_slug, modulo_compilato_id = None):
         la directory con gli allegati del ModuloCompilato.
     """
     path = '{}/{}/{}/bando-{}'.format(settings.MEDIA_ROOT,
-                                               settings.DOMANDE_PEO_FOLDER, 
-                                               matricola, 
+                                               settings.DOMANDE_PEO_FOLDER,
+                                               matricola,
                                                bando_slug)
     if modulo_compilato_id:
         path = path + '/domanda-id-{}'.format(modulo_compilato_id)
-    
+
     try:
         shutil.rmtree(path)
         return path
@@ -89,7 +82,7 @@ def elimina_directory(matricola, bando_slug, modulo_compilato_id = None):
         return False
 
 
-def export_graduatoria_csv(queryset, fopen, 
+def export_graduatoria_csv(queryset, fopen,
                            delimiter=';', quotechar='"',
                            replace_dot_with = '.'):
     """
@@ -101,11 +94,11 @@ def export_graduatoria_csv(queryset, fopen,
     posizioni_economiche = PosizioneEconomica.objects.all().order_by('nome')
     #Recupero tutti i DescrInd del bando in questione
     descr_ind = DescrizioneIndicatore.objects.filter(indicatore_ponderato__bando = queryset.first().bando).all().order_by('id_code')
-    
+
     intestazione = ['Prog', 'Cognome', 'Nome', 'Pos.Eco']
-    
-    writer = csv.writer(fopen, 
-                        delimiter = delimiter, 
+
+    writer = csv.writer(fopen,
+                        delimiter = delimiter,
                         quotechar = quotechar)
     intestazione2 = []
     lista_id_descr = []
@@ -118,7 +111,7 @@ def export_graduatoria_csv(queryset, fopen,
     intestazione.append('Anzianità presso Università')
     intestazione.append('Punti')
     writer.writerow(intestazione)
-    
+
     # Per ogni posizione economica, controllo se ci sono domande
     # cosi da ordinarle e avere una graduatoria
     for pos_eco in posizioni_economiche:
@@ -126,7 +119,7 @@ def export_graduatoria_csv(queryset, fopen,
         for livello in livelli:
             writer.writerow('')
             index = 1
-            # Per ogni domanda del bando, recupero quelle fatte per 
+            # Per ogni domanda del bando, recupero quelle fatte per
             # un singolo Livello Economico
             for domanda in queryset:
                 # Se la domanda non è stata chiusa almeno una volta

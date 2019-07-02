@@ -11,6 +11,20 @@ DEBUG = True
 PRODUCTION = False
 MANTEINANCE = False
 
+if PRODUCTION:
+    SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+    SESSION_COOKIE_AGE=60*120
+    # TODO: fare detect della socket hostname
+    HOSTNAME = 'peo.unical.it'
+    URL = 'https://{}'.format(HOSTNAME)
+    ALLOWED_HOSTS = [ HOSTNAME ]
+else:
+    HOSTNAME = 'localhost'
+    URL = 'http://{}:8000'.format('localhost')
+    ALLOWED_HOSTS = [ 'localhost', HOSTNAME, ]
+
+WKHTMLTOPDF_CMD = '/usr/local/bin/wkhtmltopdf'
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
@@ -24,6 +38,8 @@ DATABASES = {
     }
 }
 
+
+## CSA
 DATABASE_CSA = {
                 # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
                 'ENGINE': 'django.db.backends.oracle', 
@@ -33,6 +49,28 @@ DATABASE_CSA = {
                 'HOST': 'SERVER_HOST',
                 'PORT': '1521',
                 }
+
+CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
+CSA_V_CARRIERA = 'V_CARRIERA'
+CSA_V_CARRIERA_DOCENTI = 'V_CARRIERA_DOCENTI'
+CSA_V_INCARICO_DIP = 'V_INCARICO_DIP'
+CSA_V_RUOLO = 'V_RUOLO'
+CSA_SQL_QUERY = 'SELECT * FROM {} where matricola={} ORDER BY {} DESC'
+
+CSA_REPLICA = 'replica'
+CSA_NATIVE = 'native'
+# if replica a scheduled sqlscript must replicate datas in default DB
+CSA_MODE = CSA_REPLICA # or CSA_NATIVE
+
+if CSA_MODE == CSA_NATIVE:
+    DATABASES['csa'] = DATABASE_CSA
+    DATABASE_ROUTERS = ['csa.routers.ReadOnlyDbRouter',]
+elif CSA_MODE == CSA_REPLICA:
+    CSA_REPL_SCRIPT = 'csa.sqlalchemy_repl'
+else:
+    raise Exception('CSA_MODE non configured in settings.py')
+
+# END CSA
 
 LANGUAGE_CODE = 'it-it'
 TIME_ZONE = 'Europe/Rome'
@@ -45,8 +83,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-ADMINS = [('name surname', 'giuseppe.demarco@DOMAIN'),
-          ('name surnale', 'francesco.filicetti@DOMAIN'),]
+ADMINS = [('name surname', 'user1@DOMAIN'),
+          ('name surnale', 'user2@DOMAIN'),]
 
 LOGGING = {
         'version': 1,
@@ -106,12 +144,19 @@ LOGGING = {
 
 # PROTOCOLLO, questi valori possono variare sulla base di come
 # vengono istruite le pratiche all'interno del sistema di protocollo di riferimento
+
+# Flusso entrata per dipendenti
+# mittente persona fisica come dipendente, destinatario Unical
+parametri_ws_archipro_tmpl = '<Parametro nome="{nome}" valore="{valore}" />'
+parametri_ws_archipro = [{'nome': 'agd', 'valore': '483'},
+                         {'nome': 'uo', 'valore': '1231'}]
+
 PROTOCOLLO_FASCICOLO_DEFAULT = '3'
 PROTOCOLLO_TITOLARIO_DEFAULT = '9095'
 PROTOCOLLO_CODICI_TITOLARI = (
-                               ('9095','7.1'),
+                               ('9095','7.1'), # dipendenti
+                               ('9099', '7.5'), # docenti una-tantum
                              )
-PROTOCOLLO_AOO = 'AOO55'
 
 # PRODUCTION
 PROT_URL = 'http://PROT_URL?wsdl'

@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+
+{% load domande_peo_tags %}
 {% load static %}
 
 {% block extra_head %}
@@ -92,7 +94,8 @@
     <p><i>{{ ins.descrizione_indicatore.indicatore_ponderato }}: ({{ ins.descrizione_indicatore.id_code }}) {{ ins.descrizione_indicatore.nome }}</i></p>
     <p>{{ ins.descrizione_indicatore.note_as_html|safe }}</p>
     <form class="ui form">
-        {% for field in ins.compiled_form_readonly %}
+        {% domanda_bando_readonly ins as domanda_bando_readonly %}
+        {% for field in domanda_bando_readonly %}
         <div class="field">
             {{ field.label_tag }}
             {{ field.errors }}

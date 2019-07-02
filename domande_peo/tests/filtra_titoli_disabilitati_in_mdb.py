@@ -1,3 +1,4 @@
+from django_form_builder.utils import get_as_dict
 from domande_peo.models import *
 from gestione_peo.models import *
 
@@ -15,11 +16,12 @@ for dom in DomandaBando.objects.filter(bando=bando):
     punteggio_titoli_pos_eco = bando.get_punteggio_titoli_pos_eco(pos_eco)
     for mdb in dom.modulodomandabando_set.all():
         if mdb.disabilita: continue
-        d = mdb.get_as_dict()
+        json_dict = json.loads(mdb.modulo_compilato)
+        d = get_as_dict(json_dict)
         if field_name in d.keys():
             punteggio =  Punteggio_TitoloStudio.objects.get(pk=d[field_name])
             if punteggio not in punteggio_titoli_pos_eco:
-                errato = (dipendente, 
+                errato = (dipendente,
                           mdb.descrizione_indicatore,
                           ' - livello {}'.format(pos_eco))
                 print(*errato)

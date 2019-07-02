@@ -16,8 +16,8 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
                scarica_template_bando]
     list_display = ('nome',
                     'data_inizio',
-                    'data_fine_presentazione_domande', 
-                    'data_fine', 
+                    'data_fine_presentazione_domande',
+                    'data_fine',
                     'ultima_progressione',
                     # 'descrizione',
                     'collaudo',
@@ -28,13 +28,13 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
     list_editable = ('collaudo', 'redazione', 'pubblicato')
     search_fields = ('nome',)
     inlines = [ClausoleBandoNestedInline,
-               #IndicatorePonderatoInline, 
-               Punteggio_TitoloStudioNestedInline, 
+               #IndicatorePonderatoInline,
+               Punteggio_TitoloStudioNestedInline,
                CategorieDisabilitate_TitoloStudioNestedInline,
                Punteggio_Anzianita_ServizioNestedInline]
-    
+
     date_hierarchy = 'data_inizio'
-    
+
     fieldsets = (
              (None, {
                         # 'classes': ('collapse',),
@@ -42,7 +42,7 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
                                       ('nome', 'slug',),
                                       ('descrizione',),
                                       ('bando_url',),
-                                      ('accettazione_clausole_text'),                                        
+                                      ('accettazione_clausole_text'),
                                       ('redazione', 'collaudo', 'pubblicato'),
                                       ('email_avvenuto_completamento', 'pubblica_punteggio'),
                                     )
@@ -101,13 +101,13 @@ class IndicatorePonderatoAdmin(admin.ModelAdmin):
     search_fields = ('nome', 'bando__nome',)
     class Media:
         js = ('js/textarea-autosize.js',)
-     
+
 
 @admin.register(DescrizioneIndicatore)
 class DescrizioneIndicatoreAdmin(DescrizioneIndicatoreAdminAbstract, nested_admin.NestedModelAdmin):
     list_display = ('nome', 'id_code', 'indicatore_ponderato') #, 'note')
-    list_filter = ('indicatore_ponderato__bando__nome', 
-                   'id_code', 
+    list_filter = ('indicatore_ponderato__bando__nome',
+                   'id_code',
                    'non_cancellabile',
                    'is_required')
     inlines = [Punteggio_DescrizioneIndicatoreNestedInline,
@@ -128,14 +128,14 @@ class DescrizioneIndicatoreAdmin(DescrizioneIndicatoreAdminAbstract, nested_admi
               ('limite_inserimenti','numero_inserimenti'),
               ('get_anteprima_modulo_inserimento')
               )
-    
+
     autocomplete_fields = ['indicatore_ponderato',]
     date_hierarchy = 'indicatore_ponderato__bando__data_inizio'
-    
+
     class Media:
         js = ('js/textarea-autosize.js',)
-        
-        
+
+
 # @admin.register(ClausoleBando)
 # class ClausoleBandoAdmin(admin.ModelAdmin):
     # list_display = ('titolo', 'bando') #, 'note')
@@ -143,10 +143,10 @@ class DescrizioneIndicatoreAdmin(DescrizioneIndicatoreAdminAbstract, nested_admi
     #inlines = [ Punteggio_DescrizioneIndicatoreInline,
     #            Punteggio_DescrizioneIndicatore_TimeDeltaInline,
     #            PunteggioMax_DescrizioneIndicatore_PosEconomicaInline,
-    #            ModuloInserimentoCampiInline,              
+    #            ModuloInserimentoCampiInline,
     #           ]
-    
-    
+
+
     # class Media:
         # js = ('js/textarea-autosize.js',)
 
@@ -160,21 +160,21 @@ class DescrizioneIndicatoreAdmin(DescrizioneIndicatoreAdminAbstract, nested_admi
     # list_display = ('punteggio',)
     # list_filter = ('punteggio',)
 
-    
+
 #@admin.register(CategorieDisabilitatePunteggioTitoloStudio)
 # class CategorieDisabilitatePunteggioTitoloStudioAdmin(admin.ModelAdmin):
     # pass
-    
-    
+
+
 # @admin.register(PunteggioAnzianitaDiServizio)
 # class PunteggioAnzianitaDiServizioAdmin(admin.ModelAdmin):
    # list_display = ('punteggio_max', 'punteggio')
-   
-   
+
+
 @admin.register(SubDescrizioneIndicatore)
 class SubDescrizioneIndicatoreAdmin(nested_admin.NestedModelAdmin):
     list_display = ('nome', 'id_code', 'descrizione_indicatore') #, 'note')
-    list_filter = ('descrizione_indicatore__indicatore_ponderato__bando__nome', 
+    list_filter = ('descrizione_indicatore__indicatore_ponderato__bando__nome',
                    'id_code')
     inlines = [ Punteggio_SubDescrizioneIndicatoreNestedInline,
                 Punteggio_SubDescrizioneIndicatore_TimeDeltaNestedInline,
@@ -189,6 +189,6 @@ class SubDescrizioneIndicatoreAdmin(nested_admin.NestedModelAdmin):
     autocomplete_fields = ['descrizione_indicatore',]
     # autocomplete_fields = ['indicatore_ponderato',]
     date_hierarchy = 'descrizione_indicatore__indicatore_ponderato__bando__data_inizio'
-    
+
     class Media:
         js = ('js/textarea-autosize.js',)

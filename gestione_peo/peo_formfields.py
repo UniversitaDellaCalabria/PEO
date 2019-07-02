@@ -9,29 +9,13 @@ from django.forms import ModelChoiceField
 from django.forms.fields import *
 from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
+from django_form_builder.dynamic_fields import *
+from django_form_builder.utils import *
 from gestione_risorse_umane.models import Dipendente, TitoloStudio
 
 from .settings import NUMERAZIONI_CONSENTITE
-
-
-def _split_choices(choices_string):
-    """
-    Riceve una stringa e la splitta ogni ';'
-    creando una tupla di scelte
-    """
-    str_split = choices_string.split(';')
-    choices = tuple((x, x) for x in str_split)
-    return choices
-
-
-def _successivo_ad_oggi(data_da_valutare):
-    """
-    Ci dice se una data è successiva alla data di oggi
-    """
-    oggi = timezone.localtime().date()
-    if data_da_valutare:
-        return data_da_valutare > oggi
 
 
 def _limite_validita_titoli(domanda_bando):
@@ -78,139 +62,37 @@ def _ultima_progressione_data_presa_servizio(domanda_bando):
 _date_field_options = {'class': 'datepicker'}
 
 
-class PeoBaseCustomField(Field):
+class PEO_BaseDateField(BaseDateField):
     """
-    Classe Base che definisce i metodi per ogni CustomField
+    DateField
     """
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-    def define_value(self,
-                     domanda_bando=None,
-                     descrizione_indicatore=None,
-                     custom_value=None):
-        """
-        Integra la costruzione del field con informazioni aggiuntive
-        provenienti dai parametri di configurazione definiti dall'utente
-        """
-        return
-
-    def get_fields(self):
-        """
-        Se è un field semplice, torna se stesso.
-        Se è un field composto, torna una lista di fields.
-        """
-        return [self]
-
-    def raise_error(self, domanda_bando, fname, cleaned_data):
-        """
-        Torna la lista degli errori generati dalla validazoine del field
-        """
-        return []
+    widget = forms.DateInput(attrs=_date_field_options)
 
 
-class CustomCharField(CharField, PeoBaseCustomField):
+class PEO_BaseDateTimeField(BaseDateTimeField):
     """
-    CharField
+    DateTimeField
     """
-    titolo_classe = "Testo"
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
+    widget = forms.DateInput(attrs=_date_field_options)
 
 
-class CustomChoiceField(ChoiceField, PeoBaseCustomField):
-    """
-    ChoiceField
-    """
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-    def define_value(self, domanda_bando,
-                     descrizione_indicatore, custom_value):
-        """
-        Se presenti, sostituisce alle opzioni di default
-        quelle di 'custom_value'
-        """
-        if custom_value:
-            elements = _split_choices(custom_value)
-        self.choices = elements
-
-
-class CustomFileField(FileField, PeoBaseCustomField):
-    """
-    FileField
-    """
-    titolo_classe = "Allegato PDF"
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-
-class PositiveIntegerField(DecimalField, PeoBaseCustomField):
-    """
-    Int DecimalField positivo
-    """
-    titolo_classe = "Numero intero positivo"
-    default_validators = [MinValueValidator(0)]
-    
-    def __init__(self, **data_kwargs):
-        # Non si accettano formati con cifre decimali
-        data_kwargs['decimal_places'] = 0
-        super().__init__(**data_kwargs)
-
-
-class PositiveFloatField(DecimalField, PeoBaseCustomField):
-    """
-    Float DecimalField positivo
-    """
-    titolo_classe = "Numero con virgola positivo"
-    default_validators = [MinValueValidator(0)]
-    
-    def __init__(self, **data_kwargs):
-        # Max 3 cifre decimali
-        data_kwargs['decimal_places'] = 3
-        super().__init__(**data_kwargs)
-
-
-class TextAreaField(CharField, PeoBaseCustomField):
-    """
-    TextArea
-    """
-    titolo_classe = "Testo lungo"
-    widget = forms.Textarea()
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-
-class CheckBoxField(BooleanField, PeoBaseCustomField):
-    """
-    BooleanField sottoforma di Checkbox
-    """
-    titolo_classe = "Checkbox"
-    widget = forms.CheckboxInput()
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-
-class PunteggioFloatField(PositiveFloatField):
+class PEO_PunteggioFloatField(PositiveFloatField):
     """
     Punteggio come FloatField positivo
     """
-    titolo_classe = "Punteggio (numero con virgola)"
+    field_type = _("_PEO_  Punteggio (numero con virgola)")
     name = "punteggio_dyn"
 
     def __init__(self, **data_kwargs):
         super().__init__(**data_kwargs)
 
-    def define_value(self, domanda_bando,
-                     descrizione_indicatore, custom_value):
+    def define_value(self, custom_value, **kwargs):
         """
         Se DescrizioneIndicatore o Indicatore Ponderato prevedono
         un punteggio massimo, applica un validatore MaxValueValidator
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        descrizione_indicatore = kwargs.get('descrizione_indicatore')
         if domanda_bando:
             posizione_economica = domanda_bando.dipendente. \
                 livello.posizione_economica
@@ -226,11 +108,12 @@ class PunteggioFloatField(PositiveFloatField):
                 self.validators.append(MaxValueValidator(p_max))
                 
 
-class TitoloStudioField(ModelChoiceField, PeoBaseCustomField):
+
+class PEO_TitoloStudioField(ModelChoiceField, BaseCustomField):
     """
     SelectBox con i titoli di studio
     """
-    titolo_classe = "Titoli di studio"
+    field_type = _("_PEO_  Titoli di studio")
     name = "titolo_di_studio_superiore"
 
     def __init__(self, **data_kwargs):
@@ -238,12 +121,13 @@ class TitoloStudioField(ModelChoiceField, PeoBaseCustomField):
         data_kwargs['queryset'] = TitoloStudio.objects.all()
         super().__init__(**data_kwargs)
 
-    def define_value(self, domanda_bando,
-                     descrizione_indicatore, custom_value):
+    def define_value(self, custom_value, **kwargs):
         """
         Se per la categoria economica del Dipendente alcuni titoli
         di studio sono inibiti, li elimina dalla queryset
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        descrizione_indicatore = kwargs.get('descrizione_indicatore')
         if domanda_bando:
             pos_eco = domanda_bando.dipendente.livello.posizione_economica
             punteggio_titoli = domanda_bando.bando. \
@@ -254,11 +138,11 @@ class TitoloStudioField(ModelChoiceField, PeoBaseCustomField):
                 self.queryset = TitoloStudio.objects.none()
 
 
-class SubDescrizioneIndicatoreField(ModelChoiceField, PeoBaseCustomField):
+class PEO_SubDescrizioneIndicatoreField(ModelChoiceField, BaseCustomField):
     """
     SelectBox con le sotto-categorie SubDescrizioneIndicatore
     """
-    titolo_classe = "Selezione sotto-categorie DescrizioneIndicatore"
+    field_type = _("_PEO_  Selezione sotto-categorie DescrizioneIndicatore")
     name = 'sub_descrizione_indicatore'
 
     def __init__(self, **data_kwargs):
@@ -268,12 +152,13 @@ class SubDescrizioneIndicatoreField(ModelChoiceField, PeoBaseCustomField):
         data_kwargs['queryset'] = sub_descr_ind.objects.all()
         super().__init__(**data_kwargs)
 
-    def define_value(self, domanda_bando,
-                     descrizione_indicatore, custom_value):
+    def define_value(self, custom_value,**kwargs):
         """
         Se la DescrizioneIndicatore associata al Form prevede SubDescrInd
         li sostituisce ai valori di default
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        descrizione_indicatore = kwargs.get('descrizione_indicatore')
         sub_descr_ind = None
         if descrizione_indicatore:
             sub_descr_ind = descrizione_indicatore. \
@@ -282,133 +167,41 @@ class SubDescrizioneIndicatoreField(ModelChoiceField, PeoBaseCustomField):
             self.queryset = sub_descr_ind
 
 
-class CustomSelectBoxField(CustomChoiceField):
-    """
-    SelectBox
-    """
-    titolo_classe = "Lista di opzioni (tendina)"
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-        elements = []
-
-        # Imposta le 'choices' definite in backend come opzioni
-        options = data_kwargs.get('choices')
-        if options:
-            elements = _split_choices(options)
-        self.choices = elements
-
-
-class CustomRadioBoxField(CustomChoiceField):
-    """
-    CheckBox multiplo
-    """
-    titolo_classe = "Lista di opzioni (checkbox)"
-    widget = forms.RadioSelect()
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-        # Imposta le 'choices' definite in backend come opzioni
-        elements = []
-        options = data_kwargs.get('choices')
-        if options:
-            elements = _split_choices(options)
-        self.choices = elements
-
-
-class BaseDateField(DateField, PeoBaseCustomField):
-    """
-    DateField
-    """
-    titolo_classe = "Data"
-    widget = forms.DateInput(attrs=_date_field_options)
-    input_formats = settings.DATE_INPUT_FORMATS
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-
-class BaseDateTimeField(DateTimeField):
-    """
-    DateTimeField
-    """
-    titolo_classe = "Data e Ora"
-    widget = forms.DateInput(attrs=_date_field_options)
-    input_formats = settings.DATE_INPUT_FORMATS
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-
-class DateStartEndComplexField(PeoBaseCustomField):
+class PEO_DateStartEndComplexField(DateStartEndComplexField):
     """
     Field composto da DataInizio (DateField) e DataFine (DateField)
     """
-    titolo_classe = "Data inizio e Data fine"
+    field_type = _("_PEO_ Data inizio e Data fine")
+    is_complex = True
 
-    def __init__(self, **data_kwargs):
+    def __init__(self, *args, **data_kwargs):
         # Data Inizio
-        self.start = BaseDateField(**data_kwargs)
+        self.start = PEO_BaseDateField(*args, **data_kwargs)
         self.start.required = True
-        self.start.label = 'Data Inizio'
+        self.start.label = _('Data Inizio')
+        self.start.name = "data_inizio_dyn"
 
         # Riferimento a DateStartEndComplexField
         self.start.parent = self
 
         # Data Fine
-        self.end = BaseDateField(**data_kwargs)
+        self.end = PEO_BaseDateField(*args, **data_kwargs)
         self.end.required = True
-        self.end.label = 'Data Fine'
+        self.end.label = _('Data Fine')
+        self.end.name = "data_fine_dyn"
 
         # Riferimento a DateStartEndComplexField
         self.end.parent = self
 
-    def get_fields(self):
-        fields = [self.start, self.end]
-        return fields
 
-    def raise_error(self, domanda_bando, name, cleaned_data):
-        """
-        Essendo un campo complesso che non ha riferimenti ai vincoli
-        imposti dal bando, si eseguono solo i controlli standard sulle
-        date di inizio e di fine
-        """
-        errors = []
-        start_value = cleaned_data.get(self.start.name)
-        end_value = cleaned_data.get(self.end.name)
-
-        # Se il campo non viene correttamente inizializzato
-        if not cleaned_data.get(name):
-            return []
-
-        # Si valuta 'Data Inizio'
-        if name == self.start.name:
-            # Se la data di inizio è successiva ad oggi
-            if _successivo_ad_oggi(start_value):
-                errors.append("La data di inizio non può "
-                              "essere successiva ad oggi")
-            # Se data_inizio > data_fine
-            if end_value and start_value > end_value:
-                errors.append("La data di inizio non può "
-                              "essere successiva a quella di fine")
-
-        # Si valuta 'Data Fine'
-        if name == self.end.name:
-            # Se la data di fine è successiva ad oggi
-            if _successivo_ad_oggi(end_value):
-                errors.append("La data di fine non può essere "
-                              "successiva ad oggi")
-        return errors
-
-
-class DateInRangeComplexField(DateStartEndComplexField):
+class PEO_DateInRangeComplexField(PEO_DateStartEndComplexField):
     """
     Field composto da DataInizio (DateField) e DataFine (DateField)
     che deve rigorisamente ricadere nel range imposto dal Bando
     (Data PresaServizio/UltimaProgressione - LimiteTitoli Bando)
     """
-    titolo_classe = "Data inizio e Data fine IN RANGE of bando"
+    field_type = _("_PEO_  Data inizio e Data fine IN RANGE of bando")
+    is_complex = True
 
     def __init__(self, **data_kwargs):
         super().__init__(**data_kwargs)
@@ -424,12 +217,14 @@ class DateInRangeComplexField(DateStartEndComplexField):
     def get_end_name(self):
         return self.end.name
 
-    def raise_error(self, domanda_bando, name, cleaned_data):
+    def raise_error(self, name, cleaned_data, **kwargs):
         """
         Questo campo complesso deve attenersi strettamente ai vincoli
         imposti dal bando, per cui, oltre a ereditard i controlli standard
         del parent, si eseguono ulteriori verifiche
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        if not domanda_bando: return []
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
         ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
@@ -438,9 +233,9 @@ class DateInRangeComplexField(DateStartEndComplexField):
 
         errors = []
         # Recupero la lista di errori proveniente dai controlli del super
-        errors = errors + (super().raise_error(domanda_bando,
-                                               name,
-                                               cleaned_data))
+        errors = errors + (super().raise_error(name,
+                                               cleaned_data,
+                                               **kwargs))
 
         value = cleaned_data.get(name)
 
@@ -481,14 +276,15 @@ class DateInRangeComplexField(DateStartEndComplexField):
         return errors
 
 
-class DateInRangeInCorsoComplexField(DateInRangeComplexField):
+class PEO_DateInRangeInCorsoComplexField(PEO_DateInRangeComplexField):
     """
     Field composto da DataInizio (DateField), DataFine (DateField)
     e In Corso (BooleanField).
     Rispetta i vincoli del parent DateInRangeComplexField
     ma offre la possibilità di non specificare la data di fine (in corso)
     """
-    titolo_classe = "Data inizio e Data fine IN RANGE of bando + 'In corso'"
+    field_type = _("_PEO_  Data inizio e Data fine IN RANGE of bando + 'In corso'")
+    is_complex = True
 
     def __init__(self, **data_kwargs):
         super().__init__(**data_kwargs)
@@ -511,12 +307,14 @@ class DateInRangeInCorsoComplexField(DateInRangeComplexField):
         ereditati.extend([self.in_corso])
         return ereditati
 
-    def raise_error(self, domanda_bando, name, cleaned_data):
+    def raise_error(self, name, cleaned_data, **kwargs):
         """
         Questo campo complesso dete attenersi strettamente ai vincoli
         imposti dal bando, per cui, oltre a ereditard i controlli standard
         del parent, si eseguono ulteriori verifiche
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        if not domanda_bando: return []
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
         ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
@@ -540,20 +338,21 @@ class DateInRangeInCorsoComplexField(DateInRangeComplexField):
                               " 'Data Fine' e 'Incarico in corso'")
         # Se valuto gli altri fields recupero gli altri errori
         else:
-            errors = errors + (super().raise_error(domanda_bando,
-                                                   name,
-                                                   cleaned_data))
+            errors = errors + (super().raise_error(name,
+                                                   cleaned_data,
+                                                   **kwargs))
 
         return errors
 
 
-class DateOutOfRangeComplexField(DateStartEndComplexField):
+class PEO_DateOutOfRangeComplexField(DateStartEndComplexField):
     """
     Field composto da DataInizio (DateField) e DataFine (DateField)
     che deve rigorisamente ricadere fuori dal range imposto dal Bando
     (Data PresaServizio/UltimaProgressione - LimiteTitoli Bando)
     """
-    titolo_classe = "Data inizio e Data fine OUT OF RANGE of bando"
+    field_type = _("_PEO_  Data inizio e Data fine OUT OF RANGE of bando")
+    is_complex = True
 
     def __init__(self, **data_kwargs):
         super().__init__(**data_kwargs)
@@ -561,12 +360,14 @@ class DateOutOfRangeComplexField(DateStartEndComplexField):
         self.start.name = 'data_inizio_dyn_out'
         self.end.name = 'data_fine_dyn_out'
 
-    def raise_error(self, domanda_bando, name, cleaned_data):
+    def raise_error(self, name, cleaned_data, **kwargs):
         """
         Questo campo complesso deve attenersi strettamente ai vincoli
         imposti dal bando, per cui, oltre a ereditard i controlli standard
         del parent, si eseguono ulteriori verifiche
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        if not domanda_bando: return []
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
         ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
@@ -574,9 +375,9 @@ class DateOutOfRangeComplexField(DateStartEndComplexField):
             _ultima_progressione_data_presa_servizio(domanda_bando)[1]
 
         errors = []
-        errors = errors + (super().raise_error(domanda_bando,
-                                               name,
-                                               cleaned_data))
+        errors = errors + (super().raise_error(name,
+                                               cleaned_data,
+                                               **kwargs))
 
         value = cleaned_data.get(name)
 
@@ -600,51 +401,115 @@ class DateOutOfRangeComplexField(DateStartEndComplexField):
         return errors
 
 
-class ProtocolloField(PeoBaseCustomField):
+class PEO_DataLowerThanBandoField(PEO_BaseDateField):
     """
-    Tipo,Numero e Data protocollo (o altro tipo di numerazione)
+    DateField singolo all'interno dei limiti imposti dal bando
     """
-    titolo_classe = "Protocollo (tipo/numero/data)"
+    field_type = _("_PEO_  Data singola IN RANGE of bando")
 
     def __init__(self, **data_kwargs):
-        # Tipo protocollo. SelectBox
-        self.tipo = CustomChoiceField(**data_kwargs)
-        self.tipo.label = "Tipo"
-        self.tipo.name = "tipo_numerazione_dyn"
-        self.tipo.help_text = "Scegli se protocollo/decreto/delibera, " \
-                              "al/alla quale la numerazione è riferita"
-        self.tipo.choices = [(i.lower().replace(' ', '_'), i) \
-                             for i in NUMERAZIONI_CONSENTITE]
-        self.tipo.parent = self
+        super().__init__(**data_kwargs)
 
-        # Numero protocollo. CharField
-        self.numero = CustomCharField(**data_kwargs)
-        self.numero.required = True
-        self.numero.label = "Numero"
-        self.numero.name = "numero_protocollo_dyn"
-        self.numero.help_text = "Indica il numero del " \
-                                "protocollo/decreto/delibera"
-        self.numero.parent = self
+    def raise_error(self, name, cleaned_data, **kwargs):
+        """
+        Questo campo deve rispettare i vincoli temporali del bando
+        """
+        domanda_bando = kwargs.get('domanda_bando')
+        if not domanda_bando: return []
+        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
+        ultima_progressione = \
+            _ultima_progressione_data_presa_servizio(domanda_bando)[0]
+        data_presa_servizio = \
+            _ultima_progressione_data_presa_servizio(domanda_bando)[1]
 
-        # Data protocollo. DateField
-        self.data = BaseDateField(**data_kwargs)
-        self.data.name = "data_protocollo_dyn"
-        self.data.label = "Data di riferimento alla numerazione"
-        self.data.help_text = "Indica la data del protocollo/decreto/delibera"
-        self.data.parent = self
+        if ultima_progressione == data_presa_servizio:
+            ultima_progressione = False
 
-    def get_fields(self):
-        return [self.tipo, self.numero, self.data]
+        errors = []
+        value = cleaned_data.get(name)
 
-    def get_data_name(self):
-        return self.data.name
+        if not value:
+            return ['Valore non presente']
 
-    def raise_error(self, domanda_bando, name, cleaned_data):
+        # Se la data è successiva al termine imposto dal bando
+        if value > limite_validita_titoli:
+            errors.append("La data non può essere successiva"
+                          " al limite imposto dal bando:"
+                          " {}".format(limite_validita_titoli))
+        # Se la data è precedente all'ultima progressione
+        if ultima_progressione and (value < ultima_progressione):
+            errors.append("La data non può essere precedente all'ultima "
+                          "progressione effettuata: {} "
+                          .format(ultima_progressione))
+        # Se la data è precedente alla presa di servizio
+        if value < data_presa_servizio:
+            errors.append("La data non può essere precedente alla presa "
+                          "di servizio: {}".format(data_presa_servizio))
+        return errors
+
+
+class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
+    """
+    Intero positivo per rappresentare un anno all'interno dei limiti
+    temporali imposti dal bando
+    """
+    field_type = _("_PEO_  Anno singolo IN RANGE of bando")
+
+    def __init__(self, **data_kwargs):
+        super().__init__(**data_kwargs)
+
+    def raise_error(self, name, cleaned_data ,**kwargs):
+        """
+        L'anno rappresentato, oltre alle validazioni su PositiveInteger,
+        deve rispettare i limiti imposti dal bando e dalla carriera
+        """
+        domanda_bando = kwargs.get('domanda_bando')
+        if not domanda_bando: return []
+        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
+        ultima_progressione = \
+            _ultima_progressione_data_presa_servizio(domanda_bando)[0]
+        data_presa_servizio = \
+            _ultima_progressione_data_presa_servizio(domanda_bando)[1]
+
+        if ultima_progressione == data_presa_servizio:
+            ultima_progressione = False
+
+        errors = []
+        value = cleaned_data.get(name)
+
+        if not value:
+            return ["Specificare un valore valido"]
+
+        # Se è successivo all'anno di 'limite_validita_titoli' del bando
+        if value > limite_validita_titoli.year:
+            errors.append("Questo anno non può essere superiore a "
+                          "quello della data limite imposta dal bando: "
+                          "{}".format(bando.data_validita_titoli_fine.year))
+        # Se è successivo all'anno dell'ultima progressione
+        if ultima_progressione and (value < ultima_progressione.year):
+            errors.append("Questo anno non può essere precedente a "
+                          "quello dell'ultima progressione effettuata: "
+                          "{}".format(ultima_progressione.year))
+        # Se è successivo all'anno della presa di servizio
+        if value < data_presa_servizio.year:
+            errors.append("Questo anno non può essere precedente a "
+                          "quello della presa di servizio: "
+                          "{}".format(data_presa_servizio.year))
+        return errors
+
+
+class PEO_ProtocolloField(ProtocolloField):
+    field_type = _("_PEO_  Protocollo (tipo/numero/data)")
+    is_complex = True
+
+    def raise_error(self, name, cleaned_data, **kwargs):
         """
         Questo campo complesso subisce controlli inerenti i parametri
         imposti dal bando e allo stesso tempo si relaziona, se presente,
         a DataInizio e DataFine in range
         """
+        domanda_bando = kwargs.get('domanda_bando')
+        if not domanda_bando: return []
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
         ultima_progr = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
@@ -710,121 +575,3 @@ class ProtocolloField(PeoBaseCustomField):
                                   "all'ultima progressione effettuata: "
                                   "{}".format(ultima_progr))
             return errors
-
-
-class CustomHiddenField(CharField, PeoBaseCustomField):
-    """
-    CharField Hidden
-    """
-    titolo_classe = "Campo nascosto"
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-    def define_value(self, domanda_bando,
-                     descrizione_indicatore, custom_value):
-        self.widget = forms.HiddenInput(attrs={'value': custom_value})
-
-
-class DurataComeInteroField(PositiveIntegerField):
-    """
-    Durata come Intero positivo
-    """
-    titolo_classe = "Durata come numero intero (anni,mesi,ore)"
-    name = 'durata_come_intero'
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-
-class DataLowerThanBandoField(BaseDateField):
-    """
-    DateField singolo all'interno dei limiti imposti dal bando
-    """
-    titolo_classe = "Data singola IN RANGE of bando"
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-    def raise_error(self, domanda_bando, name, cleaned_data):
-        """
-        Questo campo deve rispettare i vincoli temporali del bando
-        """
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
-        ultima_progressione = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[0]
-        data_presa_servizio = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[1]
-
-        if ultima_progressione == data_presa_servizio:
-            ultima_progressione = False
-
-        errors = []
-        value = cleaned_data.get(name)
-
-        if not value:
-            return ['Valore non presente']
-
-        # Se la data è successiva al termine imposto dal bando
-        if value > limite_validita_titoli:
-            errors.append("La data non può essere successiva"
-                          " al limite imposto dal bando:"
-                          " {}".format(limite_validita_titoli))
-        # Se la data è precedente all'ultima progressione
-        if ultima_progressione and (value < ultima_progressione):
-            errors.append("La data non può essere precedente all'ultima "
-                          "progressione effettuata: {} "
-                          .format(ultima_progressione))
-        # Se la data è precedente alla presa di servizio
-        if value < data_presa_servizio:
-            errors.append("La data non può essere precedente alla presa "
-                          "di servizio: {}".format(data_presa_servizio))
-        return errors
-
-
-class AnnoInRangeOfCarrieraField(PositiveIntegerField):
-    """
-    Intero positivo per rappresentare un anno all'interno dei limiti
-    temporali imposti dal bando
-    """
-    titolo_classe = "Anno singolo IN RANGE of bando"
-
-    def __init__(self, **data_kwargs):
-        super().__init__(**data_kwargs)
-
-    def raise_error(self, domanda_bando, name, cleaned_data):
-        """
-        L'anno rappresentato, oltre alle validazioni su PositiveInteger,
-        deve rispettare i limiti imposti dal bando e dalla carriera
-        """
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
-        ultima_progressione = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[0]
-        data_presa_servizio = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[1]
-
-        if ultima_progressione == data_presa_servizio:
-            ultima_progressione = False
-
-        errors = []
-        value = cleaned_data.get(name)
-
-        if not value:
-            return ["Specificare un valore valido"]
-
-        # Se è successivo all'anno di 'limite_validita_titoli' del bando
-        if value > limite_validita_titoli.year:
-            errors.append("Questo anno non può essere superiore a "
-                          "quello della data limite imposta dal bando: "
-                          "{}".format(bando.data_validita_titoli_fine.year))
-        # Se è successivo all'anno dell'ultima progressione
-        if ultima_progressione and (value < ultima_progressione.year):
-            errors.append("Questo anno non può essere precedente a "
-                          "quello dell'ultima progressione effettuata: "
-                          "{}".format(ultima_progressione.year))
-        # Se è successivo all'anno della presa di servizio
-        if value < data_presa_servizio.year:
-            errors.append("Questo anno non può essere precedente a "
-                          "quello della presa di servizio: "
-                          "{}".format(data_presa_servizio.year))
-        return errors

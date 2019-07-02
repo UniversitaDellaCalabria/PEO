@@ -14,13 +14,13 @@
                 changeMonth: true,
                 changeYear: true,
                 isRTL: false,
-                /* 
-                Imposta il limite max del calendario alla data 
+                /*
+                Imposta il limite max del calendario alla data
                 di validità dei titoli definita nel bando
                 */
                 maxDate: '{{ bando.data_validita_titoli_fine|date:"d/m/Y" }}'
             });
-                                     
+
         $.datepicker.regional['it'] = {
             closeText: 'Chiudi',
             prevText: 'Prec',
@@ -33,12 +33,12 @@
             dayNamesMin: ['Do','Lu','Ma','Me','Gio','Ve','Sa'],
             firstDay: 1,
         };
-    
+
         $.datepicker.
             setDefaults(
                 $.datepicker.regional['it']
             );
-    
+
     });
     </script>
 {% endblock js_head %}
@@ -88,19 +88,19 @@
                 <div class="header">
                     ATTENZIONE, Sono stati riscontrati i seguenti errori di compilazione:
                 </div>
+                {% if labeled_errors %}
                 <ul class="list">
-                    {% if form.get_labeled_errors %}
-                        {% for k,v in form.get_labeled_errors.items %}                
-                                <li>{{ k }}</li>
-                        {% endfor %}
-                    {% endif %}
+                    {% for k,v in labeled_errors.items %}
+                            <li>{{ k }}</li>
+                    {% endfor %}
                 </ul>
+                {% endif %}
             </div>
         {% endif %}
     {% endif %}
 
     <form action='#' method='post'  enctype="multipart/form-data" class="ui form">
-    
+
         {% for field in form %}
             <div class="field">
                 {{ field.label_tag }}
@@ -115,9 +115,9 @@
                 {% endif %}
             </div>
         {% endfor %}
-        
+
         {% block allegati %}{% endblock allegati %}
-    
+
         {% block formbuttons %}
             {% block formbuttons_back %}
                 <a href="{% url 'domande_peo:dashboard_domanda' bando.slug %}#{{ bando.slug }}">
@@ -133,9 +133,9 @@
                     </div>
                 </a>
             {% endblock formbuttons_back %}
-    
+
             {% block formbuttons_pdf %}{% endblock formbuttons_pdf %}
-        
+
             {% block submit_button %}
                 <input class="ui button green" type="submit" value="Inserisci" />
             {% endblock submit_button %}
@@ -143,4 +143,9 @@
 
         {% csrf_token %}
     </form>
+{% endblock %}
+
+{% block bottom_scripts %}
+{{ block.super }}
+{{ form.media }}
 {% endblock %}

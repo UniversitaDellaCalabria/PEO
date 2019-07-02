@@ -2,7 +2,6 @@ import inspect
 import operator
 
 from csa.models import RUOLI
-from collections import OrderedDict
 from django.apps import apps
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
@@ -11,6 +10,9 @@ from django.db.models import Q
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+
+from django_form_builder.dynamic_fields import get_fields_types
+from django_form_builder.models import DynamicFieldMap
 from gestione_risorse_umane.models import (PosizioneEconomica,
                                            TitoloStudio)
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
@@ -47,15 +49,6 @@ _OPERATORI_PUNTEGGIO = (('x', _('moltiplicatore')),
                         ('+', _('addizione')),
                         ('/', _('divisione')),
                         ('-', _('sottrazione')))
-
-def tipi_fields():
-    tipi_fields = []
-    for m in inspect.getmembers(peo_formfields, inspect.isclass):
-        if hasattr(m[1],'titolo_classe'):
-            tipi_fields.append(tuple((m[1].__name__,getattr(m[1],
-                                      'titolo_classe'))))
-    tipi_fields.sort(key=lambda tup: tup[1])
-    return tipi_fields
 
 
 class Bando(TimeStampedModel):
@@ -329,35 +322,32 @@ class DescrizioneIndicatore(TimeStampedModel):
     def get_form(self,
                  data=None,
                  files=None,
-                 domanda_id=None,
-                 remove_filefields=False):
+                 remove_filefields=False,
+                 remove_datafields=False,
+                 **kwargs):
         """
         files solitamente request.FILES vedi domande_peo.views.aggiungi_titolo
         """
         moduli_inserimento = self.moduloinserimentocampi_set.all().order_by('ordinamento')
         if not moduli_inserimento: return None
+        # Static method of DynamicFieldMap
+        constructor_dict = DynamicFieldMap.build_constructor_dict(moduli_inserimento)
 
-        constructor_dict = OrderedDict()
-        for campo in moduli_inserimento:
-            # costruisco il dizionario da dare in pasto al costruttore del form dinamico
-            constructor_dict[campo.nome] = (campo.tipo,
-                                            {'required' : campo.is_required,
-                                             'help_text' : campo.aiuto},
-                                            campo.valore,)
         # TODO: refactor di questo if all'interno di un metodo della classe Domanda
         domanda_bando = None
-        if domanda_id:
+        if kwargs.get('domanda_id'):
             domanda_model = apps.get_model(app_label='domande_peo', model_name='DomandaBando')
-            domanda_bando = domanda_model.objects.get(pk=domanda_id)
+            domanda_bando = domanda_model.objects.get(pk=kwargs['domanda_id'])
+        custom_params = {'domanda_bando': domanda_bando,
+                         'descrizione_indicatore': self}
+        form = DynamicFieldMap.get_form(PeoDynamicForm,
+                                        constructor_dict=constructor_dict,
+                                        custom_params=custom_params,
+                                        data=data,
+                                        files=files,
+                                        remove_filefields=remove_filefields,
+                                        remove_datafields=remove_datafields)
 
-        form = PeoDynamicForm(constructor_dict, domanda_bando, self)
-        if remove_filefields:
-            form.remove_files(allegati=remove_filefields)
-        if files:
-            form.files = files
-        if data:
-            form.data = data
-            form.is_bound = True
         return form
 
     def is_available_for_cateco(self, cateco):
@@ -613,31 +603,16 @@ class CategorieDisabilitate_TitoloStudio(models.Model):
         return '{} - {}'.format(self.bando, self.titolo_studio)
 
 
-class ModuloInserimentoCampi(models.Model):
+class ModuloInserimentoCampi(DynamicFieldMap):
     """
     Classe per la generazione dinamica di forms di inserimento relativi
     ai titoli (descrizione indicatori ponderati) dei dipendenti
     """
-    nome = models.CharField(max_length=150,)
-    tipo = models.CharField(max_length=33,
-                            choices = tipi_fields(),
-                            help_text="I campi contrassegnati da asterisco"
-                                      " (*) vengono validati tenendo conto"
-                                      " delle specifiche del Bando,"
-                                      " pertanto possono influire sul calcolo del punteggio")
-    valore = models.CharField(max_length=255, blank=True, default='',
-                              verbose_name='Lista di Valori',
-                              help_text="Viene considerato solo se si sceglie"
-                                        " 'Menu a tendina' oppure 'Serie di Opzioni'."
-                                        " (Es: valore1;valore2;valore3...)")
-    is_required = models.BooleanField(default=True)
     descrizione_indicatore = models.ForeignKey(DescrizioneIndicatore,
                                                on_delete=models.CASCADE)
-    aiuto = models.CharField(max_length=254, blank=True, default='')
-    ordinamento = models.PositiveIntegerField(help_text="posizione nell'ordinamento", blank=True, default=0)
+    DynamicFieldMap._meta.get_field('field_type').choices = get_fields_types(peo_formfields)
 
     class Meta:
-        ordering = ('ordinamento', )
         verbose_name = _('Modulo di inserimento')
         verbose_name_plural = _('Moduli di inserimento')
 

@@ -4,6 +4,8 @@ from django import forms
 from django.db import models
 from django.utils import timezone
 
+from django_form_builder.models import SavedFormContent
+from django_form_builder.utils import get_allegati, get_as_dict, set_as_dict
 from gestione_peo.models import (Bando,
                                  DescrizioneIndicatore,
                                  Punteggio_TitoloStudio)
@@ -203,7 +205,9 @@ class RettificaDomandaBando(TimeStampedModel):
         return '{} {}'.format(self.domanda_bando, self.numero_protocollo)
 
 
-class ModuloDomandaBando(TimeStampedModel, PunteggioModuloDomandaBando):
+class ModuloDomandaBando(PunteggioModuloDomandaBando,
+                         SavedFormContent,
+                         TimeStampedModel):
     """
     Quando un utente partecipa a PEO
     relazione debole su matricola
@@ -215,9 +219,6 @@ class ModuloDomandaBando(TimeStampedModel, PunteggioModuloDomandaBando):
     domanda_bando = models.ForeignKey(DomandaBando, on_delete=models.CASCADE)
     descrizione_indicatore = models.ForeignKey(DescrizioneIndicatore,
                                                on_delete=models.CASCADE)
-    # libreria esterna oppure cambio client per JsonField
-    # non serve gestirlo come JsonField perchè non vi facciamo ricerche al suo interno ;)
-    modulo_compilato = models.TextField()
     # Escludi il modulo dal calcolo del punteggio
     disabilita = models.BooleanField(help_text="Se selezionato, esclude "
                                                "il modulo dal calcolo del punteggio",
@@ -243,28 +244,12 @@ class ModuloDomandaBando(TimeStampedModel, PunteggioModuloDomandaBando):
         self.modified=timezone.localtime()
         self.save()
 
-    def get_allegati_dict(self):
-        allegati_dict = self.get_as_dict().get('allegati')
-        if allegati_dict:
-            return allegati_dict
-        else:
-            return {}
-
-    def get_allegati(self):
-        """
-        torna un lista di file path contenenti gli allegati su filesystem
-        """
-        allegati = self.get_allegati_dict()
-        if allegati:
-            return allegati.items()
-        else:
-            return []
-
     def allegati_validi(self):
         """
         controlla che gli allegati del modulo siano presenti se required
         """
-        allegati = dict(self.get_allegati())
+        # allegati = dict(self.get_allegati())
+        allegati = dict(get_allegati(self))
         form = self.descrizione_indicatore.get_form()
         for field in form.fields:
             f = form.fields[field]
@@ -275,40 +260,6 @@ class ModuloDomandaBando(TimeStampedModel, PunteggioModuloDomandaBando):
                     return False
         # any fields returns as False
         return True
-
-    def get_as_dict_with_allegati(self):
-        """
-        torna il dizionario con i field allegati originali
-        """
-        d = self.get_as_dict()
-
-        # ricostruisco la struttura con gli allegati
-        allegati = d.get('allegati')
-        if allegati:
-            del d['allegati']
-            d.update(allegati)
-        return d
-
-    def get_as_dict(self, allegati=True):
-        """
-        torna il dizionario con gli allegati raggruppati in 'allegati'
-        """
-        d = json.loads(self.modulo_compilato)
-        if d.get('allegati'):
-            if not allegati:
-                del d['allegati']
-                return d
-
-        # Corregge i campi inseriti con spazi prima e dopo
-        for k,v in d.items():
-           if isinstance(d[k],str):
-               d[k] = d[k].strip()
-
-        return d
-
-    def set_as_dict(self, modulo_compilato_dict):
-        self.modulo_compilato = json.dumps(modulo_compilato_dict)
-        self.save()
 
     def is_valid(self):
         """
@@ -323,7 +274,7 @@ class ModuloDomandaBando(TimeStampedModel, PunteggioModuloDomandaBando):
 
     def get_allegati_path(self):
         l = []
-        allegati = self.get_allegati()
+        allegati = get_allegati(self)
         for allegato in allegati:
             fpath = get_path_allegato(self.domanda_bando.dipendente.matricola,
                                       self.domanda_bando.bando.slug,
@@ -334,60 +285,45 @@ class ModuloDomandaBando(TimeStampedModel, PunteggioModuloDomandaBando):
 
     def compiled_form(self, files=None, remove_filefields=True):
         """
-        Torna il form compilato senza allegati
+        Restituisce il form compilato senza allegati
+        Integra django_form_builder.models.SavedFormContent.compiled_form
         """
-        form = self.descrizione_indicatore.get_form(data=self.get_as_dict(allegati=False),
-                                                    files=files,
-                                                    domanda_id=self.domanda_bando.pk,
-                                                    remove_filefields=remove_filefields)
+        # imposta la classe che fornirà il metodo get_form()
+        form_source = self.descrizione_indicatore
+        form = SavedFormContent.compiled_form(data_source=self.modulo_compilato,
+                                              files=files,
+                                              remove_filefields=remove_filefields,
+                                              form_source=form_source,
+                                              domanda_id=self.domanda_bando.pk)
+
+        # json_dict = json.loads(self.modulo_compilato)
+        # data = get_as_dict(json_dict, allegati=False)
+
+        # form = self.descrizione_indicatore.get_form(data=data,
+                                                    # files=files,
+                                                    # domanda_id=self.domanda_bando.pk,
+                                                    # remove_filefields=remove_filefields)
         return form
 
-    def compiled_form_readonly(self, show_title=False, attr='disabled'):
-        """
-        Restituisce una versione "più pulita" di compiled_form
-        - I field non compilati non vengono mostrati (remove_not_compiled_fields())
-        - Il campo "titolo" di default non viene mostrato
-        - I fields sono readonly
-        NOTA: i field select non risentono dell'attributo readonly!!!
-        Usato nei metodo che producono le anteprime non modificabili
-        dei moduli compilati
-        """
-        form = self.compiled_form()
-        form.remove_not_compiled_fields()
-        if not show_title:
-            del form.fields[ETICHETTA_INSERIMENTI_ID]
-        for generic_field in form:
-            field = form.fields[generic_field.name]
-            widget = field.widget
-            widget.attrs[attr] = True
-            # Es: TextArea non ha attributo 'input_type'
-            # Senza questo controllo il codice genera un'eccezione
-            if not hasattr(widget, 'input_type'):
-                widget.attrs[attr] = True
-                continue
-            tipo = widget.input_type
-            if tipo in ['select', 'checkbox', 'radiobox']:
-                widget.attrs['disabled'] = True
-            else:
-                widget.attrs[attr] = True
-        return form
+    # def compiled_form_as_table(self):
+        # return self.compiled_form().as_table()
 
     def migrate_fieldname(self, old, new, save=True, strict=False):
         """
         change fieldname for migration purpose
         """
-        d = self.get_as_dict()
+        # d = self.get_as_dict()
+        json_dict = json.loads(self.modulo_compilato)
+        d = get_as_dict(json_dict)
         if not d.get(old):
             if strict: raise Exception('{} does not exist'.format(old))
             return
         d[new] = ''.join(d[old])
         del d[old]
         if save:
-            self.set_as_dict(d)
+            set_as_dict(self, d)
+            # self.set_as_dict(d)
         return d
-
-    def compiled_form_as_table(self):
-        return self.compiled_form().as_table()
 
     def get_identificativo_veloce(self):
         modulo_compilato_dict = json.loads(self.modulo_compilato)

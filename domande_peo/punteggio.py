@@ -1,8 +1,11 @@
+import json
+
 from django.utils import timezone
 
 # DEPRECATO: non considera DATE_INPUT_FORMAT bensì regexp dichiarate localmente alla classe! (abominio)
 #from django.utils.dateparse import parse_date
 
+from django_form_builder.utils import get_as_dict
 from gestione_peo.models import Punteggio_TitoloStudio
 from unical_template.utils import (differenza_date_in_mesi_aru,
                                    parse_date_string as parse_date)
@@ -412,7 +415,8 @@ class PunteggioModuloDomandaBando(object):
         Calcolo del punteggio attribuito al titolo di studio
         """
         if self.descrizione_indicatore.calcolo_punteggio_automatico:
-            dati_inseriti = self.get_as_dict()
+            json_dict = json.loads(self.modulo_compilato)
+            dati_inseriti = get_as_dict(json_dict)
             if "titolo_di_studio_superiore" in dati_inseriti:
                 titolo_studio = Punteggio_TitoloStudio.objects.get(pk=dati_inseriti.get("titolo_di_studio_superiore"))
                 result = [titolo_studio.titolo,
@@ -424,7 +428,8 @@ class PunteggioModuloDomandaBando(object):
         """
         True se il modulo compilato contiene un SubDescrizioneIndicatore
         """
-        dati_inseriti = self.get_as_dict()
+        json_dict = json.loads(self.modulo_compilato)
+        dati_inseriti = get_as_dict(json_dict)
         if "sub_descrizione_indicatore" in dati_inseriti:
             return dati_inseriti.get("sub_descrizione_indicatore")
 
@@ -440,7 +445,8 @@ class PunteggioModuloDomandaBando(object):
 
         # Se la DescrizioneIndicatore ha il calcolo punteggio automatico
         if descr_ind.calcolo_punteggio_automatico:
-            dati_inseriti = self.get_as_dict()
+            json_dict = json.loads(self.modulo_compilato)
+            dati_inseriti = get_as_dict(json_dict)
             dipendente = self.domanda_bando.dipendente
             cat_eco = dipendente.livello.posizione_economica
             # Se il form prevede un campo Punteggio

@@ -1,5 +1,8 @@
 {% extends 'modulo_form.html' %}
+
 {% load domande_peo_tags %}
+{% load django_form_builder_tags %}
+{% load i18n %}
 
 {% block add_another %}
     {% domanda_bando_num_max_descrind modulo_domanda_bando.domanda_bando modulo_domanda_bando.descrizione_indicatore as max_inserimenti %}
@@ -54,6 +57,7 @@ la cancellazione degli allegati vengono prodotti
 {% endblock submit_button %}
 
 {% block bottom_scripts %}
+    {{ block.super }}
     {% if modulo_domanda_bando.domanda_bando.modificabile %}
         <script type="text/javascript">
             $(function () {
@@ -78,8 +82,9 @@ la cancellazione degli allegati vengono prodotti
         <table class="ui compact single line striped table">
             <tbody>
                 <tr>
-                    <th>Nome Allegato</th>
-                    <th>Nome File</th>
+                    <th>{% trans "Nome Allegato" %}</th>
+                    <th>{% trans "Nome File" %}</th>
+                    <th>{% trans "Altre info" %}</th>
                     <th></th>
                     {% if modulo_domanda_bando.domanda_bando.modificabile %}
                         <th></th>
@@ -91,6 +96,18 @@ la cancellazione degli allegati vengono prodotti
                             <b>{{k}}</b>
                         </td>
                         <td>{{v}}</td>
+                        <td>
+                        {% get_attachment_sign_details form_allegati path_allegati k v as sign_details %}
+                        {% if sign_details %}
+                            <ul>
+                            {% for kk, vv in sign_details.items %}
+                                <li>{{ kk }}: {{ vv }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                        -
+                        {% endif %}
+                        </td>
                         <td class="right aligned collapsing">
                             <a download href="{% url 'domande_peo:download_allegato' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id allegato=k  %}">
                                 <div class="ui small button">

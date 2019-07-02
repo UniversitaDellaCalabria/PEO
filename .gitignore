@@ -22,6 +22,7 @@ Documentazione/*
 !Documentazione/source/
 !Documentazione/make.bat
 !Documentazione/Makefile
-csa/migrations/*
-!csa/migrations/__init__.py
+csa/*
 saml2_sp/saml2_config/certificates/*
+django_form_builder/*
+django_peo/sp_pysaml2_shibidp.py

@@ -19,6 +19,13 @@ from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.utils import timezone
 
+from django_form_builder.models import SavedFormContent
+from django_form_builder.utils import (get_allegati,
+                                       get_allegati_dict,
+                                       get_as_dict,
+                                       get_labeled_errors,
+                                       get_POST_as_json,
+                                       set_as_dict)
 from gestione_peo.decorators import _get_bando_queryset, check_accessibilita_bando, check_termini_domande
 from gestione_peo.models import *
 from gestione_risorse_umane.models import Dipendente
@@ -162,7 +169,7 @@ def anteprima_modulo_inserimento(request, bando_id, descrizione_indicatore_id):
     form = descrizione_indicatore.get_form()
 
     if request.method == 'POST':
-        form = descrizione_indicatore.get_form(request.POST)
+        form = descrizione_indicatore.get_form(data=request.POST)
 
     page_title = 'Modulo Inserimento: "({}) {}"'.format(descrizione_indicatore.id_code,
                                                           descrizione_indicatore.nome)
@@ -185,7 +192,7 @@ def anteprima_modulo_inserimento_frontend(request, bando_id, descrizione_indicat
     dipendente = Dipendente.objects.filter(matricola=request.user.matricola).first()
     form = descrizione_indicatore.get_form()
     if request.method == 'POST':
-        form = descrizione_indicatore.get_form(request.POST)
+        form = descrizione_indicatore.get_form(data=request.POST)
     page_title = 'Modulo Inserimento: "({}) {}"'.format(descrizione_indicatore.id_code,
                                                           descrizione_indicatore.nome)
     d = {'page_title': page_title,
@@ -209,10 +216,13 @@ def vedi_modulo_inserito(request, bando_id, modulo_domanda_bando_id):
     bando = get_object_or_404(Bando, pk=bando_id)
 
     descrizione_indicatore = modulo_domanda_bando.descrizione_indicatore
-    data = modulo_domanda_bando.get_as_dict(allegati=False)
-    form = modulo_domanda_bando.compiled_form_readonly(show_title=True)
-    allegati = modulo_domanda_bando.get_allegati_dict()
-
+    # data = modulo_domanda_bando.get_as_dict(allegati=False)
+    json_dict = json.loads(modulo_domanda_bando.modulo_compilato)
+    data = get_as_dict(json_dict, allegati=False)
+    # form = modulo_domanda_bando.compiled_form_readonly(show_title=True)+
+    form = SavedFormContent.compiled_form_readonly(modulo_domanda_bando.get_form())
+    # allegati = modulo_domanda_bando.get_allegati_dict()
+    allegati = get_allegati_dict(modulo_domanda_bando)
     d = {
          'allegati': allegati,
          'form': form,
@@ -314,7 +324,9 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
                           {'avviso': ("Hai raggiunto il numero di inserimenti"
                                       " consentiti per questo modulo")})
 
-    form = descrizione_indicatore.get_form(None, None, domanda_bando.id)
+    form = descrizione_indicatore.get_form(data=None,
+                                           files=None,
+                                           domanda_id=domanda_bando.id)
 
     dashboard_domanda_title = 'Partecipazione Bando {}'.format(bando.nome)
     dashboard_domanda_url = reverse('domande_peo:dashboard_domanda',
@@ -337,7 +349,9 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
          'descrizione_indicatore': descrizione_indicatore}
 
     if request.method == 'POST':
-        form = descrizione_indicatore.get_form(request.POST, request.FILES, domanda_bando.id)
+        form = descrizione_indicatore.get_form(data=request.POST,
+                                               files=request.FILES,
+                                               domanda_id=domanda_bando.id)
         if form.is_valid():
             # qui chiedere conferma prima del salvataggio
             json_data = get_POST_as_json(request)
@@ -351,7 +365,9 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
             # salvataggio degli allegati nella cartella relativa
             # Ogni file viene rinominato con l'ID del ModuloDomandaBando
             # appena creato e lo "slug" del campo FileField
-            json_stored = mdb.get_as_dict()
+            # json_stored = mdb.get_as_dict()
+            json_dict = json.loads(mdb.modulo_compilato)
+            json_stored = get_as_dict(json_dict)
             if request.FILES:
                 json_stored["allegati"] = {}
                 path_allegati = get_path_allegato(dipendente.matricola,
@@ -363,7 +379,8 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
                                 request.FILES[key]._name)
                     json_stored["allegati"]["{}".format(key)] = "{}".format(request.FILES[key]._name)
 
-            mdb.set_as_dict(json_stored)
+            set_as_dict(mdb, json_stored)
+            # mdb.set_as_dict(json_stored)
             domanda_bando.mark_as_modified()
             #Allega il messaggio al redirect
             messages.success(request, 'Inserimento effettuato con successo!')
@@ -373,6 +390,7 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
         else:
             # il form non è valido, ripetere inserimento
             d['form'] = form
+            d['labeled_errors'] = get_labeled_errors(form)
             # print('ERRORE', request.POST)
 
     return render(request, 'modulo_form.html', d)
@@ -405,13 +423,17 @@ def modifica_titolo(request, bando_id,
     # perchè al momento della creazione non ci sono ovviamente allegati
     # già inseriti (ma se non setto remove_filefields=False il form
     # viene generato senza campi FileField)
-    form = mdb.compiled_form(None,False)
-    allegati = mdb.get_allegati_dict()
+    # form = mdb.compiled_form(files=None, remove_filefields=False)
+    allegati = get_allegati_dict(mdb)
+    form = mdb.compiled_form(remove_filefields=allegati)
+    # form con i soli campi File da dare in pasto al tag della firma digitale
+    form_allegati = descrizione_indicatore.get_form(remove_datafields=True)
+    # allegati = mdb.get_allegati_dict()
 
     # se non ci sono allegati preesistenti evita di distruggere il campo per
     # l'eventuale inserimento di un allegato
-    if allegati:
-        form.remove_files(allegati)
+    # if allegati:
+        # form.remove_files(allegati)
 
     # Nonostante sia reperibile anche da 'modulo_domanda_bando',
     # nel contesto devo passare anche 'descrizione_indicatore', altrimenti
@@ -423,6 +445,9 @@ def modifica_titolo(request, bando_id,
     dashboard_domanda_url = reverse('domande_peo:dashboard_domanda',
                                     args=[bando.slug])
 
+    path_allegati = get_path_allegato(dipendente.matricola,
+                                      bando.slug,
+                                      mdb.pk)
 
     page_title = 'Modifica Inserimento: "({}) {}"'.format(descrizione_indicatore.id_code,
                                                           descrizione_indicatore.nome)
@@ -432,13 +457,15 @@ def modifica_titolo(request, bando_id,
     _breadcrumbs.add_url(('#', page_title))
 
     d = {
-         'page_title': page_title,
-         'breadcrumbs': _breadcrumbs,
-         'form': form,
-         'dipendente': dipendente,
-         'bando': bando,
-         'modulo_domanda_bando': mdb,
          'allegati': allegati,
+         'bando': bando,
+         'breadcrumbs': _breadcrumbs,
+         'dipendente': dipendente,
+         'form': form,
+         'form_allegati': form_allegati,
+         'modulo_domanda_bando': mdb,
+         'page_title': page_title,
+         'path_allegati': path_allegati,
          }
 
     if request.method == 'POST':
@@ -446,17 +473,14 @@ def modifica_titolo(request, bando_id,
         # Costruisco il form con il json dei dati inviati e tutti gli allegati
         json_response["allegati"] = allegati
         # rimuovo solo gli allegati che sono stati già inseriti
-        form = descrizione_indicatore.get_form(json_response,
-                                               request.FILES,
-                                               mdb.domanda_bando.id,
+        form = descrizione_indicatore.get_form(data=json_response,
+                                               files=request.FILES,
+                                               domanda_id=mdb.domanda_bando.id,
                                                remove_filefields=allegati)
         if form.is_valid():
             if request.FILES:
-                path_allegati = get_path_allegato(dipendente.matricola,
-                                                  bando.slug,
-                                                  mdb.pk)
                 for key, value in request.FILES.items():
-                    form.validate_attachment(request.FILES[key])
+                    # form.validate_attachment(request.FILES[key])
                     salva_file(request.FILES[key],
                                 path_allegati,
                                 request.FILES[key]._name)
@@ -468,7 +492,8 @@ def modifica_titolo(request, bando_id,
                 json_response["allegati"] = allegati
 
             # salva il modulo
-            mdb.set_as_dict(json_response)
+            # mdb.set_as_dict(json_response)
+            set_as_dict(mdb, json_response)
             # data di modifica
             mdb.mark_as_modified()
             #Allega il messaggio al redirect
@@ -479,6 +504,8 @@ def modifica_titolo(request, bando_id,
         else:
             # il form non è valido, ripetere inserimento
             d['form'] = form
+
+    d['labeled_errors'] = get_labeled_errors(form)
 
     return render(request, 'modulo_form_modifica.html', d)
 
@@ -557,13 +584,16 @@ def elimina_allegato(request, bando_id, modulo_compilato_id, allegato):
 
     bando = mdb.domanda_bando.bando
 
-    json_stored = mdb.get_as_dict()
+    # json_stored = mdb.get_as_dict()
+    json_dict = json.loads(mdb.modulo_compilato)
+    json_stored = get_as_dict(json_dict)
     nome_file = json_stored["allegati"]["{}".format(allegato)]
 
     # Rimuove il riferimento all'allegato dalla base dati
     del json_stored["allegati"]["{}".format(allegato)]
 
-    mdb.set_as_dict(json_stored)
+    # mdb.set_as_dict(json_stored)
+    set_as_dict(mdb, json_stored)
     mdb.mark_as_modified()
     mdb.domanda_bando.mark_as_modified()
 
@@ -599,7 +629,9 @@ def download_allegato(request, bando_id, modulo_compilato_id, allegato):
 
     bando = mdb.domanda_bando.bando
 
-    json_stored = mdb.get_as_dict()
+    # json_stored = mdb.get_as_dict()
+    json_dict = json.loads(mdb.modulo_compilato)
+    json_stored = get_as_dict(json_dict)
     nome_file = json_stored["allegati"]["{}".format(allegato)]
 
     path_allegato = get_path_allegato(dipendente.matricola,
@@ -695,7 +727,9 @@ def download_modulo_inserito_pdf(request, bando_id, modulo_compilato_id):
         response = HttpResponse(f.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename=' + pdf_fname
     except Exception as e:
-        mdb_dict = mdb.get_as_dict()
+        #mdb_dict = mdb.get_as_dict()
+        json_dict = json.loads(mdb.modulo_compilato)
+        mdb_dict = get_as_dict(json_dict)
         return render(request, 'custom_message.html',
                       {'avviso': ("E' stato incorso un errore relativo alla interpretazione "
                                   "dei file PDF da te immessi come allegato.<br>"
@@ -792,7 +826,8 @@ def chiudi_apri_domanda(request, bando_id,
 
             for modulo in domanda_bando.modulodomandabando_set.all():
                 # aggiungi come allegati solo i moduli che hanno allegati
-                if not modulo.get_allegati(): continue
+                # if not modulo.get_allegati(): continue
+                if not get_allegati(modulo): continue
                 allegato = BytesIO()
                 allegato.write(download_modulo_inserito_pdf(request, bando_id, modulo.pk).content)
                 allegato.seek(0)
