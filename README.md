@@ -413,7 +413,7 @@ Installazione Sphinx (solo development)
 Sphinx serve per la produzione della documentazione della piattaforma.
 
 ````
-pip install sphinx-quickstart Documentazione
+sphinx-quickstart Documentazione
 
 Separate source and build directories (y/n) [n]: y
 Name prefix for templates and static dir [_]: peo_

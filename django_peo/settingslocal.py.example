@@ -40,22 +40,25 @@ DATABASES = {
 
 
 ## CSA
+=======
+# CSA conf
+CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
+CSA_V_CARRIERA = 'V_CARRIERA'
+CSA_V_CARRIERA_DOCENTI = 'V_CARRIERA_DOCENTI'
+CSA_V_INCARICO_DIP = 'V_INCARICO_DIP'
+CSA_V_RUOLO = 'V_RUOLO'
+
+CSA_SQL_QUERY = 'SELECT * FROM {} where matricola={} ORDER BY {} DESC'
+
 DATABASE_CSA = {
                 # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-                'ENGINE': 'django.db.backends.oracle', 
+                'ENGINE': 'django.db.backends.oracle',
                 'NAME': 'xe',
                 'USER': 'USERNAME',
                 'PASSWORD': 'PASSWD',
                 'HOST': 'SERVER_HOST',
                 'PORT': '1521',
                 }
-
-CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
-CSA_V_CARRIERA = 'V_CARRIERA'
-CSA_V_CARRIERA_DOCENTI = 'V_CARRIERA_DOCENTI'
-CSA_V_INCARICO_DIP = 'V_INCARICO_DIP'
-CSA_V_RUOLO = 'V_RUOLO'
-CSA_SQL_QUERY = 'SELECT * FROM {} where matricola={} ORDER BY {} DESC'
 
 CSA_REPLICA = 'replica'
 CSA_NATIVE = 'native'
