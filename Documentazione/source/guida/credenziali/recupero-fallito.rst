@@ -12,7 +12,6 @@ caso, l’utente deve collegarsi alla pagina web `https://soldi.unical.it <https
 password. 
 
 Se la nuova password non permette di accedere alla compilazione della domanda attraverso la
-pagina web `https://peo.unical.it <https://peo.unical.it>`_, l’utente trasmette una corrispondente richiesta all’indirizzo
-`helpdesk.dip@unical.it <mailto:helpdesk.dip@unical.it>`_, dal quale riceverà istruzioni per l’acquisizione di nuove credenziali da utilizzare
+pagina web `https://peo.unical.it <https://peo.unical.it>`_, l’utente deve contattare gli operatori del `servizio Helpdesk del Centro ICT d'Ateneo <https://www.unical.it/portale/strutture/centri/centroict/schdeserviziict/helpdeskcentroict/>`_, dai quali riceverà istruzioni per l’acquisizione di nuove credenziali da utilizzare
 per l’accesso alla pagina web `https://peo.unical.it <https://peo.unical.it>`_ e compilare utilmente la domanda.
 

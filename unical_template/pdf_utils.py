@@ -18,7 +18,7 @@ def response_as_pdf(response, pdf_fname):
     production_static_url = settings.URL+static_url
     html_page_rewritten = re.sub(static_url,
                                  production_static_url, html_page)
-    
+
     production_media_url = settings.URL+settings.MEDIA_URL
     html_page_rewritten = re.sub(settings.MEDIA_URL,
                                  production_media_url, html_page_rewritten)
@@ -26,11 +26,11 @@ def response_as_pdf(response, pdf_fname):
     # f = open('/tmp/pdf_debug.html', 'w')
     # f.write(html_page_rewritten)
     # f.close()
-    
+
     pdf_path = settings.TMP_DIR + os.path.sep + pdf_fname
-    
+
     options = {
-        'dpi':120,
+        'dpi':90,
         #'page-width': 2024,
         #'enable-smart-width': True,
         'page-size': 'A4',
@@ -39,11 +39,12 @@ def response_as_pdf(response, pdf_fname):
         'no-outline': None,
         'margin-top': '0.2in',
         'margin-right': '0in',
-        'margin-bottom': '0.2in',
+        'margin-bottom': '0.3in',
         'margin-left': '0in',
+        'footer-center': '[page] di [topage]',
     }
     # print(html_page_rewritten)
-    pdf_stream = pdfkit.from_string(html_page_rewritten, 
+    pdf_stream = pdfkit.from_string(html_page_rewritten,
                                     pdf_path,
                                     options=options)
 

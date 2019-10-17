@@ -1,4 +1,4 @@
-django==2.2.3
+django<2.3
 django-model-utils
 ipython
 mysqlclient>1.3.12
@@ -12,7 +12,8 @@ cffi
 git+https://github.com/knaperek/djangosaml2.git
 
 # Admin nested inlines
-git+https://github.com/peppelinux/django-nested-admin.git
+#git+https://github.com/peppelinux/django-nested-admin.git
+git+https://github.com/theatlantic/django-nested-admin.git
 
 # advanced filters
 #git+https://github.com/modlinltd/django-advanced-filters.git
@@ -52,6 +53,9 @@ pypdf2
 
 # SOAP Client protocollazione
 zeep
+
+# csa model 
+git+https://github.com/UniversitaDellaCalabria/django-cineca-csa.git
 
 # auto serializer
 git+https://github.com/peppelinux/django-auto-serializer.git

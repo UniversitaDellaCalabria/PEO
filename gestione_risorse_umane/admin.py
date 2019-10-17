@@ -156,7 +156,7 @@ class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
         actions.append(sincronizza_da_csa)
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
     def get_inquadramento_csa(self, obj):

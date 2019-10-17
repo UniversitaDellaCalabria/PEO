@@ -87,7 +87,7 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
         )
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
 @admin.register(IndicatorePonderato)
@@ -100,7 +100,7 @@ class IndicatorePonderatoAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('nome', 'bando__nome',)
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
 
 
 @admin.register(DescrizioneIndicatore)
@@ -133,7 +133,7 @@ class DescrizioneIndicatoreAdmin(DescrizioneIndicatoreAdminAbstract, nested_admi
     date_hierarchy = 'indicatore_ponderato__bando__data_inizio'
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
 
 
 # @admin.register(ClausoleBando)
@@ -148,7 +148,7 @@ class DescrizioneIndicatoreAdmin(DescrizioneIndicatoreAdminAbstract, nested_admi
 
 
     # class Media:
-        # js = ('js/textarea-autosize.js',)
+        # js = ('js/textarea-autosize_legacy.js',)
 
 
 # i seguenti li lasciamo in caso di attivazione postuma
@@ -191,4 +191,4 @@ class SubDescrizioneIndicatoreAdmin(nested_admin.NestedModelAdmin):
     date_hierarchy = 'descrizione_indicatore__indicatore_ponderato__bando__data_inizio'
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)

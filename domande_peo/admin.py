@@ -256,7 +256,7 @@ class DomandaBandoAdmin(admin.ModelAdmin):
     get_modulo_grafica.short_description = 'Riepilogo Domanda con grafica'
 
     class Media:
-        js = ('js/textarea-autosize.js',
+        js = ('js/textarea-autosize_legacy_legacy.js',
               # 'js/jquery-ui/jquery-ui.min.js',
               'js/jquery-ui-django.js',
               'js/datepicker_onload.js')

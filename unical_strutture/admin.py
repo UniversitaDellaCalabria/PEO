@@ -8,7 +8,7 @@ class FunzioneLocazioneStruttura(admin.ModelAdmin):
     list_display = ('nome', 'descrizione')
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
 
@@ -17,7 +17,7 @@ class TipoStrutturaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'descrizione')
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
 
@@ -26,9 +26,9 @@ class StrutturaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'tipo', 'sede','is_active')
     list_filter = ('tipo', 'is_active')
     inlines = [LocazioneStrutturaInline,]
-    
+
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
 
@@ -37,7 +37,7 @@ class TipoDotazioneAdmin(admin.ModelAdmin):
     list_display = ('nome', 'descrizione')
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
 @admin.register(Locazione)
@@ -46,14 +46,14 @@ class LocazioneAdmin(admin.ModelAdmin):
     # list_filter = ('')
 
     class Media:
-        js = ('js/textarea-autosize.js',)
+        js = ('js/textarea-autosize_legacy.js',)
         css = {'all': ('css/textarea-small.css',),}
 
 # @admin.register(LocazioneStruttura)
 # class LocazioneStrutturaAdmin(admin.ModelAdmin):
     # list_display = ('struttura', 'descrizione_breve', 'locazione', 'telefono', 'is_active')
     # list_filter = ('dotazione', 'funzione', 'is_active')
-# 
+#
     # class Media:
-        # js = ('js/textarea-autosize.js',)
+        # js = ('js/textarea-autosize_legacy.js',)
         # css = {'all': ('css/textarea-small.css',),}

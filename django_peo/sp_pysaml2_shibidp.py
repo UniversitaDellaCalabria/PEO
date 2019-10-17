@@ -187,7 +187,7 @@ SAML_CONFIG = {
       'url': [('http://www.unical.it', 'it'), ('http://www.unical.it', 'en')],
       },
 
-    'valid_for': 365 * 24, 
+    #'valid_for': 365 * 24, 
 }
 
 # NAME_ID or MAIN_ATTRIBUTE (not together!)
