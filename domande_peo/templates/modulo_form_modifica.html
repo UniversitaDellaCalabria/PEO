@@ -58,7 +58,7 @@ la cancellazione degli allegati vengono prodotti
 
 {% block bottom_scripts %}
     {{ block.super }}
-    {% if modulo_domanda_bando.domanda_bando.modificabile %}
+    {% if allegati and modulo_domanda_bando.domanda_bando.modificabile %}
         <script type="text/javascript">
             $(function () {
                 {% for k,v in allegati.items %}

@@ -151,7 +151,7 @@ SAML_CONFIG = {
         # Uses metadata files, both local and remote, and will talk to whatever IdP that appears in any of the metadata files.
 
         # wget -O idp_metadata.xml https://idp.testunical.it/idp/shibboleth
-        # 'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
+        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'saml2_sp'), 'saml2_config'), 'idp_metadata.xml')],
         #
         # ondemand
         "remote": [{
