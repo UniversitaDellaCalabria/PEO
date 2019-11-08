@@ -126,7 +126,9 @@ def scelta_titolo_da_aggiungere(request, bando_id):
     elif not domanda_peo:
         domanda_peo = DomandaBando.objects.create(bando=bando,
                                                   dipendente=dipendente,
-                                                  modified=timezone.localtime())
+                                                  modified=timezone.localtime(),
+                                                  livello=dipendente.livello,
+						  data_presa_servizio=dipendente.get_data_presa_servizio_csa())
     if not domanda_peo.is_active:
         return render(request, 'custom_message.html',
                       {'avviso': ("La tua Domanda è stata sospesa. Per avere "
@@ -212,20 +214,18 @@ def vedi_modulo_inserito(request, bando_id, modulo_domanda_bando_id):
         usato in admin per avere una anteprima dei campi scelti
     """
     modulo_domanda_bando = get_object_or_404(ModuloDomandaBando, pk=modulo_domanda_bando_id)
-
     bando = get_object_or_404(Bando, pk=bando_id)
-
     descrizione_indicatore = modulo_domanda_bando.descrizione_indicatore
-    # data = modulo_domanda_bando.get_as_dict(allegati=False)
     json_dict = json.loads(modulo_domanda_bando.modulo_compilato)
     data = get_as_dict(json_dict, allegati=False)
-    # form = modulo_domanda_bando.compiled_form_readonly(show_title=True)+
-    form = SavedFormContent.compiled_form_readonly(modulo_domanda_bando.get_form())
-    # allegati = modulo_domanda_bando.get_allegati_dict()
     allegati = get_allegati_dict(modulo_domanda_bando)
+    form = SavedFormContent.compiled_form_readonly(modulo_domanda_bando.compiled_form(remove_filefields=allegati))
+    # form con i soli campi File da dare in pasto al tag della firma digitale
+    form_allegati = descrizione_indicatore.get_form(remove_datafields=True)
     d = {
          'allegati': allegati,
          'form': form,
+         'form_allegati': form_allegati,
          'bando': bando,
          'descrizione_indicatore': descrizione_indicatore,
          'modulo_domanda_bando': modulo_domanda_bando,

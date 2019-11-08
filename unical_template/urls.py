@@ -17,7 +17,7 @@ Including another URLconf
 from django.urls import path
 from .views import *
 
-app_name="unical_accounts"
+app_name="unical_template"
 
 urlpatterns = [
     path('base', base_template, name='base'),

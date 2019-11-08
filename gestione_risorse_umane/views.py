@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views.decorators.http import require_POST
 from django.shortcuts import render
 
 from gestione_peo.models import *

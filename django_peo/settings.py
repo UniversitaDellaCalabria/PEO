@@ -212,7 +212,7 @@ HOME_PAGE = '/'
 # 100MB 104857600
 # 250MB - 214958080
 # 500MB - 429916160
-MAX_UPLOAD_SIZE = 10485760
+MAX_UPLOAD_SIZE = 5242880
 PERMITTED_UPLOAD_FILETYPE = ('application/pdf',)
 
 # maximum permitted filename lengh in attachments, uploads

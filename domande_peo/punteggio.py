@@ -22,9 +22,6 @@ class PunteggioDomandaBando(object):
         Torna il punteggio assegnato all'anzianità di servizio
         considerando anche gli eventuali "bonus" previsti nel bando
         """
-        if not self.dipendente:
-            return 0
-
         punteggio = 0
         punteggio_categoria = 0
 
@@ -36,7 +33,7 @@ class PunteggioDomandaBando(object):
         data_limite = self.bando.data_validita_titoli_fine
 
         # Presa servizio
-        presa_servizio = self.dipendente.get_data_presa_servizio_csa()
+        presa_servizio = self.data_presa_servizio
         mesi_servizio = differenza_date_in_mesi_aru(presa_servizio,
                                                     data_limite)
         if mesi_servizio == 0:
@@ -46,14 +43,13 @@ class PunteggioDomandaBando(object):
         ultima_progressione = self.dipendente.get_data_progressione()
         mesi_permanenza = differenza_date_in_mesi_aru(ultima_progressione,
                                                       data_limite)
-
         unita_temporale = "m"
 
         # Se nel bando è impostata l'assegnazione di punti per l'anzianità
         if self.bando.punteggio_anzianita_servizio_set.first():
             for fascia in self.bando.punteggio_anzianita_servizio_set.all():
                 unita_temporale = fascia.unita_temporale
-                if fascia.posizione_economica == self.dipendente.livello.posizione_economica:
+                if fascia.posizione_economica == self.livello.posizione_economica:
                     punteggio_categoria = fascia.punteggio
                     break
                 elif not fascia.posizione_economica:
@@ -259,7 +255,7 @@ class PunteggioDomandaBando(object):
         """
         punteggio = 0
         if self.modulodomandabando_set.first() or self.bando.indicatore_con_anzianita():
-            categoria_economica = self.dipendente.livello.posizione_economica
+            categoria_economica = self.livello.posizione_economica
 
             # Per ogni IndicatorePonderato del Bando
             for indicatore in self.bando.indicatoreponderato_set.all():
@@ -272,6 +268,19 @@ class PunteggioDomandaBando(object):
         return float("{:.2f}".format(punteggio))
 
     def calcolo_punteggio_domanda(self, save=False):
+
+        if not self.dipendente:
+            return 0
+
+        # patch
+        if not self.livello:
+            self.livello = self.dipendente.livello
+            self.save()
+
+        if not self.data_presa_servizio:
+            self.data_presa_servizio = self.dipendente.get_data_presa_servizio_csa()
+        # end patch
+
         punteggio = self.calcolo_punteggio_tot_moduli_compilati()
 
         if save:
@@ -351,18 +360,7 @@ class PunteggioModuloDomandaBando(object):
         # Se nel form è stato inserito il campo "intervallo date OUT OF RANGE Bando"
         elif data_inizio_out:
             inizio = parse_date(data_inizio_out)
-            if ultima_progressione and (inizio < ultima_progressione):
-                inizio = ultima_progressione
-            if data_fine_out:
-                termine = parse_date(data_fine_out)
-                # Se la data di fine va oltre il termine di validità
-                # dei titoli imposto dal bando, allora lo stesso termine
-                # viene considerato come data_fine
-                if termine > self.domanda_bando.bando.data_validita_titoli_fine:
-                    termine = self.domanda_bando.bando.data_validita_titoli_fine
-            if fino_ad_oggi:
-                termine = self.domanda_bando.bando.data_validita_titoli_fine
-
+            termine = parse_date(data_fine_out)
             # Calcolo numero di mesi nell'intervallo delle date
             return differenza_date_in_mesi_aru(inizio, now=termine)
         return 0
@@ -448,7 +446,7 @@ class PunteggioModuloDomandaBando(object):
             json_dict = json.loads(self.modulo_compilato)
             dati_inseriti = get_as_dict(json_dict)
             dipendente = self.domanda_bando.dipendente
-            cat_eco = dipendente.livello.posizione_economica
+            cat_eco = self.domanda_bando.livello.posizione_economica
             # Se il form prevede un campo Punteggio
             if "punteggio_dyn" in dati_inseriti:
                 punteggio =  float(dati_inseriti.get("punteggio_dyn"))

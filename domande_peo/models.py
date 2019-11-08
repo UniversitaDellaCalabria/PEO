@@ -58,6 +58,12 @@ class DomandaBando(TimeStampedModel, PunteggioDomandaBando):
     # data_chiusura deve essere impostata prima della protocollazione
     data_protocollazione = models.DateTimeField(help_text="quando la domanda è stata protocolla/consegnata",
                                                 blank=True, null=True)
+    livello = models.ForeignKey(LivelloPosizioneEconomica,
+                                on_delete=models.SET_NULL,
+                                null=True, blank=True,
+                                help_text='Livello alla data della presentazione della domanda')
+    data_presa_servizio = models.DateField('Data presa servizio alla data della presentazione della domanda',
+                                            null=True, blank=True)
     punteggio_anzianita_manuale = models.FloatField('Punteggio assegnato all\'anzianità interna MANUALE',
                                                     help_text="impostato manualmente",
                                                     blank=True, null=True)
@@ -295,14 +301,6 @@ class ModuloDomandaBando(PunteggioModuloDomandaBando,
                                               remove_filefields=remove_filefields,
                                               form_source=form_source,
                                               domanda_id=self.domanda_bando.pk)
-
-        # json_dict = json.loads(self.modulo_compilato)
-        # data = get_as_dict(json_dict, allegati=False)
-
-        # form = self.descrizione_indicatore.get_form(data=data,
-                                                    # files=files,
-                                                    # domanda_id=self.domanda_bando.pk,
-                                                    # remove_filefields=remove_filefields)
         return form
 
     # def compiled_form_as_table(self):

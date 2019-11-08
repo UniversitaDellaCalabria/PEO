@@ -197,6 +197,7 @@ class DomandaBandoAdmin(admin.ModelAdmin):
                 ('dipendente', 'bando'),
                 'data_chiusura',
                 ('numero_protocollo',), ('data_protocollazione',),
+                ('livello', 'data_presa_servizio'),
                 ('punteggio_anzianita','punteggio_anzianita_manuale',),
                 'punteggio_calcolato',
                 ('is_active', 'progressione_accettata',),
@@ -256,7 +257,7 @@ class DomandaBandoAdmin(admin.ModelAdmin):
     get_modulo_grafica.short_description = 'Riepilogo Domanda con grafica'
 
     class Media:
-        js = ('js/textarea-autosize_legacy_legacy.js',
+        js = ('js/textarea-autosize_legacy.js',
               # 'js/jquery-ui/jquery-ui.min.js',
               'js/jquery-ui-django.js',
               'js/datepicker_onload.js')

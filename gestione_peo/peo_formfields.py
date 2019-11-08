@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from django_form_builder.dynamic_fields import *
-from django_form_builder.utils import *
+from django_form_builder.utils import _successivo_ad_oggi
 from gestione_risorse_umane.models import Dipendente, TitoloStudio
 
 from .settings import NUMERAZIONI_CONSENTITE
@@ -106,7 +106,6 @@ class PEO_PunteggioFloatField(PositiveFloatField):
             if p_max:
                 #self.default_validators.append(MaxValueValidator(p_max))
                 self.validators.append(MaxValueValidator(p_max))
-                
 
 
 class PEO_TitoloStudioField(ModelChoiceField, BaseCustomField):
@@ -257,7 +256,7 @@ class PEO_DateInRangeComplexField(PEO_DateStartEndComplexField):
                               " {}".format(data_presa_servizio))
 
             # Check con Field Protocollo se presente
-            protocollo = ProtocolloField()
+            protocollo = PEO_ProtocolloField()
             data_protocollo_name = protocollo.get_data_name()
             data_protocollo = cleaned_data.get(data_protocollo_name)
 
@@ -475,7 +474,8 @@ class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
             ultima_progressione = False
 
         errors = []
-        value = cleaned_data.get(name)
+        # value = cleaned_data.get(name)
+        value = cleaned_data
 
         if not value:
             return ["Specificare un valore valido"]
@@ -543,7 +543,7 @@ class PEO_ProtocolloField(ProtocolloField):
                               " {}".format(data_presa_servizio))
 
             # Serve interfacciarsi con DateInRangeInCorsoComplexField
-            d = DateInRangeInCorsoComplexField()
+            d = PEO_DateInRangeInCorsoComplexField()
 
             in_corso_name = d.get_in_corso_name()
             in_corso = cleaned_data.get(in_corso_name)
@@ -570,7 +570,7 @@ class PEO_ProtocolloField(ProtocolloField):
             # per cui la data del protocollo deve essere sempre precedente
             # all'ultima progressione effettuata
             if not data_inizio:
-                if ultima_progr and data_protocollo < ultima_progr:
+                if ultima_progr and self.data_protocollo < ultima_progr:
                     errors.append("La data del protocollo è precedente "
                                   "all'ultima progressione effettuata: "
                                   "{}".format(ultima_progr))

@@ -1,11 +1,16 @@
-{% extends 'modulo_form.html' %}
+{% extends 'modulo_form_modifica.html' %}
+
+{% load i18n %}
 
 {% block  modulo_head %}
-<h1 class="ui header">Modulo inserito</h1>
+<h1 class="ui header">{% trans "Modulo inserito" %}</h1>
 {% endblock modulo_head %}
 
+{% block add_another %}{% endblock add_another %}
 {% block info_bando %}{% endblock info_bando%}
 
+{% block formbuttons_back %}{% endblock formbuttons_back %}
+{% block formbuttons_pdf %}{% endblock formbuttons_pdf %}
+{% block submit_button %}{% endblock submit_button %}
 
-{% block formbuttons %}
-{% endblock %}
+{% block bottom_scripts %}{% endblock bottom_scripts %}
