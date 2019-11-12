@@ -138,7 +138,7 @@ def export_graduatoria_csv(queryset, fopen,
                         punteggio = domanda.calcolo_punteggio_max_descr_ind(d, domanda.dipendente.livello)
                         riga.append(punteggio.__str__().replace('.', replace_dot_with))
                     # Anzianità Dipendente Università
-                    riga.append(domanda.punteggio_anzianita.replace('.', replace_dot_with))
+                    riga.append(domanda.get_punteggio_anzianita().__str__().replace('.', replace_dot_with))
                     # Punteggio totale
                     riga.append(domanda.punteggio_calcolato.__str__().replace('.', replace_dot_with))
                     writer.writerow(riga)

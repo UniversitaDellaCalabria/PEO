@@ -157,10 +157,17 @@ class IndicatorePonderatoNestedInline(nested_admin.NestedTabularInline):
     model = IndicatorePonderato
     form  = IndicatorePonderatoModelForm
     sortable_field_name = "ordinamento"
-    NestedInlines = [ 
+    NestedInlines = [
                      # DescrizioneIndicatoreNestedInline,
                      PunteggioMaxIndicatorePonderatoPosizioneEconomicaNestedInline,]
     # This controls the number of extra forms the formset will display in addition to the initial forms.
+    extra = 0
+    classes = ['collapse',]
+
+
+class AvvisoBandoBandoNestedInline(nested_admin.NestedTabularInline):
+    model = AvvisoBando
+    sortable_field_name = "ordinamento"
     extra = 0
     classes = ['collapse',]
 
@@ -240,7 +247,7 @@ class RuoliDisabilitati_DescrizioneIndicatoreModelForm(forms.ModelForm):
         fields = ('__all__')
         widgets = {'ordinamento': forms.HiddenInput(),}
                    #'ruolo': forms.CheckboxSelectMultiple()}
-                
+
 class RuoliDisabilitati_DescrizioneIndicatoreNestedInline(nested_admin.NestedTabularInline):
     model = RuoliDisabilitati_DescrizioneIndicatore
     form = RuoliDisabilitati_DescrizioneIndicatoreModelForm

@@ -153,7 +153,7 @@ class CSAMethods(object):
         if not v:
             raise CSAException(message='Il dipendente non ha una data di presa servizio in CSA!',
                                errors=['dt_rap_ini è vuoto',])
-        return timezone.get_current_timezone().localize(v)
+        return timezone.get_current_timezone().localize(v).date()
 
     def get_data_cessazione_servizio_csa(self):
         # TODO

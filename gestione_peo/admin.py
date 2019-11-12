@@ -31,7 +31,8 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
                #IndicatorePonderatoInline,
                Punteggio_TitoloStudioNestedInline,
                CategorieDisabilitate_TitoloStudioNestedInline,
-               Punteggio_Anzianita_ServizioNestedInline]
+               Punteggio_Anzianita_ServizioNestedInline,
+               AvvisoBandoBandoNestedInline,]
 
     date_hierarchy = 'data_inizio'
 

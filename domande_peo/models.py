@@ -64,6 +64,8 @@ class DomandaBando(TimeStampedModel, PunteggioDomandaBando):
                                 help_text='Livello alla data della presentazione della domanda')
     data_presa_servizio = models.DateField('Data presa servizio alla data della presentazione della domanda',
                                             null=True, blank=True)
+    data_ultima_progressione = models.DateField('Data ultima progressione alla data della presentazione della domanda',
+                                                null=True, blank=True)
     punteggio_anzianita_manuale = models.FloatField('Punteggio assegnato all\'anzianità interna MANUALE',
                                                     help_text="impostato manualmente",
                                                     blank=True, null=True)
@@ -71,9 +73,7 @@ class DomandaBando(TimeStampedModel, PunteggioDomandaBando):
                                                       " comprensivo di quello derivante dall'anzianità",
                                             blank=True, null=True)
     progressione_accettata = models.BooleanField(default=False,
-                                    help_text=("Marca questa domanda come idonea alla progressione."
-                                               " Se vero fa fede la data di protocollazione come"
-                                               " Data ultima progressione"))
+                                    help_text=("Marca questa domanda come idonea alla progressione."))
     descrizione = models.TextField(blank=True, default='')
     commento_punteggio = models.TextField(blank=True, default='',
                                           help_text="Il testo inserito in questo"
@@ -187,6 +187,19 @@ class DomandaBando(TimeStampedModel, PunteggioDomandaBando):
                 n += 1
         return n
 
+    def get_livello_dipendente(self):
+        if self.livello: return self.livello
+        return self.dipendente.livello
+
+    def get_presa_servizio_dipendente(self):
+        if self.data_presa_servizio: return self.data_presa_servizio
+        return self.dipendente.get_data_presa_servizio_csa()
+
+    def get_ultima_progressione_dipendente(self):
+        if self.data_ultima_progressione: return self.data_ultima_progressione
+        return self.dipendente.get_data_progressione()
+
+
 class RettificaDomandaBando(TimeStampedModel):
     """
     Timeline di chiusure, protocollazioni e rettifiche delle domande
@@ -199,9 +212,8 @@ class RettificaDomandaBando(TimeStampedModel):
                                          max_length=32)
     data_protocollazione = models.DateTimeField(help_text="quando la domanda è stata protocolla/consegnata",
                                                 blank=True, null=True)
-    # data_rettifica   = models.DateTimeField(help_text=("Data di rettifica in caso"
-                                                       # " di riapertura della"
-                                                       # " domanda per modifiche"),)
+    dump = models.TextField(blank=True, default='')
+
     class Meta:
         ordering = ['-created']
         verbose_name = 'Chiusura della Domanda di partecipazione del Dipendente'

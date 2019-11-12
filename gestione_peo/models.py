@@ -1,5 +1,6 @@
 import inspect
 import operator
+import sys
 
 from csa.models import RUOLI
 from django.apps import apps
@@ -136,7 +137,6 @@ class Bando(TimeStampedModel):
     accettazione_clausole_text = models.TextField('Testo Accettazione Clausole',
                                                   help_text=("es. Dichiaro di aver preso visione..."),
                                                   blank=True, null=True)
-
     class Meta:
         verbose_name = _('Bando')
         verbose_name_plural = _('Bandi')
@@ -324,9 +324,29 @@ class DescrizioneIndicatore(TimeStampedModel):
         Ritorna l'ordinamento dei fields che compongono il form associato,
         definito da backend
         """
+        # print(get_fields_types(peo_formfields))
+
         fields_order = [ETICHETTA_INSERIMENTI_ID,]
         for i in self.moduloinserimentocampi_set.all():
-            fields_order.append(format_field_name(i.name))
+            appended = False
+            class_name=sys.modules['gestione_peo.peo_formfields']
+            for m in inspect.getmembers(class_name, inspect.isclass):
+                is_complex = False
+                if hasattr(m[1], 'is_complex'):
+                    is_complex=getattr(m[1], 'is_complex')
+                to_check = is_complex or hasattr(m[1], 'name')
+                if m[0]==i.field_type and to_check:
+                    dyn_field=m[1]()
+                    if is_complex:
+                        fields = dyn_field.get_fields()
+                        for f in fields:
+                            if hasattr(f, 'name'):
+                                fields_order.append(f.name)
+                    else: fields_order.append(dyn_field.name)
+                    appended=True
+                if appended: break
+            if not appended:
+                fields_order.append(format_field_name(i.name))
         return fields_order
 
     def get_form(self,
@@ -626,6 +646,29 @@ class ModuloInserimentoCampi(DynamicFieldMap):
         ordering = ('ordinamento', )
         verbose_name = _('Modulo di inserimento')
         verbose_name_plural = _('Moduli di inserimento')
+
+
+class AvvisoBando(TimeStampedModel):
+    """
+    """
+    bando = models.ForeignKey(Bando, on_delete=models.CASCADE)
+    titolo = models.CharField(max_length=255, blank=False, null=False,
+                              help_text="Titolo clausola (es: Privacy...)")
+    corpo_del_testo = models.TextField(help_text=("es. Avviso riguardante..."),
+                                       blank=False, null=False)
+    ordinamento = models.PositiveIntegerField(help_text="posizione nell'ordinamento",
+                                              blank=True, default=0)
+    allegato = models.FileField(upload_to='avvisi_bando/%m-%Y/',
+                                null=True,blank=True)
+    is_active = models.BooleanField('Visibile agli utenti', default=True)
+
+    class Meta:
+        ordering = ('ordinamento', )
+        verbose_name = _('Avviso Bando')
+        verbose_name_plural = _('Avvisi Bando')
+
+    def __str__(self):
+        return '({}) {}'.format(self.bando, self.titolo)
 
 
 class ClausoleBando(TimeStampedModel):

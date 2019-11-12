@@ -23,7 +23,7 @@ class DescrizioneIndicatoreAdminAbstract(admin.ModelAdmin):
     class Meta:
         abstract = True
 
-    
+
 class PunteggioMax_DescrizioneIndicatore_PosEconomicaModelForm(forms.ModelForm):
     class Meta:
         model = PunteggioMax_DescrizioneIndicatore_PosEconomica
@@ -117,6 +117,13 @@ class DescrizioneIndicatoreAbstract(admin.TabularInline):
     get_anteprima_modulo_inserimento.short_description = 'Anteprima'
 
 
+class AvvisoBandoInline(admin.TabularInline, ):
+    model = AvvisoBando
+    sortable_field_name = "ordinamento"
+    extra = 0
+    classes = ['collapse',]
+
+
 class ClausoleBandoInline(admin.TabularInline, ):
     model = ClausoleBando
     sortable_field_name = "ordinamento"
@@ -134,7 +141,7 @@ class DescrizioneIndicatoreInline(DescrizioneIndicatoreAbstract,
     inlines = [ Punteggio_DescrizioneIndicatoreInline,
                 Punteggio_DescrizioneIndicatore_TimeDeltaInline,
                 PunteggioMax_DescrizioneIndicatore_PosEconomicaInline,
-                ModuloInserimentoCampiInline,              
+                ModuloInserimentoCampiInline,
                ]
     readonly_fields = ['get_anteprima_modulo_inserimento']
 
@@ -144,10 +151,10 @@ class IndicatorePonderatoInline(admin.TabularInline):
     model = IndicatorePonderato
     form  = IndicatorePonderatoModelForm
     sortable_field_name = "ordinamento"
-    inlines = [ 
+    inlines = [
                 # DescrizioneIndicatoreInline,
                 PunteggioMaxIndicatorePonderatoPosizioneEconomicaInline, ]
-                
+
     # This controls the number of extra forms the formset will display in addition to the initial forms.
     extra = 0
     classes = ['collapse',]
@@ -196,7 +203,7 @@ class Punteggio_Anzianita_ServizioInline(admin.TabularInline):
     sortable_field_name = "ordinamento"
     extra = 0
     classes = ['collapse',]
-    
+
 
 class Punteggio_SubDescrizioneIndicatore_TimeDeltaModelForm(forms.ModelForm):
     class Meta:
@@ -264,8 +271,8 @@ class CategorieDisabilitate_DescrizioneIndicatoreInline(admin.TabularInline):
     form = CategorieDisabilitate_DescrizioneIndicatoreModelForm
     extra = 0
     classes = ['collapse',]
-    
-    
+
+
 class RuoliDisabilitati_DescrizioneIndicatoreModelForm(forms.ModelForm):
 
     class Meta:

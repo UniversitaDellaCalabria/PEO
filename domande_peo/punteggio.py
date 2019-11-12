@@ -33,14 +33,14 @@ class PunteggioDomandaBando(object):
         data_limite = self.bando.data_validita_titoli_fine
 
         # Presa servizio
-        presa_servizio = self.data_presa_servizio
+        presa_servizio = self.get_presa_servizio_dipendente()
         mesi_servizio = differenza_date_in_mesi_aru(presa_servizio,
                                                     data_limite)
         if mesi_servizio == 0:
             return punteggio
 
         # Permanenza nella stessa categoria
-        ultima_progressione = self.dipendente.get_data_progressione()
+        ultima_progressione = self.get_ultima_progressione_dipendente()
         mesi_permanenza = differenza_date_in_mesi_aru(ultima_progressione,
                                                       data_limite)
         unita_temporale = "m"
@@ -49,7 +49,7 @@ class PunteggioDomandaBando(object):
         if self.bando.punteggio_anzianita_servizio_set.first():
             for fascia in self.bando.punteggio_anzianita_servizio_set.all():
                 unita_temporale = fascia.unita_temporale
-                if fascia.posizione_economica == self.livello.posizione_economica:
+                if fascia.posizione_economica == self.get_livello_dipendente().posizione_economica:
                     punteggio_categoria = fascia.punteggio
                     break
                 elif not fascia.posizione_economica:
@@ -255,7 +255,7 @@ class PunteggioDomandaBando(object):
         """
         punteggio = 0
         if self.modulodomandabando_set.first() or self.bando.indicatore_con_anzianita():
-            categoria_economica = self.livello.posizione_economica
+            categoria_economica = self.get_livello_dipendente().posizione_economica
 
             # Per ogni IndicatorePonderato del Bando
             for indicatore in self.bando.indicatoreponderato_set.all():
@@ -273,12 +273,18 @@ class PunteggioDomandaBando(object):
             return 0
 
         # patch
+        # DA RIMUOVERE
         if not self.livello:
             self.livello = self.dipendente.livello
             self.save()
 
         if not self.data_presa_servizio:
             self.data_presa_servizio = self.dipendente.get_data_presa_servizio_csa()
+            self.save()
+
+        if not self.data_ultima_progressione:
+            self.data_ultima_progressione = self.dipendente.get_data_presa_servizio_csa()
+            self.save()
         # end patch
 
         punteggio = self.calcolo_punteggio_tot_moduli_compilati()
@@ -335,7 +341,7 @@ class PunteggioModuloDomandaBando(object):
         # Format Date e controllo "fino ad oggi" e ultima_progressione
         inizio = termine = None
         dipendente = self.domanda_bando.dipendente
-        ultima_progressione = dipendente.get_data_progressione().date()
+        ultima_progressione = self.domanda_bando.get_ultima_progressione_dipendente()
 
         if durata_inserita:
             return durata_inserita
@@ -446,7 +452,7 @@ class PunteggioModuloDomandaBando(object):
             json_dict = json.loads(self.modulo_compilato)
             dati_inseriti = get_as_dict(json_dict)
             dipendente = self.domanda_bando.dipendente
-            cat_eco = self.domanda_bando.livello.posizione_economica
+            cat_eco = self.domanda_bando.get_livello_dipendente().posizione_economica
             # Se il form prevede un campo Punteggio
             if "punteggio_dyn" in dati_inseriti:
                 punteggio =  float(dati_inseriti.get("punteggio_dyn"))

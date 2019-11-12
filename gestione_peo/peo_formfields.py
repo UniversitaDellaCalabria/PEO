@@ -28,6 +28,10 @@ def _limite_validita_titoli(domanda_bando):
     return limite_validita_titoli
 
 
+def _get_livello_dipendente(domanda_bando):
+    return domanda_bando.get_livello_dipendente()
+
+
 def _ultima_progressione_data_presa_servizio(domanda_bando):
     """
     Torna una tuplua con 'data_ultima_progressione' e
@@ -35,8 +39,9 @@ def _ultima_progressione_data_presa_servizio(domanda_bando):
     """
     dipendente = domanda_bando.dipendente
     bando = domanda_bando.bando
-    ultima_progressione = dipendente.get_data_progressione().date()
-    data_presa_servizio = dipendente.get_data_presa_servizio_csa().date()
+
+    data_presa_servizio = domanda_bando.get_presa_servizio_dipendente()
+    ultima_progressione = domanda_bando.get_ultima_progressione_dipendente()
 
     # OVERRIDE delle date progressione e presa_servizio SE queste sono
     # maggiori di bando.ultima_progressione SE E SOLO SE il dipendente
@@ -48,11 +53,11 @@ def _ultima_progressione_data_presa_servizio(domanda_bando):
     # bando.data_validita_titoli_fine.
     # Se il dipendente dovesse in aggiunta inserire ulteriori pregressi
     # li dovrebbe innanzitutto intervenire ARU sui dati presenti in CSA
-    if dipendente.idoneita_peo_attivata():
-        if ultima_progressione > bando.ultima_progressione:
-            ultima_progressione = bando.ultima_progressione
-        if data_presa_servizio > bando.ultima_progressione:
-            data_presa_servizio = bando.ultima_progressione
+    # if dipendente.idoneita_peo_attivata():
+        # if ultima_progressione > bando.ultima_progressione:
+            # ultima_progressione = bando.ultima_progressione
+        # if data_presa_servizio > bando.ultima_progressione:
+            # data_presa_servizio = bando.ultima_progressione
     # Questo risolve i conflitti che potrebbero incorrere
     # tra una decisione di ARU e il comportamento del sistema
     return (ultima_progressione, data_presa_servizio)
@@ -94,8 +99,7 @@ class PEO_PunteggioFloatField(PositiveFloatField):
         domanda_bando = kwargs.get('domanda_bando')
         descrizione_indicatore = kwargs.get('descrizione_indicatore')
         if domanda_bando:
-            posizione_economica = domanda_bando.dipendente. \
-                livello.posizione_economica
+            posizione_economica = _get_livello_dipendente(domanda_bando).posizione_economica
             p_max = descrizione_indicatore. \
                 get_pmax_pos_eco(posizione_economica)
             if not p_max:
@@ -128,7 +132,7 @@ class PEO_TitoloStudioField(ModelChoiceField, BaseCustomField):
         domanda_bando = kwargs.get('domanda_bando')
         descrizione_indicatore = kwargs.get('descrizione_indicatore')
         if domanda_bando:
-            pos_eco = domanda_bando.dipendente.livello.posizione_economica
+            pos_eco = _get_livello_dipendente(domanda_bando).posizione_economica
             punteggio_titoli = domanda_bando.bando. \
                                get_punteggio_titoli_pos_eco(pos_eco)
             if punteggio_titoli:
@@ -501,6 +505,10 @@ class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
 class PEO_ProtocolloField(ProtocolloField):
     field_type = _("_PEO_  Protocollo (tipo/numero/data)")
     is_complex = True
+
+    def __init__(self, **data_kwargs):
+        super().__init__(**data_kwargs)
+        self.data.widget = forms.DateInput(attrs=_date_field_options)
 
     def raise_error(self, name, cleaned_data, **kwargs):
         """

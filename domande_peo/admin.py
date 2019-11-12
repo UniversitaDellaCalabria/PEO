@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.contrib import admin
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 
 from django_form_builder.models import SavedFormContent
@@ -10,7 +11,8 @@ from django_form_builder.utils import get_allegati, get_as_dict
 from unical_template.admin import ReadOnlyAdmin
 
 from .admin_actions import (calcolo_punteggio_domanda,
-                            download_report_graduatoria)
+                            download_report_graduatoria,
+                            progressione_accettata)
 from .models import *
 
 class ModuloDomandaBandoModelForm(forms.ModelForm):
@@ -33,14 +35,12 @@ class ModuloDomandaBandoInLines(admin.StackedInline):
                        'punteggio_calcolato',
                        'download_pdf',
                        'created', 'modified')
-
     fields = ('descrizione_indicatore',
-               # 'modulo_compilato',
-               'get_modulo_anteprima',
-               'punteggio_calcolato',
-               ('get_modulo_grafica', 'download_pdf',),
-               ('created', 'modified'),
-               ('disabilita','motivazione',))
+              'get_modulo_anteprima',
+              'punteggio_calcolato',
+              ('get_modulo_grafica', 'download_pdf',),
+              ('created', 'modified'),
+              ('disabilita','motivazione',))
     extra = 0
     classes = ['collapse',]
 
@@ -146,16 +146,33 @@ class RettificaDomandaBandoInlineAdmin(admin.StackedInline):
     readonly_fields = ['created',
                        'numero_protocollo',
                        'data_protocollazione',
-                       # 'data_rettifica',
-                       'data_chiusura']
-    fields = (
-                ('created',
-                # 'data_rettifica'
-                ),
-                ('numero_protocollo', 'data_protocollazione'),
-                ('data_chiusura',),
+                       'data_chiusura',
+                       'dump',]
 
-             )
+    fieldsets = (
+                (None, {'fields' : (
+                                    ('created',),
+                                    ('numero_protocollo', 'data_protocollazione'),
+                                    ('data_chiusura',),
+                                   )
+                        }),
+                ('Dump', {
+                            'classes': ('collapse',),
+                            'fields': (
+                                        ('dump',),
+                                       )
+                        }
+
+                ))
+
+
+    # fields = (
+                # ('created',),
+                # ('numero_protocollo', 'data_protocollazione'),
+                # ('dump',),
+                # ('data_chiusura',),
+             # )
+
     classes = ['collapse',]
 
 
@@ -191,13 +208,14 @@ class DomandaBandoAdmin(admin.ModelAdmin):
                        'get_dipendente_matricola',
                        'get_dipendente_nome',
                        'get_dipendente_cognome',)
-    actions = [calcolo_punteggio_domanda, download_report_graduatoria]
+    actions = [calcolo_punteggio_domanda, download_report_graduatoria,
+               progressione_accettata]
     date_hierarchy = 'created'
     fields = (
                 ('dipendente', 'bando'),
                 'data_chiusura',
                 ('numero_protocollo',), ('data_protocollazione',),
-                ('livello', 'data_presa_servizio'),
+                ('livello', 'data_presa_servizio', 'data_ultima_progressione'),
                 ('punteggio_anzianita','punteggio_anzianita_manuale',),
                 'punteggio_calcolato',
                 ('is_active', 'progressione_accettata',),
@@ -242,8 +260,7 @@ class DomandaBandoAdmin(admin.ModelAdmin):
 
     def get_modulo_grafica(self, obj):
         url = reverse('domande_peo:riepilogo_domanda',
-                      args=(obj.bando.pk,
-                            obj.pk))
+                      args=(obj.bando.pk, obj.pk))
 
         a = ( "<button type='button' class='button' onClick=\""
               "window.open('{}','winname',"
@@ -255,6 +272,13 @@ class DomandaBandoAdmin(admin.ModelAdmin):
         value = '{}'.format(a)
         return  mark_safe(value)
     get_modulo_grafica.short_description = 'Riepilogo Domanda con grafica'
+
+    def save_model(self, request, obj, form, change):
+        if obj.progressione_accettata:
+            obj.dipendente.data_ultima_progressione_manuale = timezone.datetime(obj.bando.data_inizio.year,
+                                                                                1, 1).date()
+            obj.dipendente.save()
+        super().save_model(request, obj, form, change)
 
     class Media:
         js = ('js/textarea-autosize_legacy.js',

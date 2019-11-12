@@ -1,0 +1,26 @@
+<form action='#' method='post' class="ui form">
+    {% for field in form %}
+    <div class="field">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% block formbuttons %}
+
+    <a href="{% url 'risorse_umane:dashboard' %}">
+        <div class="ui button">
+            <i class="home icon"></i>
+            Torna indietro
+        </div>
+    </a>
+
+
+    <input class="ui primary button" type="submit" value="Inserisci" />
+    {% endblock %}
+
+    {% csrf_token %}
+</form>

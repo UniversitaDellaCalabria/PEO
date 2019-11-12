@@ -14,34 +14,7 @@
     <div class="twelve wide column" id="dashboard_first_panel">
 
         {% include "dettaglio_bando_peo_fields.html" %}
-
-        {% if clausole %}
-        <div class="ui section divider"></div>
-
-        <h2 class="ui">Accettazione delle Condizioni di Partecipazione</h2>
-
-        {% for clausola in clausole %}
-        {% if clausola.is_active %}
-        <div class="ui raised segment">
-            <h4>
-                {{ clausola.titolo }}
-            </h4>
-            <p>
-                {{ clausola.corpo_as_html|safe }}
-            </p>
-
-            {% if clausola.allegato %}
-                <p>
-                    <a href="{% get_media_prefix %}{{ clausola.allegato }}">
-                        <i class="paperclip right icon"></i>Allegato
-                    </a>
-                </p>
-            {% endif %}
-        </div>
-        {% endif %}
-        {% endfor %}
-
-        {% endif %}
+        {% include "clausole.html" %}
         <br>
         <p>
             <b>
@@ -55,33 +28,7 @@
                 {% endif %}
             </b>
         </p>
-        <form action='#' method='post' class="ui form">
-
-            {% for field in form %}
-            <div class="field">
-                {{ field.errors }}
-                {{ field.label_tag }} {{ field }}
-                {% if field.help_text %}
-                <p class="help">{{ field.help_text|safe }}</p>
-                {% endif %}
-            </div>
-            {% endfor %}
-
-            {% block formbuttons %}
-
-            <a href="{% url 'risorse_umane:dashboard' %}">
-                <div class="ui button">
-                    <i class="home icon"></i>
-                    Torna indietro
-                </div>
-            </a>
-
-
-            <input class="ui primary button" type="submit" value="Inserisci" />
-            {% endblock %}
-
-            {% csrf_token %}
-        </form>
+        {% include "clausole_check_form.html" %}
     </div>
 
     <div class="four wide column">

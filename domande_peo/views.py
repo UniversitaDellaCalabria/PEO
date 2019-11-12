@@ -128,7 +128,8 @@ def scelta_titolo_da_aggiungere(request, bando_id):
                                                   dipendente=dipendente,
                                                   modified=timezone.localtime(),
                                                   livello=dipendente.livello,
-						  data_presa_servizio=dipendente.get_data_presa_servizio_csa())
+                                                  data_presa_servizio=dipendente.get_data_presa_servizio_csa(),
+                                                  data_ultima_progressione=dipendente.get_data_progressione())
     if not domanda_peo.is_active:
         return render(request, 'custom_message.html',
                       {'avviso': ("La tua Domanda è stata sospesa. Per avere "
@@ -652,7 +653,7 @@ def riepilogo_domanda(request, bando_id, domanda_bando_id, pdf=None):
     if request.user.is_staff:
         # has the permission to view others data
         domanda_bando = get_object_or_404(DomandaBando,
-                                  pk=domanda_bando_id)
+                                          pk=domanda_bando_id)
     else:
         dipendente = get_object_or_404(Dipendente,
                                        matricola=request.user.matricola)
@@ -678,8 +679,9 @@ def riepilogo_domanda(request, bando_id, domanda_bando_id, pdf=None):
         'MEDIA_URL': settings.MEDIA_URL}
     if pdf:
         return render(request, 'riepilogo_domanda_pdf.html', d)
-    else:
-        return render(request, 'riepilogo_domanda.html', d)
+    elif request.user!=domanda_bando.dipendente.utente:
+        return render(request, 'riepilogo_domanda_admin.html', d)
+    return render(request, 'riepilogo_domanda.html', d)
 
 @login_required
 def download_modulo_inserito_pdf(request, bando_id, modulo_compilato_id):
@@ -688,15 +690,17 @@ def download_modulo_inserito_pdf(request, bando_id, modulo_compilato_id):
         riutilizzando le view precedenti evitiamo di rifare gli stessi controlli
         ricicliamo query e decoratori
     """
-    dipendente = get_object_or_404(Dipendente, matricola=request.user.matricola)
     bando = _get_bando_queryset(bando_id).first()
-    mdb = get_object_or_404(ModuloDomandaBando,
-                            pk=modulo_compilato_id)
-    # se l'utente non fa parte dello staff e il pdf non gli appartiene nega l'accesso
-    if not request.user.is_staff:
-        mdb = ModuloDomandaBando.objects.filter(domanda_bando__dipendente=dipendente).first()
-        if not mdb:
-            return 404()
+    if request.user.is_staff:
+        mdb = get_object_or_404(ModuloDomandaBando,
+                                pk=modulo_compilato_id)
+        dipendente = mdb.domanda_bando.dipendente
+    else:
+        dipendente = get_object_or_404(Dipendente,
+                                       matricola=request.user.matricola)
+        mdb = get_object_or_404(ModuloDomandaBando,
+                                pk=modulo_compilato_id,
+                                domanda_bando__dipendente=dipendente)
 
     descrizione_indicatore = mdb.descrizione_indicatore
     form = mdb.compiled_form(remove_filefields=True)
@@ -780,12 +784,23 @@ def chiudi_apri_domanda(request, bando_id,
     # la rettifica è identica sia con protocollo che senza
     if azione == 'riapri':
         # creazione rettifica
-        rettifica = RettificaDomandaBando.objects.create(
-                                                    domanda_bando=domanda_bando,
-                                                    data_chiusura=domanda_bando.data_chiusura,
-                                                    numero_protocollo=domanda_bando.numero_protocollo,
-                                                    data_protocollazione=domanda_bando.data_protocollazione,
-                                                        )
+        dump_domanda = []
+        mdbs = ModuloDomandaBando.objects.filter(domanda_bando=domanda_bando)
+        for mdb in mdbs:
+            inner_list = []
+            inner_list.append(("id", mdb.pk))
+            inner_list.append(("created", mdb.created.__str__()))
+            inner_list.append(("modified", mdb.modified.__str__()))
+            inner_list.append(("modulo_compilato", mdb.modulo_compilato))
+            inner_list.append(("descrizione_indicatore_id", mdb.descrizione_indicatore_id))
+            dump_domanda.append(inner_list)
+            dump_json = json.dumps(dump_domanda, indent=2)
+
+        rettifica = RettificaDomandaBando.objects.create(domanda_bando=domanda_bando,
+                                                         data_chiusura=domanda_bando.data_chiusura,
+                                                         numero_protocollo=domanda_bando.numero_protocollo,
+                                                         data_protocollazione=domanda_bando.data_protocollazione,
+                                                         dump=dump_json)
         # eventuale protocollo e data protocollo vengono sovrascritti solo ad ulteriore chiusura
         # se già protocollato e rettificato vale sempre quello già protocollato
         domanda_bando.data_chiusura = None

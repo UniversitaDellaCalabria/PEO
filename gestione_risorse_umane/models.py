@@ -15,6 +15,32 @@ from  csa.models import RUOLI
 from .csa_methods import CSAMethods
 
 
+class Avviso(TimeStampedModel):
+    """
+    Avvisi che se attivi vengono visualizzati in home page
+    """
+    titolo = models.CharField(max_length=255, blank=False, null=False,
+                              help_text="Titolo Avviso")
+    corpo_del_testo = models.TextField(help_text=("es. La partecipazione al Bando comporta..."),
+                                       blank=False, null=False)
+    ordinamento = models.PositiveIntegerField(help_text="posizione nell'ordinamento",
+                                              blank=True, default=0)
+    allegato = models.FileField(upload_to='allegati_avvisi/%m-%Y/',
+                                null=True,blank=True)
+    is_active = models.BooleanField('Visibile agli utenti', default=True)
+
+    class Meta:
+        ordering = ('ordinamento', )
+        verbose_name = _('Avvisi')
+        verbose_name_plural = _('Avvisi')
+
+    def corpo_as_html(self):
+        return text_as_html(self.corpo_del_testo)
+
+    def __str__(self):
+        return '{}'.format(self.titolo)
+
+
 class TipoProfiloProfessionale(models.Model):
     """
     esempio
@@ -193,9 +219,9 @@ class Dipendente(TimeStampedModel, PeoMethods, CSAMethods):
                                                  null=True,blank=True)
 
 
-    data_presa_servizio_manuale = models.DateTimeField(null=True, blank=True)
-    data_ultima_progressione_manuale = models.DateTimeField(null=True, blank=True)
-    data_cessazione_contratto_manuale = models.DateTimeField(null=True, blank=True)
+    data_presa_servizio_manuale = models.DateField(null=True, blank=True)
+    data_ultima_progressione_manuale = models.DateField(null=True, blank=True)
+    data_cessazione_contratto_manuale = models.DateField(null=True, blank=True)
 
 
     motivo_cessazione_contratto = models.CharField(max_length=254,

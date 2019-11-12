@@ -28,3 +28,4 @@ django_form_builder/*
 django_peo/sp_pysaml2_shibidp.py
 django_peo_cache/tmp/*
 !django_peo_cache/tmp/README.md
+data/media/avvisi_bando/*

@@ -19,6 +19,11 @@ from .admin_filters import *
 from .models import *
 
 
+@admin.register(Avviso)
+class AvvisoAdmin(admin.ModelAdmin):
+    list_display = ('titolo', 'is_active')
+    list_filter = ('titolo',)
+
 @admin.register(PosizioneEconomica)
 class PosizioneEconomicaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'punti_organico', 'descrizione')
@@ -97,7 +102,8 @@ class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
                               'data_presa_servizio',
                               'data_cessazione_contratto')
 
-    readonly_fields = ('livello', 'ruolo',
+    readonly_fields = (
+                       # 'livello', 'ruolo',
                        'sede',
                        'afferenza_organizzativa',
                        'data_presa_servizio',

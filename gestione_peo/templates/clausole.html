@@ -1,0 +1,26 @@
+{% load static %}
+
+{% if clausole %}
+    <div class="ui section divider"></div>
+
+    <h2 class="ui">Accettazione delle Condizioni di Partecipazione</h2>
+    {% for clausola in clausole %}
+        {% if clausola.is_active %}
+        <div class="ui raised segment">
+            <h4>
+                {{ clausola.titolo }}
+            </h4>
+            <p>
+                {{ clausola.corpo_as_html|safe }}
+            </p>
+            {% if clausola.allegato %}
+                <p>
+                    <a href="{% get_media_prefix %}{{ clausola.allegato }}">
+                        <i class="paperclip right icon"></i> Allegato
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}

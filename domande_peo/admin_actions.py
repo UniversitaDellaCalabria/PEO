@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
+from django.utils import timezone
 
 from .models import *
 from .utils import export_graduatoria_csv
@@ -43,3 +44,23 @@ def download_report_graduatoria(modeladmin, request, queryset):
     response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(queryset.first().bando)
     return export_graduatoria_csv(queryset, response, replace_dot_with = ',')
 download_report_graduatoria.short_description = "Download report risultati"
+
+
+def progressione_accettata(modeladmin, request, queryset):
+    """
+    progressione_accettata
+    """
+    num = 0
+    failed = 0
+    msg_ok = '{} progressione accettata'
+    for i in queryset:
+        i.progressione_accettata = 1
+        i.dipendente.data_ultima_progressione_manuale = timezone.datetime(i.bando.data_inizio.year,
+                                                                          1, 1).date()
+        i.dipendente.save()
+        i.save()
+        messages.add_message(request, messages.INFO, msg_ok.format(i.__str__()))
+        num += 1
+    if num:
+        messages.add_message(request, messages.INFO, '{} progressioni accettate'.format(num))
+progressione_accettata.short_description = "Marca come Progressione Accettata"

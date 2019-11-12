@@ -12,9 +12,9 @@
 <div class="ui grid stackable grid">
     <div class="twelve wide column" id="sticky_reference_panel">
         {% include "dettaglio_bando_peo_fields.html" %}
-        
+
         <h2 class="ui" id="{{ bando.slug }}">Presentazione Domanda</h2>
-        
+
         {% include "chiusure_rettifiche_dialogs.html" %}
 
         {% if domanda_peo.modulodomandabando_set.all or domanda_peo.bando.indicatore_con_anzianita %}
@@ -29,15 +29,15 @@
             </ul>
             {% endif %}
             <br>
-    
+
             {% comment %}
                 {% if domanda_peo.modulodomandabando_set.all|length > 5 %}
                     {% include "buttons_domanda_peo.html" %}
                 {% endif %}
             {% endcomment %}
-    
+
             <div class="content" style="overflow-x: auto;">
-                
+
                 {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
                     <div class="ui info message" style="padding-bottom:0">
                         <div class="header">
@@ -45,13 +45,13 @@
                         </div>
                         <div class="ui grid">
                             <div class="fourteen wide column">
-                                Il "punteggio calcolato" deriva dalla somma di 
-                                tutti i singoli punteggi attribuiti a ciascun 
-                                inserimento, tenendo conto dei <b>limiti massimi</b> 
+                                Il "punteggio calcolato" deriva dalla somma di
+                                tutti i singoli punteggi attribuiti a ciascun
+                                inserimento, tenendo conto dei <b>limiti massimi</b>
                                 previsti dal Bando per ogni singolo Indicatore ponderato.
                             </div>
                             <div class="two wide column" style="text-align:right">
-                                <b>{{ domanda_peo.punteggio_calcolato }}</b>
+                                <b>{{ domanda_peo.punteggio_calcolato|default_if_none:"" }}</b>
                             </div>
                         </div>
                     </div>
@@ -75,10 +75,10 @@
                         </div>
                     {% endif %}
                 {% endif %}
-                
+
                 {% if domanda_peo.modulodomandabando_set.all %}
                 <p>
-                    Di seguito sono riportati i moduli che hai compilato 
+                    Di seguito sono riportati i moduli che hai compilato
                     per la presentazione della tua Domanda {{ bando }}.
                 </p>
                 <table class="ui celled striped selectable table visible">
@@ -91,12 +91,12 @@
                                 Indicatore Ponderato
                             </th>
                             {% if domanda_peo.modificabile %}
-                                <th class="center aligned">  
+                                <th class="center aligned">
                                     Azione
                                 </th>
                             {% endif %}
                             {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
-                                <th class="right aligned">  
+                                <th class="right aligned">
                                     Punteggio calcolato
                                 </th>
                             {% endif %}
@@ -131,7 +131,7 @@
                                             <a style="color: white;" href="{% url 'domande_peo:modifica_titolo' bando_id=ins.domanda_bando.bando.slug modulo_compilato_id=ins.pk  %}">
                                                 <button class="ui button primary">Modifica</button>
                                             </a>
-                                        {% else %}  
+                                        {% else %}
                                             <div class="ui buttons">
                                                 <button class="ui negative button" id="cancella_ind_{{ ins.pk }}">Cancella</button>
                                                 <div class="or" data-text="o"></div>
@@ -144,15 +144,15 @@
                                 {% endif %}
 
                                 {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
-                                    <td class="right aligned"> 
-                                        {% if ins.disabilita %}  
+                                    <td class="right aligned">
+                                        {% if ins.disabilita %}
                                             <div class="ui error message">
                                                 <div class="header">Inserimento non valutato</div>
                                                 <p>{{ ins.motivazione }}</p>
                                             </div>
                                         {% elif ins.punteggio_calcolato %}
                                             {{ ins.punteggio_calcolato }}
-                                        {% else %}  
+                                        {% else %}
                                             --
                                         {% endif %}
                                     </td>
@@ -162,17 +162,17 @@
                     </tbody>
                 </table>
             {% endif%}
-            
+
             {% include "buttons_domanda_peo.html" %}
-            
+
             </div>
 
         {% endif %}
-    
+
         {% comment %}
             end if domanda_peo.modulodomandabando_set.all
         {% endcomment %}
-    
+
         <br>
         <a href="{% url 'risorse_umane:dashboard' %}">
             <button class="ui button">
@@ -191,13 +191,13 @@
 {% endblock modal_dialogs %}
 
 {% endblock %}
-    
+
 {% block bottom_scripts %}
 <script type="text/javascript" src="{% static 'js/lockbutton.js' %}"></script>
 <script>
 $('.ui.accordion').accordion();
 
-// Mostra il pannello modal 
+// Mostra il pannello modal
 // per la conferma di cancellazione di un inserimento
 $(function(){
     {% for ins in domanda_peo.modulodomandabando_set.all %}
@@ -208,8 +208,8 @@ $(function(){
     {% endfor %}
 });
 
-// Mostra il pannello modal 
-// per la conferma di cancellazione della domanda    
+// Mostra il pannello modal
+// per la conferma di cancellazione della domanda
 $(function(){
     $("#but_cancella_domanda_{{ domanda_peo.pk }}").click(function(){
         $('#cancella_domanda_{{ domanda_peo.pk }}')
@@ -217,7 +217,7 @@ $(function(){
     });
 });
 
-// Mostra il pannello modal 
+// Mostra il pannello modal
 // per la conferma di chiusura di un inserimento
 $(function(){
     $("#but_chiudi_domanda_{{ domanda_peo.pk }}").click(function(){
@@ -226,7 +226,7 @@ $(function(){
     });
 });
 
-// Mostra il pannello modal 
+// Mostra il pannello modal
 // per la visualizzazione dei moduli non compilati che impediscono
 // la chiusura della domanda
 $(function(){
@@ -236,7 +236,7 @@ $(function(){
     });
 });
 
-// Mostra il pannello modal 
+// Mostra il pannello modal
 // per la conferma di riapertura della domanda
 $(function(){
     $("#but_rettifica_domanda_{{ domanda_peo.pk }}").click(function(){

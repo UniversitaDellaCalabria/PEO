@@ -1,9 +1,25 @@
 {% extends 'riepilogo_domanda.html' %}
 {% load static %}
+{% load domande_peo_tags %}
 
 {% block  modulo_head %}
 <h2 class="ui header">Domanda di partecipazione {{ bando }}</h2>
 {% endblock modulo_head %}
+
+{% block allegati %}
+{% get_allegati_modulo ins as allegati_modulo %}
+    {% if allegati_modulo %}
+    <div class="ui section divider" ></div>
+    <div>
+        <label>Allegati</label>
+        {% for k,v in allegati_modulo %}
+            <div class="field">
+                <p style="margin-bottom: 3px; margin-top: 7px;">{{k}}</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endblock allegati %}
 
 {% block submit_button %}
 {% endblock submit_button %}

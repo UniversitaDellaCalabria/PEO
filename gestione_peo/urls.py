@@ -22,4 +22,5 @@ urlpatterns = [
     path('bandi/<str:bando_id>/', dettaglio_bando_peo, name='dettaglio_bando_peo'),
     path('bandi', bandi_peo, name='bandi_peo'),
     path('bandi/import_file', import_file, name='import_file'),
+    path('bandi/<str:bando_id>/avvisi/<int:avviso_id>/download/', download_avviso, name='download_avviso'),
 ]

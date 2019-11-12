@@ -35,104 +35,18 @@
         </div>
         <div class="ui horizontal divider"></div>
 
+        {% for avviso in avvisi %}
+        <div class="ui message">
+          <div class="header">
+            {{ avviso.titolo }}
+          </div>
+          <p>{{ avviso.corpo_del_testo }}</p>
+        </div>
+        {% endfor %}
+
         {% include "peo_dialogs.html" %}
 
-        {% if domande_bando %}
-            <div class="ui horizontal divider"></div>
-            <h3 class="ui dividing header item">Storico delle Domande</h3>
-            <p>
-                In questa sezione puoi visionare tutte le domande relative
-                ai precedenti bandi ai quali hai partecipato attraverso questa piattaforma.
-            </p>
-            <div class="ui fluid styled accordion">
-
-                {% for domanda_bando in domande_bando %}
-                    {% with domanda_bando.is_protocollata as domanda_protocollata %}
-                    <div class="title" style="color: #000000;">
-                        <i class="dropdown icon"></i> {{ domanda_bando.bando.nome}}
-                    </div>
-                    <div class="ui content">
-                        <div class="ui list">
-                            <div class="item">
-                                <i class="file alternate outline icon"></i>
-                                <div class="content">
-                                    <b>Parametri:</b>
-                                    <a href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=domanda_bando.bando.slug %}">
-                                        Consulta.
-                                    </a>
-                                </div>
-                            </div>
-
-                            {% if domanda_protocollata %}
-                                <div class="item">
-                                    <i class="calendar icon"></i>
-                                    <div class="content">
-                                        {% if domanda_bando.progressione_accettata %}
-                                            <b style="color:green">PROGRESSIONE ACCETTATA</b>
-                                        {% else %}
-                                            <b>--</b>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% endif %}
-
-                            <div class="item">
-                                <i class="calendar alternate outline icon"></i>
-                                <div class="content">
-                                    <b>Data creazione:</b> {{domanda_bando.created}}
-                                </div>
-                            </div>
-                            <div class="item">
-
-                                {% if domanda_bando.bando.is_in_corso %}
-                                    <i class="hourglass start icon"></i>
-                                    <div class="content">
-                                        <b>Stato:</b>
-                                        <span style="color:green">In Corso</span>
-                                    </div>
-
-                                {% elif domanda_protocollata %}
-                                    <i class="hourglass end icon"></i>
-                                    <div class="content">
-                                        <b>Stato:</b>
-                                        <span style="color:blue">
-                                            Chiusa e Protocollata ({{ domanda_bando.data_protocollazione }})
-                                        </span>
-                                    </div>
-
-                                {% else %}
-                                    <i class="hourglass half icon"></i>
-                                    <div class="content">
-                                        <b>Stato:</b>
-                                        <span style="color:red">Chiusa</span>
-                                    </div>
-                                {% endif %}
-
-                            </div>
-                            <div class="item" style="margin-top: 21px;">
-                                <a href="{% url 'domande_peo:riepilogo_domanda' bando_id=domanda_bando.bando.pk domanda_bando_id=domanda_bando.pk  %}">
-                                    <button class="ui left floated labeled icon blue button">
-                                        <i class="file pdf outline icon"></i> Riepilogo stampabile
-                                    </button>
-                                </a>
-                                <a href="{% url 'domande_peo:accetta_condizioni_bando' bando_id=domanda_bando.bando.slug %}">
-                                    <button class="ui right floated positive button">
-                                        <i class="file alternate outline icon"></i> Accedi alla tua Domanda di partecipazione
-                                    </button>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endwith %}
-                <!--
-                domanda_bando in domande_bando
-                -->
-                {% endfor %}
-            </div>
-            <!--
-        end if domande_bando
-        -->
-        {% endif %}
+        {% include "storico_domande.html" %}
 
         {% comment %}
         <div class="ui horizontal divider"></div>

@@ -59,7 +59,7 @@ class PeoMethods(object):
             if _ultima['inquadr'] == i['inquadramento']:
                 _ultima['dt_ini'] = i['data_inizio']
 
-        return timezone.get_current_timezone().localize(_ultima['dt_ini'])
+        return timezone.get_current_timezone().localize(_ultima['dt_ini']).date()
 
     @is_apps_installed(['gestione_peo', ])
     def idoneita_peo(self):
@@ -73,7 +73,7 @@ class PeoMethods(object):
 
         # Se ad oggi non sono stati maturati gli anni minimi di servizio
         # specificati nel bando
-        data_presa_servizio = self.get_data_presa_servizio_csa().date()
+        data_presa_servizio = self.get_data_presa_servizio_csa()
         if (bando.data_validita_titoli_fine - data_presa_servizio) < datetime.timedelta(days=(365*bando.anni_servizio_minimi)):
             return False
 
@@ -89,7 +89,7 @@ class PeoMethods(object):
 
         # Se l'ultima progressione effettuata non rispetta i termini del bando
         # specificati dal campo "ultima_progressione"
-        if self.get_data_progressione().date() > bando.ultima_progressione:
+        if self.get_data_progressione() > bando.ultima_progressione:
             return False
         return True
 

@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.shortcuts import render
 
 from gestione_peo.models import *
-from gestione_risorse_umane.models import Dipendente
+from gestione_risorse_umane.models import Dipendente, Avviso
 from unical_accounts.models import User
 from unical_template.decorators import site_not_in_manteinance
 from unical_template.breadcrumbs import BreadCrumbs
@@ -65,7 +65,8 @@ def dashboard(request):
         'dipendente': dipendente,
         'domande_bando': domande_bando,
         'bandi': bandi,
-        'MEDIA_URL': settings.MEDIA_URL
+        'MEDIA_URL': settings.MEDIA_URL,
+        'avvisi': Avviso.objects.filter(is_active=1),
         }
     return render(request, "dashboard.html", context=d)
 

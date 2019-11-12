@@ -18,6 +18,8 @@ from django_auto_serializer.auto_serializer import ImportableSerializedInstance
 from .forms import *
 from .models import *
 
+from domande_peo.decorators import abilitato_a_partecipare
+from domande_peo.utils import download_file
 from gestione_risorse_umane.models import Dipendente
 from unical_accounts.models import User
 from unical_template.breadcrumbs import BreadCrumbs
@@ -107,3 +109,16 @@ def import_file(request):
     isi = ImportableSerializedInstance(jcont)
     isi.save()
     return HttpResponseRedirect(url)
+
+@login_required
+@abilitato_a_partecipare
+def download_avviso(request, bando_id, avviso_id):
+    bando = get_object_or_404(Bando, slug=bando_id)
+    avviso = get_object_or_404(AvvisoBando,
+                               bando=bando,
+                               pk=avviso_id)
+    allegato = avviso.allegato
+    result = download_file(settings.MEDIA_ROOT, allegato)
+
+    if result is None: raise Http404
+    return result
