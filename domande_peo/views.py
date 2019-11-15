@@ -415,7 +415,8 @@ def modifica_titolo(request, bando_id,
 
     mdb = get_object_or_404(ModuloDomandaBando,
                             pk=modulo_compilato_id,
-                            domanda_bando__is_active=True)
+                            domanda_bando__is_active=True,
+                            domanda_bando__dipendente=dipendente)
 
     # json_data = mdb.get_as_dict(allegati=False)
     descrizione_indicatore = mdb.descrizione_indicatore

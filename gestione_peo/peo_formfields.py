@@ -348,7 +348,7 @@ class PEO_DateInRangeInCorsoComplexField(PEO_DateInRangeComplexField):
         return errors
 
 
-class PEO_DateOutOfRangeComplexField(DateStartEndComplexField):
+class PEO_DateOutOfRangeComplexField(PEO_DateStartEndComplexField):
     """
     Field composto da DataInizio (DateField) e DataFine (DateField)
     che deve rigorisamente ricadere fuori dal range imposto dal Bando
@@ -429,7 +429,7 @@ class PEO_DataLowerThanBandoField(PEO_BaseDateField):
             ultima_progressione = False
 
         errors = []
-        value = cleaned_data.get(name)
+        value = cleaned_data
 
         if not value:
             return ['Valore non presente']
@@ -488,7 +488,7 @@ class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
         if value > limite_validita_titoli.year:
             errors.append("Questo anno non può essere superiore a "
                           "quello della data limite imposta dal bando: "
-                          "{}".format(bando.data_validita_titoli_fine.year))
+                          "{}".format(_limite_validita_titoli(domanda_bando).year))
         # Se è successivo all'anno dell'ultima progressione
         if ultima_progressione and (value < ultima_progressione.year):
             errors.append("Questo anno non può essere precedente a "
