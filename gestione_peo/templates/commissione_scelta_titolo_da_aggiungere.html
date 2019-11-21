@@ -1,0 +1,95 @@
+{% extends 'scelta_titolo_da_aggiungere.html' %}
+
+{% load domande_peo_tags %}
+{% load indicatori_ponderati_tags %}
+
+{% block page_sub_title %}
+<h2 class="ui header">Integrazione domanda {{ domanda_peo }}</h2>
+{% endblock page_sub_title %}
+
+{% block lista_indicatori %}
+{% for indicatore_ponderato in indicatori_ponderati %}
+    <div class="title {% if indicatori_ponderati|length == 1 %}active{% endif %}" style="color: #000000;">
+        <i class="dropdown icon"></i>
+        ({{ indicatore_ponderato.id_code }}) {{ indicatore_ponderato.nome }}
+    </div>
+    <div class="content {% if indicatori_ponderati|length == 1 %}active{% endif %}">
+        {% if indicatore_ponderato.note %}
+            <p>{{ indicatore_ponderato.note }}</p>
+        {% endif %}
+        <div class="ui relaxed divided list">
+            {% for descrizione_indicatore in indicatore_ponderato.descrizioneindicatore_set.all %}
+
+            {% comment %}
+            Solo se di fatto il modulo di compilazione (form) esiste, altrimenti non visualizzare!
+            {% endcomment %}
+
+            {% if descrizione_indicatore.get_form %}
+            <div class="item" style="margin-bottom: 15px;">
+
+                {% domanda_bando_num_max_descrind domanda_peo descrizione_indicatore as max_inserimenti %}
+                {% descrizione_indicatore_available descrizione_indicatore dipendente.livello.posizione_economica dipendente.ruolo as available_descrind %}
+
+                <div class="content">
+                    <p>
+                        {% if max_inserimenti or not available_descrind %}
+                        <p class="header">
+                            ({{ descrizione_indicatore.id_code }}) {{ descrizione_indicatore.nome }}
+                        </p>
+                        {% else %}
+                        <a href="{% url 'gestione_peo:commissione_domanda_aggiungi_titolo' commissione_id=commissione.pk domanda_id=domanda_peo.pk descrizione_indicatore_id=descrizione_indicatore.id %}"
+                           class="header">({{ descrizione_indicatore.id_code }}) {{ descrizione_indicatore.nome }}
+                        </a>
+                        {% endif %}
+                    </p>
+                    <div class="description">{{ descrizione_indicatore.note_as_html|safe }}</div>
+                </div>
+                <br>
+
+                {% if max_inserimenti %}
+                    <button class="ui right floated grey button">
+                        <i class="ban icon"></i>
+                        Hai raggiunto il numero di inserimenti
+                        consentiti per questo modulo
+                    </button>
+                {% elif available_descrind %}
+                    <a href="{% url 'gestione_peo:commissione_domanda_aggiungi_titolo' commissione_id=commissione.pk domanda_id=domanda_peo.pk descrizione_indicatore_id=descrizione_indicatore.id %}">
+                        <button class="ui right floated blue button">
+                            <i class="plus square outline icon"></i>
+                            Aggiungi
+                        </button>
+                    </a>
+                {% else %}
+                    <button class="ui right floated grey button">
+                        <i class="ban icon"></i>
+                        Disabilitato per la tua categoria/ruolo
+                    </button>
+                {% endif %}
+            </div>
+            {% else %}
+
+            <div class="item" style="margin-bottom: 15px;">
+                <div class="content">
+                    <h5>{{ descrizione_indicatore.nome }}</h5>
+                    <p>
+                        Non risultano essere stati configurati dei moduli di inserimento per questo Indicatore. Consultare Area Risorse Umane per maggiori chiarimenti.
+                    </p>
+                </div>
+
+            </div>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+{% endfor %}
+{% endblock lista_indicatori %}
+
+{% block bottom_buttons %}
+<br>
+<a href="{% url 'gestione_peo:commissione_domanda_manage' commissione.pk domanda_peo.pk %}">
+    <button class="ui button">
+        <i class="reply icon"></i> Torna alla Domanda
+    </button>
+</a>
+{% endblock bottom_buttons %}

@@ -1,0 +1,103 @@
+<!-- Disabilita domanda -->
+<div class="ui basic modal" id="modal_disabilita_domanda">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Disabilitazione domanda
+        <h5>
+            <b>{{ domanda_peo }}</b>
+        </h5>
+    </div>
+    <div class="content">
+        <p>Stai per disabilitare questa
+            domanda, creata giorno {{ domanda_peo.created }},
+            dal dipendente {{ domanda_peo.dipendente }}.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" href="{% url 'gestione_peo:commissione_disabilita_domanda' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+            <div class="ui red ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: DISABILITA
+            </div>
+        </a>
+
+    </div>
+</div>
+<!-- Abilita domanda -->
+<div class="ui basic modal" id="modal_abilita_domanda">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Abilitazione domanda
+        <h5>
+            <b>{{ domanda_peo }}</b>
+        </h5>
+    </div>
+    <div class="content">
+        <p>Stai per bilitare questa
+            domanda, creata giorno {{ domanda_peo.created }},
+            dal dipendente {{ domanda_peo.dipendente }}.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" href="{% url 'gestione_peo:commissione_abilita_domanda' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: ABILITA
+            </div>
+        </a>
+
+    </div>
+</div>
+
+{% for ins in domanda_peo.modulodomandabando_set.all %}
+<div class="ui basic modal" id="modal_ind_{{ ins.pk }}">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Cancellazione inserimento
+        <h5>
+            <b>{{ ins.get_identificativo_veloce }}</b>
+            <br>
+            {{ ins.descrizione_indicatore.nome }}
+        </h5>
+    </div>
+    <div class="content">
+        <p>Stai per cancellare definitamente questo
+            inserimento, creato giorno {{ ins.created }},
+            dalla domanda {{ ins.domanda_bando.bando }}.
+        </p>
+        <h5>
+            Sei veramente sicuro di questa scelta?
+        </h5>
+    </div>
+    <div class="actions">
+        <div class="ui white basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+
+        <a style="color: white;" href="{% url 'gestione_peo:commissione_cancella_titolo' commissione_id=commissione.pk domanda_id=ins.domanda_bando.pk modulo_id=ins.pk  %}">
+            <div class="ui red ok inverted button">
+                <i class="checkmark icon"></i>
+                Si, sono sicuro: CANCELLA
+            </div>
+        </a>
+
+    </div>
+</div>
+{% endfor %}

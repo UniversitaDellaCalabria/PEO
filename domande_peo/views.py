@@ -51,6 +51,25 @@ import shutil
 
 _breadcrumbs = BreadCrumbs()
 
+# Ci dice se un utente è staff o fa parte di una commissione
+# attiva e in corso per il bando passato come argomento
+# Questo serve per dare accesso agli allegati delle domande
+def _user_is_staff_or_in_commission(user, bando):
+    if not user: return False
+    if user.is_staff: return True
+    if not bando: return False
+    commissioni = CommissioneGiudicatrice.objects.filter(bando=bando,
+                                                         is_active=True)
+    for commissione in commissioni:
+        if not commissione.is_in_corso(): continue
+        commissione_utente = CommissioneGiudicatriceUsers.objects.filter(commissione=commissione,
+                                                                         user=request.user,
+                                                                         is_active=True).first()
+        if not commissione_utente: continue
+        if not commissione_utente.ha_accettato_clausole(): continue
+        if commissione_utente.user==user: return True
+    return False
+
 @login_required
 #@check_accessibilita_bando
 #@check_termini_domande
@@ -303,15 +322,15 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
     dipendente = get_object_or_404(Dipendente, matricola = request.user.matricola)
     bando = _get_bando_queryset(bando_id).first()
     domanda_bando = get_object_or_404(DomandaBando,
-                                      bando = bando,
+                                      bando=bando,
                                       dipendente=dipendente,
                                       is_active=True)
     descrizione_indicatore = get_object_or_404(DescrizioneIndicatore,
-                                               pk = descrizione_indicatore_id)
+                                               pk=descrizione_indicatore_id)
 
     # From gestione_peo/templatetags/indicatori_ponderati_tags
     if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
-                                                          dipendente.ruolo):
+                                                            dipendente.ruolo):
         return render(request, 'custom_message.html',
                       {'avviso': ("La tua posizione o il tuo ruolo"
                                   " risultano disabilitati"
@@ -350,50 +369,20 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
          'descrizione_indicatore': descrizione_indicatore}
 
     if request.method == 'POST':
-        form = descrizione_indicatore.get_form(data=request.POST,
-                                               files=request.FILES,
-                                               domanda_id=domanda_bando.id)
-        if form.is_valid():
-            # qui chiedere conferma prima del salvataggio
-            json_data = get_POST_as_json(request)
-            mdb = ModuloDomandaBando.objects.create(
-                    domanda_bando = domanda_bando,
-                    modulo_compilato = json_data,
-                    descrizione_indicatore = descrizione_indicatore,
-                    modified=timezone.localtime(),
-                    )
+        return_url = reverse('domande_peo:dashboard_domanda', args=[bando.pk,])
+        result = aggiungi_titolo_form(request=request,
+                                      bando=bando,
+                                      descrizione_indicatore=descrizione_indicatore,
+                                      domanda_bando=domanda_bando,
+                                      dipendente=dipendente,
+                                      return_url=return_url,
+                                      log=False)
+        if result:
+            if isinstance(result, HttpResponseRedirect): return result
+            for k in result:
+                d[k] = result[k]
 
-            # salvataggio degli allegati nella cartella relativa
-            # Ogni file viene rinominato con l'ID del ModuloDomandaBando
-            # appena creato e lo "slug" del campo FileField
-            # json_stored = mdb.get_as_dict()
-            json_dict = json.loads(mdb.modulo_compilato)
-            json_stored = get_as_dict(json_dict)
-            if request.FILES:
-                json_stored["allegati"] = {}
-                path_allegati = get_path_allegato(dipendente.matricola,
-                                                  bando.slug,
-                                                  mdb.pk)
-                for key, value in request.FILES.items():
-                    salva_file(request.FILES[key],
-                                path_allegati,
-                                request.FILES[key]._name)
-                    json_stored["allegati"]["{}".format(key)] = "{}".format(request.FILES[key]._name)
-
-            set_as_dict(mdb, json_stored)
-            # mdb.set_as_dict(json_stored)
-            domanda_bando.mark_as_modified()
-            #Allega il messaggio al redirect
-            messages.success(request, 'Inserimento effettuato con successo!')
-
-            url = reverse('domande_peo:dashboard_domanda', args=[bando.pk,])
-            return HttpResponseRedirect(url+'#{}'.format(bando.slug))
-        else:
-            # il form non è valido, ripetere inserimento
-            d['form'] = form
-            d['labeled_errors'] = get_labeled_errors(form)
-            # print('ERRORE', request.POST)
-
+    d['labeled_errors'] = get_labeled_errors(form)
     return render(request, 'modulo_form.html', d)
 
 @login_required
@@ -471,44 +460,22 @@ def modifica_titolo(request, bando_id,
          }
 
     if request.method == 'POST':
-        json_response = json.loads(get_POST_as_json(request))
-        # Costruisco il form con il json dei dati inviati e tutti gli allegati
-        json_response["allegati"] = allegati
-        # rimuovo solo gli allegati che sono stati già inseriti
-        form = descrizione_indicatore.get_form(data=json_response,
-                                               files=request.FILES,
-                                               domanda_id=mdb.domanda_bando.id,
-                                               remove_filefields=allegati)
-        if form.is_valid():
-            if request.FILES:
-                for key, value in request.FILES.items():
-                    # form.validate_attachment(request.FILES[key])
-                    salva_file(request.FILES[key],
-                                path_allegati,
-                                request.FILES[key]._name)
-                    nome_allegato = request.FILES[key]._name
-                    json_response["allegati"]["{}".format(key)] = "{}".format(nome_allegato)
-            else:
-                # Se non ho aggiornato i miei allegati lasciandoli invariati rispetto
-                # all'inserimento precedente
-                json_response["allegati"] = allegati
-
-            # salva il modulo
-            # mdb.set_as_dict(json_response)
-            set_as_dict(mdb, json_response)
-            # data di modifica
-            mdb.mark_as_modified()
-            #Allega il messaggio al redirect
-            messages.success(request, 'Modifica effettuata con successo!')
-            url = reverse('domande_peo:modifica_titolo',
-                          args=[bando.pk,modulo_compilato_id])
-            return HttpResponseRedirect(url+'#{}'.format(bando.slug))
-        else:
-            # il form non è valido, ripetere inserimento
-            d['form'] = form
+        return_url = reverse('domande_peo:modifica_titolo',
+                            args=[bando.pk,modulo_compilato_id])
+        result = modifica_titolo_form(request=request,
+                                      bando=bando,
+                                      descrizione_indicatore=descrizione_indicatore,
+                                      mdb=mdb,
+                                      allegati=allegati,
+                                      path_allegati=path_allegati,
+                                      return_url=return_url,
+                                      log=False)
+        if result:
+            if isinstance(result, HttpResponseRedirect): return result
+            for k in result:
+                d[k] = result[k]
 
     d['labeled_errors'] = get_labeled_errors(form)
-
     return render(request, 'modulo_form_modifica.html', d)
 
 
@@ -525,22 +492,18 @@ def cancella_titolo(request, bando_id, modulo_compilato_id):
 
     dipendente = get_object_or_404(Dipendente, matricola = request.user.matricola)
     bando = _get_bando_queryset(bando_id).first()
-
     mdb = get_object_or_404(ModuloDomandaBando,
                             pk=modulo_compilato_id,
                             domanda_bando__is_active=True,
                             domanda_bando__dipendente=dipendente)
-
-    mdb.delete()
-    mdb.domanda_bando.mark_as_modified()
-    # Rimuove la folder relativa al modulo compilato,
-    # comprensiva di allegati ('modulo_compilato_id' passato come argomento)
-    elimina_directory(request.user.matricola, bando.slug, modulo_compilato_id)
-
-    messages.success(request, 'Modulo rimosso con successo!')
-    url = reverse('domande_peo:dashboard_domanda', args=[bando.pk,])
-    return HttpResponseRedirect(url+'#{}'.format(bando.slug))
-
+    return_url = reverse('domande_peo:dashboard_domanda', args=[bando.pk,])
+    return cancella_titolo_from_domanda(request,
+                                        bando,
+                                        dipendente,
+                                        mdb,
+                                        return_url,
+                                        mark_domanda_as_modified=True,
+                                        log=False)
 
 @login_required
 @check_accessibilita_bando
@@ -586,29 +549,14 @@ def elimina_allegato(request, bando_id, modulo_compilato_id, allegato):
 
     bando = mdb.domanda_bando.bando
 
-    # json_stored = mdb.get_as_dict()
-    json_dict = json.loads(mdb.modulo_compilato)
-    json_stored = get_as_dict(json_dict)
-    nome_file = json_stored["allegati"]["{}".format(allegato)]
-
-    # Rimuove il riferimento all'allegato dalla base dati
-    del json_stored["allegati"]["{}".format(allegato)]
-
-    # mdb.set_as_dict(json_stored)
-    set_as_dict(mdb, json_stored)
-    mdb.mark_as_modified()
-    mdb.domanda_bando.mark_as_modified()
-
-    path_allegato = get_path_allegato(dipendente.matricola,
-                                       bando_id,
-                                       modulo_compilato_id)
-    # Rimuove l'allegato dal disco
-    elimina_file(path_allegato,
-                  nome_file)
-
-    url = reverse('domande_peo:modifica_titolo', args=[bando.id, mdb.id])
-    return HttpResponseRedirect(url+'#{}'.format(bando.slug))
-
+    return_url = reverse('domande_peo:modifica_titolo', args=[bando.id, mdb.id])
+    return elimina_allegato_from_mdb(request,
+                                     bando,
+                                     dipendente,
+                                     mdb,
+                                     allegato,
+                                     return_url,
+                                     log=False)
 
 @login_required
 @abilitato_a_partecipare
@@ -631,38 +579,31 @@ def download_allegato(request, bando_id, modulo_compilato_id, allegato):
 
     bando = mdb.domanda_bando.bando
 
-    # json_stored = mdb.get_as_dict()
-    json_dict = json.loads(mdb.modulo_compilato)
-    json_stored = get_as_dict(json_dict)
-    nome_file = json_stored["allegati"]["{}".format(allegato)]
-
-    path_allegato = get_path_allegato(dipendente.matricola,
-                                      bando.slug,
-                                      modulo_compilato_id)
-    result = download_file(path_allegato,
-                           nome_file)
-
-    if result is None:
-        raise Http404
-    return result
+    return download_allegato_from_mdb(bando,
+                                      mdb,
+                                      dipendente,
+                                      allegato)
 
 @login_required
 def riepilogo_domanda(request, bando_id, domanda_bando_id, pdf=None):
     """
         Esegue l'output in pdf
     """
-    if request.user.is_staff:
-        # has the permission to view others data
+    bando = _get_bando_queryset(bando_id).first()
+    # se scarica un utente staff o un membro della commissione può accedervi
+    if _user_is_staff_or_in_commission(request.user, bando):
         domanda_bando = get_object_or_404(DomandaBando,
-                                          pk=domanda_bando_id)
+                                          pk=domanda_bando_id,
+                                          bando=bando)
+    # altrimenti solo se l'utente è il proprietario e la domanda è attiva
     else:
         dipendente = get_object_or_404(Dipendente,
                                        matricola=request.user.matricola)
         domanda_bando = get_object_or_404(DomandaBando,
                                           pk=domanda_bando_id,
+                                          bando=bando,
                                           dipendente=dipendente,
                                           is_active=True)
-    bando = domanda_bando.bando
     page_title = 'Riepilogo Domanda'
     dashboard_domanda_title = 'Partecipazione Bando {}'.format(bando.nome)
     dashboard_domanda_url = reverse('domande_peo:dashboard_domanda',
@@ -692,16 +633,21 @@ def download_modulo_inserito_pdf(request, bando_id, modulo_compilato_id):
         ricicliamo query e decoratori
     """
     bando = _get_bando_queryset(bando_id).first()
-    if request.user.is_staff:
+    # se scarica un utente staff o un membro della commissione può accedervi
+    if _user_is_staff_or_in_commission(request.user, bando):
         mdb = get_object_or_404(ModuloDomandaBando,
-                                pk=modulo_compilato_id)
+                                pk=modulo_compilato_id,
+                                domanda_bando__bando=bando)
         dipendente = mdb.domanda_bando.dipendente
+    # altrimenti solo se l'utente è il proprietario e la domanda è attiva
     else:
         dipendente = get_object_or_404(Dipendente,
                                        matricola=request.user.matricola)
         mdb = get_object_or_404(ModuloDomandaBando,
                                 pk=modulo_compilato_id,
-                                domanda_bando__dipendente=dipendente)
+                                domanda_bando__dipendente=dipendente,
+                                domanda_bando__bando=bando)
+
 
     descrizione_indicatore = mdb.descrizione_indicatore
     form = mdb.compiled_form(remove_filefields=True)

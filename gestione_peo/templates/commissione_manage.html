@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="ui header">{{ commissione }}
+    <span style="font-size:0.5em;font-weight:normal">
+        {% include 'stato_commissione.html' %}
+    </span>
+</h2>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+
+        {% if commissione.note %}
+        <div class="ui segment">
+            <div class="item">
+                <div class="content">
+                    <a class="header" href="#">
+                        <i class="file alternate outline left icon"></i>
+                        Note
+                    </a>
+                    <div class="description">{{ commissione.note }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="ui horizontal divider"></div>
+        <h3 class="ui header item">Domande presentate ({{ domande|length }})</h3>
+        <div class="ui grid stackable grid">
+            <div class="six wide column right floated">
+                <form method="get" class="ui form info">
+                    <div class="field">
+                        <input type="text"
+                               name="search"
+                               id="id_search"
+                               value="{{ search|default_if_none:"" }}"
+                               placeholder="cerca per numero di protocollo o matricola, cognome, nome dell'utente..."/>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if domande %}
+        <table class="ui celled selectable striped table">
+            <thead>
+                <tr>
+                    <th>Matricola</th>
+                    <th>Cognome</th>
+                    <th>Nome</th>
+                    <th>Data chiusura</th>
+                    <th>Ultimo Protocollo</th>
+                    <th>Prog. accettata</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for domanda in domande %}
+                <tr>
+                    <td>{{ domanda.dipendente.matricola }}</td>
+                    <td>{{ domanda.dipendente.cognome }}</td>
+                    <td>{{ domanda.dipendente.nome }}</td>
+                    <td>{{ domanda.data_chiusura|default_if_none:"-" }}</td>
+                    <td>
+                        {% if domanda.numero_protocollo %}
+                            {{ domanda.numero_protocollo }} del
+                            {{ domanda.data_protocollazione|date:"d F Y" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if domanda.progressione_accettata %}
+                        <i class="check circle icon" style="color:green"></i>
+                        {% else %}
+                        <i class="ban icon" style="color:red"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda.pk %}">
+                            <button class="ui right floated labeled icon mini button primary">
+                                <i class="arrow right icon"></i>
+                                Gestione
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+{% endblock content %}

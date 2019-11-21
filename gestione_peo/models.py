@@ -914,3 +914,100 @@ class RuoliDisabilitati_DescrizioneIndicatore(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.descrizione_indicatore, self.ruolo)
+
+
+class CommissioneGiudicatrice(TimeStampedModel, CreatedModifiedModel):
+    """
+    """
+    denominazione = models.CharField(max_length=255, default='')
+    bando = models.ForeignKey(Bando, on_delete=models.CASCADE)
+    data_inizio = models.DateTimeField()
+    data_fine   = models.DateTimeField()
+    note = models.TextField(blank=True, default='')
+    accettazione_clausole_text = models.TextField('Testo Accettazione Clausole',
+                                                  help_text=("es. Dichiaro di aver preso visione..."),
+                                                  blank=True, null=True)
+    is_active = models.BooleanField(help_text=_('Attiva'))
+
+    def is_in_corso(self):
+        if not self.is_active: return False
+        if timezone.localtime() < self.data_inizio: return False
+        if timezone.localtime() >= self.data_fine: return False
+        return True
+
+    def is_iniziata(self):
+        return timezone.localtime() > self.data_inizio
+
+    def is_terminata(self):
+        return timezone.localtime() >= self.data_fine
+
+    def get_clausole_attive(self):
+        return ClausoleCommissioneGiudicatrice.objects.filter(commissione=self,
+                                                              is_active=True)
+
+    class Meta:
+        verbose_name = _('Commissione giudicatrice')
+        verbose_name_plural = _('Commissioni giudicatrici')
+
+    def __str__(self):
+        return '{} - {}'.format(self.denominazione, self.bando)
+
+
+class CommissioneGiudicatriceUsers(TimeStampedModel, CreatedModifiedModel):
+    """
+    """
+    commissione = models.ForeignKey(CommissioneGiudicatrice,
+                                    on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    ruolo = models.CharField(max_length=255, blank=True, null=True)
+    clausole_accettate = models.BooleanField(default=False,
+                                             help_text=_('Ha accettato le '
+                                                         'clausole per la '
+                                                         'partecipazione '
+                                                         'alla commissione'))
+    is_active = models.BooleanField(help_text=_('Attivo'))
+
+    def ha_accettato_clausole(self):
+        clausole = ClausoleCommissioneGiudicatrice.objects.filter(commissione=self.commissione,
+                                                                  is_active=True)
+        if not clausole: return True
+        if self.clausole_accettate: return True
+        return False
+
+    class Meta:
+        unique_together = ('commissione', 'user')
+        verbose_name = _('Utente Commissione Giudicatrice')
+        verbose_name_plural = _('Utenti Commissioni Giudicatrici')
+
+    def __str__(self):
+        return '{} - {}'.format(self.user, self.commissione)
+
+
+class ClausoleCommissioneGiudicatrice(TimeStampedModel):
+    """
+    Crea le clausole del bando che ogni dipendete deve accettare prima
+    di poter prender parte a una commissione giudicatrice
+    """
+    commissione = models.ForeignKey(CommissioneGiudicatrice,
+                                    on_delete=models.CASCADE)
+    titolo = models.CharField(max_length=255, blank=False, null=False,
+                              help_text="Titolo clausola (es: Privacy...)")
+    corpo_del_testo = models.TextField(help_text=("es. La partecipazione alla Commissione comporta..."),
+                                       blank=False, null=False)
+    ordinamento = models.PositiveIntegerField(help_text="posizione nell'ordinamento",
+                                              blank=True, default=0)
+    allegato = models.FileField(upload_to='allegati_clausola_partecipazione/commissioni/%m-%Y/',
+                                null=True,blank=True)
+    is_active = models.BooleanField('Visibile agli utenti', default=True)
+
+    class Meta:
+        ordering = ('ordinamento', )
+        verbose_name = _('Clausola Commissione Giudicatrice')
+        verbose_name_plural = _('Clausole Commissione Giudicatrice')
+
+    def corpo_as_html(self):
+        return text_as_html(self.corpo_del_testo)
+
+    def __str__(self):
+        return '({}) {}'.format(self.commissione, self.titolo)

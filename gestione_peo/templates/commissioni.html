@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load lista_bandi_tags %}
+
+{% block content %}
+
+<h2 class="ui header">Le mie commissioni</h2>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+
+        {% if commissioni %}
+
+        <table class="ui celled table">
+            <thead>
+                <tr>
+                    <th>Bando</th>
+                    <th>Commissione</th>
+                    <th>Data Inizio</th>
+                    <th>Data Fine</th>
+                    <th>Stato</th>
+                    <th></th>
+                </tr></thead>
+            <tbody>
+
+                {% for commissione in commissioni %}
+                <tr>
+                    <td><b>{{ commissione.bando }}</b></td>
+                    <td><b>{{ commissione.denominazione }}</b></td>
+                    <td>{{ commissione.data_inizio|date:"j b Y"  }}</td>
+                    <td>{{ commissione.data_fine|date:"j b Y"  }}</td>
+                    <td>
+                        {% include "stato_commissione.html" %}
+                    </td>
+                    <td>
+                        <a href="{% url 'gestione_peo:dettaglio_commissione' commissione.pk %}">
+                            <div class="ui right fluid labeled icon blue button tiny">
+                                <i class="eye icon"></i> Dettagli
+                            </div>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        {% else %}
+
+        Non fai parte di nessuna commissione
+
+        {% endif %}
+
+    </div>
+
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+{% endblock %}

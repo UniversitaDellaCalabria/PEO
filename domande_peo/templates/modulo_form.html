@@ -50,10 +50,17 @@
 {% endblock %}
 
 {% block content %}
+
+
     {% block  modulo_head %}
+        {% block page_sub_title %}
         <h2 class="ui header">Partecipazione Bando {{ bando }} </h2>
+        {% endblock page_sub_title %}
         <p><span style="color: grey;">{{ dipendente }}</span></p>
         {{ breadcrumbs.as_html|safe }}
+
+        {% block content_size %}{% endblock content_size %}
+
         <h3 class="ui">{{ page_title }}</h3>
     {% endblock modulo_head %}
 
@@ -69,18 +76,7 @@
 
     <div class="ui section divider white"></div>
 
-    {% block messages %}
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
-                        {{ message }}
-                        {% block add_another %}{% endblock add_another %}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endblock messages %}
+    {% block content_top %}{% endblock content_top %}
 
     {% if form.is_bound %}
         {% if not form.is_valid %}
@@ -143,6 +139,11 @@
 
         {% csrf_token %}
     </form>
+
+    {% block close_content_size_right_menu %}{% endblock close_content_size_right_menu %}
+
+    {% block content_bottom %}{% endblock content_bottom %}
+
 {% endblock %}
 
 {% block bottom_scripts %}

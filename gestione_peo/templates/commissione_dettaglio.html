@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="ui header">{{ commissione }}
+    <span style="font-size:0.5em;font-weight:normal">
+       {% include 'stato_commissione.html' %}
+    </span>
+</h2>
+
+{{ breadcrumbs.as_html|safe }}
+
+<div class="ui section divider"></div>
+
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+
+        <div class="ui basic segment" style="padding: 0;">
+            <div class="ui three column grid">
+                <div class="column">
+                    <div class="ui item">
+                        <div class="ui segment">
+                            <div class="content">
+                                <a class="header" href="#">
+                                    <i class="calendar alternate outline left icon"></i>
+                                    Bando
+                                </a>
+                                <div class="description">{{ commissione.bando }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui item">
+                        <div class="ui segment">
+                            <div class="content">
+                                <a class="header" href="#">
+                                    <i class="calendar alternate outline left icon"></i>
+                                    Data Inizio
+                                </a>
+                                <div class="description">{{ commissione.data_inizio|date:'l j N Y, H:i' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui item">
+                        <div class="ui segment">
+                            <div class="content">
+                                <a class="header" href="#">
+                                    <i class="calendar alternate outline icon"></i>
+                                    Data Fine
+                                </a>
+                                <div class="description">{{ commissione.data_fine|date:'l j N Y, H:i' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if commissione.note %}
+        <div class="ui segment">
+            <div class="item">
+                <div class="content">
+                    <a class="header" href="#">
+                        <i class="file alternate outline left icon"></i>
+                        Note
+                    </a>
+                    <div class="description">{{ commissione.note }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="ui horizontal divider"></div>
+
+        <a href="{% url 'gestione_peo:manage_commissione' commissione_id=commissione.pk %}">
+            <button class="ui right floated labeled icon button positive">
+                <i class="arrow right icon"></i>
+                Gestione domande bando
+            </button>
+        </a>
+
+        <div class="ui horizontal divider"></div>
+
+        {% with commissione.commissionegiudicatriceusers_set.all as utenti_commissione %}
+        {% if utenti_commissione %}
+        <div class="ui horizontal divider"></div>
+        <h3 class="ui dividing header item">Utenti in commissione</h3>
+            <div class="ui relaxed divided list">
+                {% for utente in utenti_commissione %}
+                <div class="item">
+                    <i class="large user middle aligned icon"></i>
+                    <div class="content">
+                        <a class="header">{{ utente.user }}</a>
+                        <div class="description">{{ utente.ruolo|default_if_none:"" }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if clausole and not commissione_user.clausole_accettate %}
+        {% include "clausole.html" %}
+        <br>
+        <p>
+            <b>
+                {% if commissione.accettazione_clausole_text %}
+                    {{ commissione.accettazione_clausole_text }}
+                {% else %}
+                    Dichiaro di aver preso visione delle clausole
+                    e di sottoscrivere quanto sopra dichiarato.
+                {% endif %}
+            </b>
+        </p>
+        {% include "clausole_check_form.html" %}
+        {% endif %}
+    </div>
+
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+{% endblock content %}

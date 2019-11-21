@@ -328,7 +328,6 @@ class PEO_DateInRangeInCorsoComplexField(PEO_DateInRangeComplexField):
 
         value = cleaned_data.get(name)
         end_value = cleaned_data.get(self.end.name)
-
         # Si valuta 'In corso'
         if name == self.in_corso.name:
             # Se è definito anche Data Fine

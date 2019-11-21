@@ -30,6 +30,36 @@
             </div>
         </div>
 
+        {% if commissioni_in_corso %}
+        <div class="item">
+            <div class="header">Commissioni attive</div>
+            {% for commissione in commissioni_in_corso %}
+            <div class="menu">
+                <a class="active item green">
+                    {{ commissione }}
+                </a>
+                <a class="item" href="{% url 'gestione_peo:dettaglio_commissione' commissione_id=commissione.pk %}">
+                    Dettagli
+                </a>
+                <a class="item"  href="{% url 'gestione_peo:manage_commissione' commissione_id=commissione.pk %}">
+                    Gestione domande
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if commissioni %}
+        <div class="item">
+            <div class="header">Le mie commissioni</div>
+            <div class="menu">
+                <a class="item" href="{% url 'gestione_peo:commissioni' %}">
+                    Vedi lista
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="item">
             <div class="header">Account</div>
             <div class="menu">

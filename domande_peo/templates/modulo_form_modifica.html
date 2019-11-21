@@ -24,6 +24,7 @@
                 {{ modulo_domanda_bando.descrizione_indicatore.note_as_html|safe }}
             </div>
         {% endif %}
+        {% block top_buttons %}{% endblock top_buttons %}
     {% endblock descrizione_indicatore %}
 
 {% block formbuttons_back %}

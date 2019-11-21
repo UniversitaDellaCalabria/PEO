@@ -1,0 +1,71 @@
+{% if commissioni %}
+<div class="ui horizontal divider"></div>
+<h3 class="ui dividing header item">Commissioni di cui faccio parte</h3>
+<p>
+    In questa sezione puoi visionare tutte le commissioni di cui hai fatto parte..........
+</p>
+<div class="ui fluid styled accordion">
+    {% for commissione in commissioni %}
+        {% with commissione.is_in_corso as commissione_in_corso %}
+        <div class="title" style="color: #000000;">
+            <i class="dropdown icon"></i> {{ commissione }}
+        </div>
+        <div class="ui content">
+            <div class="ui list">
+                <div class="item">
+                    <i class="file alternate outline icon"></i>
+                    <div class="content">
+                        <b>Bando:</b>
+                        <a href="{% url 'gestione_peo:dettaglio_bando_peo' bando_id=commissione.bando.slug %}">
+                            {{ commissione.bando }}
+                        </a>
+                    </div>
+                </div>
+                <div class="item">
+                    <i class="calendar alternate outline icon"></i>
+                    <div class="content">
+                        <b>Data inizio:</b> {{ commissione.data_inizio }}
+                        <br>
+                        <b>Data fine:</b> {{ commissione.data_fine }}
+                    </div>
+                </div>
+                <div class="item">
+                     <i class="hourglass start icon"></i>
+                    <div class="content">
+                        <b>Stato:</b>
+                        {% if commissione_in_corso %}
+                            <span style="color:green">In Corso</span>
+                        {% elif commissione.is_terminata %}
+                            <span style="color:blue">Commissione non più accessibile</span>
+                        {% else %}
+                            <span style="color:red">Commissione non ancora attiva</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if commissione_in_corso %}
+                <div class="item" style="margin-top: 21px;">
+                    <a href="{% url 'gestione_peo:dettaglio_commissione' commissione_id=commissione.pk %}">
+                        <button class="ui left floated labeled icon blue button">
+                            <i class="file outline icon"></i>
+                            Accedi ai dettagli della Commissione
+                        </button>
+                    </a>
+                    <a href="{% url 'gestione_peo:manage_commissione' commissione_id=commissione.pk %}">
+                        <button class="ui right floated positive button">
+                            <i class="file alternate outline icon"></i>
+                            Gestisci le domande del bando "{{ commissione.bando }}"
+                        </button>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endwith %}
+    <!--
+    domanda_bando in domande_bando
+    -->
+    {% endfor %}
+</div>
+
+{% endif %}

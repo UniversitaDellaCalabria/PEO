@@ -5,7 +5,9 @@
 
 {% block content %}
 
+{% block page_sub_title %}
 <h2 class="ui header">Partecipazione Bando {{ bando }} </h2>
+{% endblock page_sub_title %}
 <p><span style="color: grey;">{{ dipendente }}</span></p>
 
 {{ breadcrumbs.as_html|safe }}
@@ -18,23 +20,13 @@
         {% comment %}
             {% include "dettaglio_bando_peo_fields.html" %}
         {% endcomment %}
-        
+
         <h2 class="ui" id="{{ bando.slug }}">Selezione Modulo di Inserimento</h2>
-        
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
-                    {{ message }}
-                </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
 
         {% if indicatori_ponderati %}
             <h5>Titolo, Certificato, Esperienza Professionale o Formativa</h5>
             <p>Segui i passaggi in basso per la corretta compilazione di {{ bando }}</p>
-        
+
             <div class="ui tiny tablet stackable fluid steps">
                 <div class="step">
                     <i class="list ul icon blue"></i>
@@ -64,9 +56,10 @@
                     </div>
                 </div>
             </div>
-    
+
             <div style="margin-top: 33px;" class="ui fluid styled accordion">
-        
+
+                {% block lista_indicatori %}
                 {% for indicatore_ponderato in indicatori_ponderati %}
                     <div class="title {% if indicatori_ponderati|length == 1 %}active{% endif %}" style="color: #000000;">
                         <i class="dropdown icon"></i>
@@ -78,17 +71,17 @@
                         {% endif %}
                         <div class="ui relaxed divided list">
                             {% for descrizione_indicatore in indicatore_ponderato.descrizioneindicatore_set.all %}
-            
+
                             {% comment %}
                             Solo se di fatto il modulo di compilazione (form) esiste, altrimenti non visualizzare!
                             {% endcomment %}
-            
+
                             {% if descrizione_indicatore.get_form %}
                             <div class="item" style="margin-bottom: 15px;">
-                                
+
                                 {% domanda_bando_num_max_descrind domanda_peo descrizione_indicatore as max_inserimenti %}
                                 {% descrizione_indicatore_available descrizione_indicatore dipendente.livello.posizione_economica dipendente.ruolo as available_descrind %}
-            
+
                                 <div class="content">
                                     <p>
                                         {% if max_inserimenti or not available_descrind %}
@@ -104,11 +97,11 @@
                                     <div class="description">{{ descrizione_indicatore.note_as_html|safe }}</div>
                                 </div>
                                 <br>
-            
+
                                 {% if max_inserimenti %}
                                     <button class="ui right floated grey button">
                                         <i class="ban icon"></i>
-                                        Hai raggiunto il numero di inserimenti 
+                                        Hai raggiunto il numero di inserimenti
                                         consentiti per questo modulo
                                     </button>
                                 {% elif available_descrind %}
@@ -126,7 +119,7 @@
                                 {% endif %}
                             </div>
                             {% else %}
-            
+
                             <div class="item" style="margin-bottom: 15px;">
                                 <div class="content">
                                     <h5>{{ descrizione_indicatore.nome }}</h5>
@@ -134,22 +127,24 @@
                                         Non risultano essere stati configurati dei moduli di inserimento per questo Indicatore. Consultare Area Risorse Umane per maggiori chiarimenti.
                                     </p>
                                 </div>
-            
+
                             </div>
                             {% endif %}
                             {% endfor %}
-            
+
                         </div>
-                    </div>   
+                    </div>
                 {% endfor %}
+                {% endblock lista_indicatori %}
             </div>
         {% endif %}
-    
+
         {% comment %}
             end if bando.indicatoreponderato_set.all
         {% endcomment %}
+
+        {% block bottom_buttons %}
         <br>
-        
         <div class="ui red button" id="but_cancella_domanda_{{domanda_peo.pk}}">
             <i class="delete icon"></i> Distruggi la tua Domanda
         </div>
@@ -163,6 +158,7 @@
                 <i class="reply icon"></i> Torna alla Domanda
             </button>
         </a>
+        {% endblock bottom_buttons %}
     </div>
 
     <div class="four wide column">
@@ -175,13 +171,13 @@
 {% endblock modal_dialogs %}
 
 {% endblock content %}
-    
+
 {% block bottom_scripts %}
 <script>
 $('.ui.accordion').accordion();
-    
-// Mostra il pannello modal 
-// per la conferma di cancellazione della domanda    
+
+// Mostra il pannello modal
+// per la conferma di cancellazione della domanda
 $(function(){
     $("#but_cancella_domanda_{{ domanda_peo.pk }}").click(function(){
         $('#cancella_domanda_{{ domanda_peo.pk }}')

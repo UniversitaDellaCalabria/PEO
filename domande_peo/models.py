@@ -339,5 +339,9 @@ class ModuloDomandaBando(PunteggioModuloDomandaBando,
         modulo_compilato_dict = json.loads(self.modulo_compilato)
         return modulo_compilato_dict.get(ETICHETTA_INSERIMENTI_ID)
 
+    def added_by_user(self):
+        bando = self.domanda_bando.bando
+        return self.created < bando.data_fine_presentazione_domande
+
     def __str__(self):
         return '{} ({})'.format(self.domanda_bando, self.descrizione_indicatore.nome)

@@ -1,0 +1,21 @@
+<div class="ui segment">
+    <div class="item">
+        <div class="content">
+            <div class="description">
+                <i class="user icon"></i>
+                Dati del dipendente {{ dipendente }}:
+                <ol class="ui list" style="padding-left: 23px;">
+                    <li value="*">
+                        Livello economico: <b>{{ dipendente.livello }}</b>
+                    </li>
+                    <li value="*">
+                        Presa servizio: <b>{{ domanda_peo.get_presa_servizio_dipendente }}</b>
+                    </li>
+                    <li value="*">
+                        Ultima progressoine: <b>{{ domanda_peo.get_ultima_progressione_dipendente }}</b>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

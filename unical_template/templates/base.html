@@ -40,6 +40,20 @@
             <div class="col-xs-12 column">
                 <div class="contenitore_body" style="margin-top: -10px;">
                     <div style="padding: 33px;">
+
+                        {% block messages %}
+                            {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                        <li{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
+                                            {{ message }}
+                                            {% block add_another %}{% endblock add_another %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endblock messages %}
+
                         {% block content %}
                         <h2 style="">Servizio in allestimento</h2>
                         {% endblock %}

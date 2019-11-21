@@ -1,0 +1,32 @@
+{% extends 'modulo_form.html' %}
+
+{% block page_sub_title %}
+<h2 class="ui header">Integrazione domanda {{ domanda_bando }} </h2>
+{% endblock page_sub_title %}
+
+{% block formbuttons_back %}
+    <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
+        <div class="ui button">
+            <i class="home icon"></i>
+            Torna alla Domanda
+        </div>
+    </a>
+    <a href="{% url 'gestione_peo:commissione_domanda_scegli_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
+        <div class="ui button">
+            <i class="reply icon"></i>
+            Torna indietro
+        </div>
+    </a>
+{% endblock formbuttons_back %}
+
+{% block content_top %}
+<div class="ui grid stackable grid">
+    <div class="twelve wide column" id="sticky_reference_panel">
+{% endblock content_top %}
+{% block content_bottom %}
+    </div>
+    <div class="four wide column">
+        {% include "right_main_menu.html" %}
+    </div>
+</div>
+{% endblock content_bottom %}

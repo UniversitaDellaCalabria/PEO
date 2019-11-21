@@ -255,3 +255,43 @@ class RuoliDisabilitati_DescrizioneIndicatoreNestedInline(nested_admin.NestedTab
     extra = 0
     #max_num = 1
     classes = ['collapse',]
+
+
+class CommissioneGiudicatriceModelForm(forms.ModelForm):
+    class Meta:
+        model = CommissioneGiudicatrice
+        fields = ('__all__')
+
+
+class CommissioneGiudicatriceNestedInline(nested_admin.NestedTabularInline):
+    model = CommissioneGiudicatrice
+    form = CommissioneGiudicatriceModelForm
+    extra = 0
+    classes = ['collapse',]
+
+
+class CommissioneGiudicatriceUsersModelForm(forms.ModelForm):
+    class Meta:
+        model = CommissioneGiudicatriceUsers
+        fields = ('__all__')
+
+
+class CommissioneGiudicatriceUsersNestedInline(nested_admin.NestedTabularInline):
+    model = CommissioneGiudicatriceUsers
+    form = CommissioneGiudicatriceUsersModelForm
+    extra = 0
+    # classes = ['collapse',]
+
+
+class ClausoleCommissioneGiudicatriceModelForm(forms.ModelForm):
+    class Meta:
+        model = ClausoleCommissioneGiudicatrice
+        fields = ('__all__')
+
+
+class ClausoleCommissioneGiudicatriceNestedInline(nested_admin.NestedTabularInline):
+    model = ClausoleCommissioneGiudicatrice
+    form = ClausoleCommissioneGiudicatriceModelForm
+    extra = 0
+    sortable_field_name = "ordinamento"
+    # classes = ['collapse',]

@@ -1,14 +1,28 @@
 import csv
+import json
 import magic
 import os
 import shutil
 
 from django.apps import apps
 from django.conf import settings
-from django.http.response import HttpResponse
+from django.contrib import messages
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
+from django.contrib.contenttypes.models import ContentType
+from django.http import Http404
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.utils import timezone
+
+from django_form_builder.utils import (get_allegati,
+                                       get_allegati_dict,
+                                       get_as_dict,
+                                       get_labeled_errors,
+                                       get_POST_as_json,
+                                       set_as_dict)
 
 from gestione_peo.models import Bando, IndicatorePonderato, DescrizioneIndicatore
 from gestione_risorse_umane.models import Dipendente, PosizioneEconomica, LivelloPosizioneEconomica
+
 
 def get_fname_allegato(domanda_bando_id, bando_id):
     return "domanda_{}-{}.pdf".format(domanda_bando_id, bando_id)
@@ -145,3 +159,193 @@ def export_graduatoria_csv(queryset, fopen,
                     index += 1
             writer.writerow('')
     return fopen
+
+
+def aggiungi_titolo_form(request,
+                         bando,
+                         descrizione_indicatore,
+                         domanda_bando,
+                         dipendente,
+                         return_url,
+                         log=False):
+    form = descrizione_indicatore.get_form(data=request.POST,
+                                           files=request.FILES,
+                                           domanda_id=domanda_bando.id)
+    if form.is_valid():
+        # qui chiedere conferma prima del salvataggio
+        json_data = get_POST_as_json(request)
+        mdb_model = apps.get_model(app_label='domande_peo', model_name='ModuloDomandaBando')
+        mdb = mdb_model.objects.create(
+                domanda_bando = domanda_bando,
+                modulo_compilato = json_data,
+                descrizione_indicatore = descrizione_indicatore,
+                modified=timezone.localtime(),
+                )
+
+        # salvataggio degli allegati nella cartella relativa
+        # Ogni file viene rinominato con l'ID del ModuloDomandaBando
+        # appena creato e lo "slug" del campo FileField
+        # json_stored = mdb.get_as_dict()
+        json_dict = json.loads(mdb.modulo_compilato)
+        json_stored = get_as_dict(json_dict)
+        if request.FILES:
+            json_stored["allegati"] = {}
+            path_allegati = get_path_allegato(dipendente.matricola,
+                                              bando.slug,
+                                              mdb.pk)
+            for key, value in request.FILES.items():
+                salva_file(request.FILES[key],
+                            path_allegati,
+                            request.FILES[key]._name)
+                json_stored["allegati"]["{}".format(key)] = "{}".format(request.FILES[key]._name)
+
+        set_as_dict(mdb, json_stored)
+        # mdb.set_as_dict(json_stored)
+        domanda_bando.mark_as_modified()
+        msg = 'Inserimento {} effettuato con successo!'.format(mdb)
+        #Allega il messaggio al redirect
+        messages.success(request, msg)
+        if log:
+            LogEntry.objects.log_action(user_id = request.user.pk,
+                                        content_type_id = ContentType.objects.get_for_model(domanda_bando).pk,
+                                        object_id       = domanda_bando.pk,
+                                        object_repr     = domanda_bando.__str__(),
+                                        action_flag     = CHANGE,
+                                        change_message  = msg)
+        # url = reverse('gestione_peo:commissione_domanda_manage', args=[commissione.pk, domanda_bando.pk,])
+        return HttpResponseRedirect(return_url)
+    else:
+        dictionary = {}
+        # il form non è valido, ripetere inserimento
+        dictionary['form'] = form
+        return dictionary
+
+def modifica_titolo_form(request,
+                         bando,
+                         descrizione_indicatore,
+                         mdb,
+                         allegati,
+                         path_allegati,
+                         return_url,
+                         log=False):
+    json_response = json.loads(get_POST_as_json(request))
+    # Costruisco il form con il json dei dati inviati e tutti gli allegati
+    json_response["allegati"] = allegati
+    # rimuovo solo gli allegati che sono stati già inseriti
+    form = descrizione_indicatore.get_form(data=json_response,
+                                           files=request.FILES,
+                                           domanda_id=mdb.domanda_bando.id,
+                                           remove_filefields=allegati)
+    if form.is_valid():
+        if request.FILES:
+            for key, value in request.FILES.items():
+                # form.validate_attachment(request.FILES[key])
+                salva_file(request.FILES[key],
+                            path_allegati,
+                            request.FILES[key]._name)
+                nome_allegato = request.FILES[key]._name
+                json_response["allegati"]["{}".format(key)] = "{}".format(nome_allegato)
+        else:
+            # Se non ho aggiornato i miei allegati lasciandoli invariati rispetto
+            # all'inserimento precedente
+            json_response["allegati"] = allegati
+
+        # salva il modulo
+        # mdb.set_as_dict(json_response)
+        set_as_dict(mdb, json_response)
+        # data di modifica
+        mdb.mark_as_modified()
+        #Allega il messaggio al redirect
+        msg = 'Modifica {} effettuata con successo!'.format(mdb)
+        messages.success(request, msg)
+        if log:
+            LogEntry.objects.log_action(user_id = request.user.pk,
+                                        content_type_id = ContentType.objects.get_for_model(mdb.domanda_bando).pk,
+                                        object_id       = mdb.domanda_bando.pk,
+                                        object_repr     = mdb.domanda_bando.__str__(),
+                                        action_flag     = CHANGE,
+                                        change_message  = msg)
+        return HttpResponseRedirect(return_url)
+    else:
+        dictionary = {}
+        # il form non è valido, ripetere inserimento
+        dictionary['form'] = form
+        return dictionary
+
+def elimina_allegato_from_mdb(request,
+                              bando,
+                              dipendente,
+                              mdb,
+                              allegato,
+                              return_url,
+                              log=False):
+    # json_stored = mdb.get_as_dict()
+    json_dict = json.loads(mdb.modulo_compilato)
+    json_stored = get_as_dict(json_dict)
+    nome_file = json_stored["allegati"]["{}".format(allegato)]
+
+    # Rimuove il riferimento all'allegato dalla base dati
+    del json_stored["allegati"]["{}".format(allegato)]
+
+    # mdb.set_as_dict(json_stored)
+    set_as_dict(mdb, json_stored)
+    mdb.mark_as_modified()
+    mdb.domanda_bando.mark_as_modified()
+
+    path_allegato = get_path_allegato(dipendente.matricola,
+                                      bando.slug,
+                                      mdb.pk)
+    # Rimuove l'allegato dal disco
+    elimina_file(path_allegato, nome_file)
+
+    msg = 'Allegato {} eliminato con successo da {}'.format(nome_file, mdb)
+    if log:
+        LogEntry.objects.log_action(user_id = request.user.pk,
+                                    content_type_id = ContentType.objects.get_for_model(mdb.domanda_bando).pk,
+                                    object_id       = mdb.domanda_bando.pk,
+                                    object_repr     = mdb.domanda_bando.__str__(),
+                                    action_flag     = CHANGE,
+                                    change_message  = msg)
+    return HttpResponseRedirect(return_url)
+
+def cancella_titolo_from_domanda(request,
+                                 bando,
+                                 dipendente,
+                                 mdb,
+                                 return_url,
+                                 mark_domanda_as_modified=True,
+                                 log=False):
+    mdb.delete()
+    if mark_domanda_as_modified:
+        mdb.domanda_bando.mark_as_modified()
+    # Rimuove la folder relativa al modulo compilato,
+    # comprensiva di allegati ('modulo_compilato_id' passato come argomento)
+    elimina_directory(dipendente.matricola, bando.slug, mdb.pk)
+    msg = 'Modulo {} rimosso con successo!'.format(mdb)
+    if log:
+        LogEntry.objects.log_action(user_id = request.user.pk,
+                                    content_type_id = ContentType.objects.get_for_model(mdb.domanda_bando).pk,
+                                    object_id       = mdb.domanda_bando.pk,
+                                    object_repr     = mdb.domanda_bando.__str__(),
+                                    action_flag     = CHANGE,
+                                    change_message  = msg)
+    messages.success(request, msg)
+    return HttpResponseRedirect(return_url)
+
+def download_allegato_from_mdb(bando,
+                               mdb,
+                               dipendente,
+                               allegato):
+    # json_stored = mdb.get_as_dict()
+    json_dict = json.loads(mdb.modulo_compilato)
+    json_stored = get_as_dict(json_dict)
+    nome_file = json_stored["allegati"]["{}".format(allegato)]
+
+    path_allegato = get_path_allegato(dipendente.matricola,
+                                      bando.slug,
+                                      mdb.pk)
+    result = download_file(path_allegato,
+                           nome_file)
+
+    if result is None: raise Http404
+    return result

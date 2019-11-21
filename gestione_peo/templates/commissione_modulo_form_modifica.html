@@ -1,0 +1,208 @@
+{% extends 'modulo_form_modifica.html' %}
+
+{% load django_form_builder_tags %}
+{% load i18n %}
+
+{% block page_sub_title %}
+<h2 class="ui header">Domanda {{ domanda_peo }}</h2>
+{% endblock page_sub_title %}
+
+{% block top_buttons %}
+<div class="ui segment">
+        {% if modulo_domanda_bando.disabilita %}
+        <form method='post' class="ui form error">
+        <div class="ui error message">
+            <div class="header">Attenzione</div>
+            <p>L'inserimento è attualmente disabilitato con questa motivazione:<br>
+            <i>{{ modulo_domanda_bando.motivazione }}</i></p>
+        </div>
+        <div class="field">
+            <button class="ui positive button" name="disabilita_abilita_inserimento" type="submit" value=1>
+                <i class="ban icon"></i>
+                Abilita inserimento
+            </button>
+        </div>
+        {% else %}
+        <form method='post' class="ui form info">
+        <div class="field">
+            <label for="id_motivazione">Motivazione:</label>
+            <textarea name="motivazione" rows="1" id="id_motivazione" required></textarea>
+            <div class="ui info message">
+                <div class="header">Attenzione</div>
+                <p>Il testo inserito in questo campo sarà reso visibile al
+                dipendente dopo la chiusura del Bando e motiverà eventuali
+                revisioni sul calcolo e l'assegnazione del punteggio</p>
+            </div>
+        </div>
+        <div class="field">
+            <button class="ui negative button" name="disabilita_abilita_inserimento" type="submit" value=1>
+                <i class="ban icon"></i>
+                Disabilita inserimento
+            </button>
+        </div>
+        {% endif %}
+        <input type="hidden" id="disable_input" name="disable_input" value="1">
+        {% csrf_token %}
+    </form>
+</div>
+{% endblock top_buttons %}
+
+
+{% block content_size %}
+    <div class="ui section divider white"></div>
+    <div class="ui grid stackable grid">
+        <div class="twelve wide column" id="sticky_reference_panel">
+{% endblock content_size %}
+
+{% block close_content_size_right_menu %}
+        </div>
+
+        <div class="four wide column">
+            {% include "right_main_menu.html" %}
+        </div>
+    </div>
+{% endblock close_content_size_right_menu %}
+
+{% block add_another %}{% endblock add_another %}
+
+{% block allegati %}
+    <!--
+    Se ci sono allegati inseriti
+    -->
+    {% if allegati %}
+        <h3>Allegati:</h3>
+        <table class="ui compact striped table">
+            <tbody>
+                <tr>
+                    <th>{% trans "Nome Allegato" %}</th>
+                    <th>{% trans "Nome File" %}</th>
+                    <th>{% trans "Altre info" %}</th>
+                    <th></th>
+                    {% if not modulo_domanda_bando.added_by_user %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+                {% for k,v in allegati.items %}
+                    <tr>
+                        <td class="collapsing">
+                            <b>{{k}}</b>
+                        </td>
+                        <td>{{v}}</td>
+                        <td>
+                        {% get_attachment_sign_details form_allegati path_allegati k v as sign_details %}
+                        {% if sign_details %}
+                            <ul>
+                            {% for kk, vv in sign_details.items %}
+                                <li>{{ kk }}: {{ vv }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                        -
+                        {% endif %}
+                        </td>
+                        <td class="right aligned collapsing">
+                            <a download href="{% url 'gestione_peo:commissione_download_allegato' commissione_id=commissione.pk domanda_id=domanda_peo.pk modulo_id=modulo_domanda_bando.pk allegato=k  %}">
+                                <div class="ui small button">
+                                    <i class="icon download"></i>
+                                    Vedi allegato
+                                </div>
+                            </a>
+                        </td>
+                        {% if not modulo_domanda_bando.added_by_user %}
+                        <!--
+                        Se la domanda è modificabile,
+                        il pulsante Rimuovi allegato viene mostrato
+                        -->
+                            <td class="right aligned collapsing">
+                                <a id="cancella_allegato_{{ k }}" href="#">
+                                    <div class="ui negative small button">
+                                        <i class="icon trash"></i>
+                                        Rimuovi allegato
+                                    </div>
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!--
+        Modal delete (solo se la domanda è modificabile)
+        -->
+        {% if not modulo_domanda_bando.added_by_user %}
+            {% for k,v in allegati.items %}
+                <div class="ui basic modal" id="modal_allegato_{{ k }}">
+                    <div class="ui icon header">
+                        <i class="trash icon"></i>
+                        Cancellazione allegato
+                        <h5>{{ k }}: {{ v }}</h5>
+                    </div>
+                    <div class="content">
+                        <p>Stai per cancellare definitamente questo
+                            allegato, creato giorno {{ modulo_domanda_bando.created }},
+                            dalla domanda {{ modulo_domanda_bando.domanda_bando.bando }}.
+                        </p>
+                        <h5>
+                            Sei veramente sicuro di questa scelta?
+                        </h5>
+                    </div>
+                    <div class="actions">
+                        <div class="ui white basic cancel inverted button">
+                            <i class="remove icon"></i>
+                            No
+                        </div>
+
+                        <a style="color: white;" href="{% url 'gestione_peo:commissione_elimina_allegato' allegato=k commissione_id=commissione.pk domanda_id=modulo_domanda_bando.domanda_bando.pk modulo_id=modulo_domanda_bando.pk  %}">
+                            <div class="ui red ok inverted button">
+                                <i class="checkmark icon"></i>
+                                Si, sono sicuro: CANCELLA
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock allegati %}
+
+{% block formbuttons_back %}
+    <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+        <div class="ui button">
+            <i class="reply icon"></i>
+            Torna alla Domanda
+        </div>
+    </a>
+{% endblock formbuttons_back %}
+
+{% block formbuttons_pdf %}
+    <a href="{% url 'domande_peo:download_modulo_inserito_pdf' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id %}">
+        <div class="ui button">
+            <i class="print icon"></i>
+            Scarica PDF
+        </div>
+    </a>
+{% endblock formbuttons_pdf %}
+
+{% block submit_button %}
+    {% if not modulo_domanda_bando.added_by_user %}
+        <input class="ui button positive" type="submit" value="Salva" />
+    {% endif %}
+{% endblock submit_button %}
+
+{% block bottom_scripts %}
+    {{ block.super }}
+    {% if allegati and not modulo_domanda_bando.added_by_user %}
+        <script type="text/javascript">
+            $(function () {
+                {% for k,v in allegati.items %}
+                $("#cancella_allegato_{{ k }}").click(function () {
+                    $('#modal_allegato_{{ k }}')
+                        .modal('show');
+                });
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+{% endblock %}

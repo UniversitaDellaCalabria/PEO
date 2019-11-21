@@ -5,7 +5,7 @@ Modal Inserimento delete
 <div class="ui basic modal" id="modal_ind_{{ ins.pk }}">
     <div class="ui icon header">
         <i class="trash icon"></i>
-        Cancellazione indicatore
+        Cancellazione inserimento
         <h5>
             <b>{{ ins.get_identificativo_veloce }}</b>
             <br>
@@ -14,7 +14,7 @@ Modal Inserimento delete
     </div>
     <div class="content">
         <p>Stai per cancellare definitamente questo
-            indicatore, creato da
+            inserimento, creato da
             te giorno {{ ins.created }},
             dalla tua domanda {{ ins.domanda_bando.bando }}.
         </p>
@@ -89,7 +89,7 @@ Modal Domanda chiusura
         <p>
             Questo significa che hai completato la tua redazione
             {% if bando.protocollo_required %}
-            , 
+            ,
             <u>
             inoltre
             ti appresti a presentare la domanda mediante protocollo informatico.

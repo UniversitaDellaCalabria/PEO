@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.shortcuts import render
 
 from gestione_peo.models import *
+from gestione_peo.utils import get_commissioni_attive, get_commissioni_in_corso
 from gestione_risorse_umane.models import Dipendente, Avviso
 from unical_accounts.models import User
 from unical_template.decorators import site_not_in_manteinance
@@ -24,6 +25,10 @@ from .decorators import matricola_in_csa
 @matricola_in_csa
 def dashboard(request):
     """ landing page """
+
+    commissioni_attive = get_commissioni_attive(request.user)
+    commissioni_in_corso = get_commissioni_in_corso(request.user,commissioni_attive)
+
     dipendente = Dipendente.objects.filter(matricola=request.user.matricola).first()
     # creazione dipendente in gestione_risorse_umane se questo non esiste
     if not dipendente:
@@ -62,6 +67,8 @@ def dashboard(request):
     # _logger.error(n)
 
     d = {
+        'commissioni': commissioni_attive,
+        'commissioni_in_corso': commissioni_in_corso,
         'dipendente': dipendente,
         'domande_bando': domande_bando,
         'bandi': bandi,

@@ -287,3 +287,41 @@ class RuoliDisabilitati_DescrizioneIndicatoreInline(admin.TabularInline):
     form = RuoliDisabilitati_DescrizioneIndicatoreModelForm
     extra = 0
     classes = ['collapse',]
+
+
+class CommissioneGiudicatriceModelForm(forms.ModelForm):
+    class Meta:
+        model = CommissioneGiudicatrice
+        fields = ('__all__')
+
+
+class CommissioneGiudicatriceInline(admin.TabularInline):
+    model = CommissioneGiudicatrice
+    form = CommissioneGiudicatriceModelForm
+    extra = 0
+    classes = ['collapse',]
+
+
+class CommissioneGiudicatriceUsersModelForm(forms.ModelForm):
+    class Meta:
+        model = CommissioneGiudicatriceUsers
+        fields = ('__all__')
+
+
+class CommissioneGiudicatriceUsersInline(admin.TabularInline):
+    model = CommissioneGiudicatriceUsers
+    form = CommissioneGiudicatriceUsersModelForm
+    extra = 0
+
+
+class ClausoleCommissioneGiudicatriceModelForm(forms.ModelForm):
+    class Meta:
+        model = ClausoleCommissioneGiudicatrice
+        fields = ('__all__')
+
+
+class ClausoleCommissioneGiudicatriceInline(admin.TabularInline):
+    model = ClausoleCommissioneGiudicatrice
+    form = ClausoleCommissioneGiudicatriceModelForm
+    extra = 0
+    classes = ['collapse',]

@@ -32,7 +32,8 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
                Punteggio_TitoloStudioNestedInline,
                CategorieDisabilitate_TitoloStudioNestedInline,
                Punteggio_Anzianita_ServizioNestedInline,
-               AvvisoBandoBandoNestedInline,]
+               AvvisoBandoBandoNestedInline,
+	       CommissioneGiudicatriceNestedInline]
 
     date_hierarchy = 'data_inizio'
 
@@ -190,6 +191,21 @@ class SubDescrizioneIndicatoreAdmin(nested_admin.NestedModelAdmin):
     autocomplete_fields = ['descrizione_indicatore',]
     # autocomplete_fields = ['indicatore_ponderato',]
     date_hierarchy = 'descrizione_indicatore__indicatore_ponderato__bando__data_inizio'
+
+    class Media:
+        js = ('js/textarea-autosize_legacy.js',)
+
+
+@admin.register(CommissioneGiudicatrice)
+class CommissioneGiudicatriceAdmin(nested_admin.NestedModelAdmin):
+    inlines = [ CommissioneGiudicatriceUsersNestedInline,
+                ClausoleCommissioneGiudicatriceNestedInline,]
+    list_filter = ('bando',)
+    list_display = ('denominazione', 'bando', 'data_inizio', 'data_fine', 'is_active')
+    list_editable = ('is_active',)
+    autocomplete_fields = ['bando',]
+    date_hierarchy = 'created'
+    search_fields = ('bando',)
 
     class Media:
         js = ('js/textarea-autosize_legacy.js',)
