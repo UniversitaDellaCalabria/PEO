@@ -12,8 +12,10 @@ from unical_template.admin import ReadOnlyAdmin
 
 from .admin_actions import (calcolo_punteggio_domanda,
                             download_report_graduatoria,
-                            progressione_accettata)
+                            progressione_accettata,
+                            verifica_allegati)
 from .models import *
+
 
 class ModuloDomandaBandoModelForm(forms.ModelForm):
     class Meta:
@@ -209,7 +211,7 @@ class DomandaBandoAdmin(admin.ModelAdmin):
                        'get_dipendente_nome',
                        'get_dipendente_cognome',)
     actions = [calcolo_punteggio_domanda, download_report_graduatoria,
-               progressione_accettata]
+               progressione_accettata, verifica_allegati]
     date_hierarchy = 'created'
     fields = (
                 ('dipendente', 'bando'),

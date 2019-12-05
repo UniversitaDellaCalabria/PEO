@@ -1,3 +1,5 @@
+import os
+
 from django.apps import apps
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
@@ -64,3 +66,24 @@ def progressione_accettata(modeladmin, request, queryset):
     if num:
         messages.add_message(request, messages.INFO, '{} progressioni accettate'.format(num))
 progressione_accettata.short_description = "Marca come Progressione Accettata"
+
+
+def verifica_allegati(modeladmin, request, queryset):
+    """
+    testa se gli allegati inseriti siano realmente presenti sul disco
+    check di integrità
+    """
+    failed = 0
+    msg_err = 'Errore in {} {}: {} [{}]'
+    for i in queryset:
+        for m in i.modulodomandabando_set.all():
+            p = m.get_allegati_path()
+            if len(p) >= 1:
+                p = p[0]
+                if not os.path.exists(p):
+                    messages.add_message(request, messages.ERROR,
+                                         msg_err.format(i, m, p, m.modified))
+                    failed += 1
+    if failed:
+        messages.add_message(request, messages.ERROR, '{} allegati mancanti'.format(failed))
+verifica_allegati.short_description = "Verifica allegati"

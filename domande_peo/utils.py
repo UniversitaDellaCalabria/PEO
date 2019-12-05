@@ -20,12 +20,14 @@ from django_form_builder.utils import (get_allegati,
                                        get_POST_as_json,
                                        set_as_dict)
 
+from domande_peo.models import *
 from gestione_peo.models import Bando, IndicatorePonderato, DescrizioneIndicatore
 from gestione_risorse_umane.models import Dipendente, PosizioneEconomica, LivelloPosizioneEconomica
 
 
 def get_fname_allegato(domanda_bando_id, bando_id):
     return "domanda_{}-{}.pdf".format(domanda_bando_id, bando_id)
+
 
 def get_path_allegato(matricola, slug_bando, id_modulo_inserito):
     """
@@ -38,6 +40,7 @@ def get_path_allegato(matricola, slug_bando, id_modulo_inserito):
                                                     id_modulo_inserito)
     return path
 
+
 def salva_file(f, path, nome_file):
     file_path = '{}/{}'.format(path,nome_file)
 
@@ -46,6 +49,7 @@ def salva_file(f, path, nome_file):
     with open(file_path,'wb') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
 
 def download_file(path, nome_file):
     """
@@ -62,6 +66,7 @@ def download_file(path, nome_file):
             return response
     return None
 
+
 def elimina_file(path, nome_file):
     """
         Elimina un file allegato a una domanda dal disco
@@ -73,6 +78,7 @@ def elimina_file(path, nome_file):
         return path
     except:
         return False
+
 
 def elimina_directory(matricola, bando_slug, modulo_compilato_id = None):
     """
@@ -220,6 +226,7 @@ def aggiungi_titolo_form(request,
         dictionary['form'] = form
         return dictionary
 
+
 def modifica_titolo_form(request,
                          bando,
                          descrizione_indicatore,
@@ -272,6 +279,7 @@ def modifica_titolo_form(request,
         dictionary['form'] = form
         return dictionary
 
+
 def elimina_allegato_from_mdb(request,
                               bando,
                               dipendente,
@@ -308,6 +316,7 @@ def elimina_allegato_from_mdb(request,
                                     change_message  = msg)
     return HttpResponseRedirect(return_url)
 
+
 def cancella_titolo_from_domanda(request,
                                  bando,
                                  dipendente,
@@ -315,7 +324,6 @@ def cancella_titolo_from_domanda(request,
                                  return_url,
                                  mark_domanda_as_modified=True,
                                  log=False):
-    mdb.delete()
     if mark_domanda_as_modified:
         mdb.domanda_bando.mark_as_modified()
     # Rimuove la folder relativa al modulo compilato,
@@ -329,8 +337,10 @@ def cancella_titolo_from_domanda(request,
                                     object_repr     = mdb.domanda_bando.__str__(),
                                     action_flag     = CHANGE,
                                     change_message  = msg)
+    mdb.delete()
     messages.success(request, msg)
     return HttpResponseRedirect(return_url)
+
 
 def download_allegato_from_mdb(bando,
                                mdb,
@@ -349,3 +359,35 @@ def download_allegato_from_mdb(bando,
 
     if result is None: raise Http404
     return result
+
+
+def test_allegati(bando,
+                  backup_folder='/opt/django_peo_dumps/backup_replica/media/media/domande_peo/',
+                  restore=False):
+    for i in DomandaBando.objects.filter(bando=bando):
+        for m in i.modulodomandabando_set.all():
+            p = m.get_allegati_path()
+            if len(p) >= 1:
+                p = p[0]
+                if not os.path.exists(p):
+                    print('Errore in {}: {}'.format(i, p))
+
+                    if backup_folder:
+                        pp = p.replace(base_path, backup_folder)
+                        if not os.path.exists(pp):
+                            print('  Non recuperabile: {}'.format(pp))
+                            failed.append(pp)
+                        else:
+                            print('  Recuperabile in: {}'.format(pp))
+                            fname = pp.split('/')[-1]
+                            bdir = base_path + '/{}/bando-{}'.format(i.dipendente.matricola,
+                                                                    bando.slug,)
+                            dest_dir =  bdir + '/domanda-id-{}/'.format(m.pk)
+                            dest_complete = dest_dir+fname
+                            print('  ... Copy "{}"\n      into: "{}"'.format(pp, dest_complete))
+                            if restore:
+                                if not os.path.exists(bdir):
+                                    os.mkdir(bdir)
+                                if not os.path.exists(dest_dir):
+                                    os.mkdir(dest_dir)
+                                shutil.copyfile(pp, dest_complete)

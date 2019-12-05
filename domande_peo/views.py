@@ -44,11 +44,14 @@ from .utils import *
 from PyPDF2 import PdfFileMerger
 from io import StringIO, BytesIO
 
+import logging
 import gestione_peo.settings
 import json
 import magic
 import shutil
 
+
+logger = logging.getLogger(__name__)
 _breadcrumbs = BreadCrumbs()
 
 # Ci dice se un utente è staff o fa parte di una commissione
@@ -778,6 +781,7 @@ def chiudi_apri_domanda(request, bando_id,
             protclass = __import__(settings.CLASSE_PROTOCOLLO, globals(), locals(), ['*'])
             wsclient = protclass.Protocollo(**peo_dict)
 
+            logger.info('Protocollazione Domanda {}'.format(domanda_bando))
             docPrinc = BytesIO()
             docPrinc.write(download_domanda_pdf(request, bando_id, domanda_bando_id).content)
             docPrinc.seek(0)
@@ -786,23 +790,26 @@ def chiudi_apri_domanda(request, bando_id,
                                                                            bando.pk),
                                        tipo_doc='{} - {}'.format(bando.pk, dipendente.matricola))
 
-            for modulo in domanda_bando.modulodomandabando_set.all():
-                # aggiungi come allegati solo i moduli che hanno allegati
-                # if not modulo.get_allegati(): continue
-                if not get_allegati(modulo): continue
-                allegato = BytesIO()
-                allegato.write(download_modulo_inserito_pdf(request, bando_id, modulo.pk).content)
-                allegato.seek(0)
-                wsclient.aggiungi_allegato(nome="domanda_{}_{}-{}.pdf".format(dipendente,
-                                                                              bando.pk,
-                                                                              modulo.pk),
-                                           descrizione='{} - {}'.format(modulo.descrizione_indicatore.id_code,
-                                                                        modulo.get_identificativo_veloce()),
-                                           fopen=allegato)
+            # allegati disabilitati
+            # for modulo in domanda_bando.modulodomandabando_set.all():
+                # if not get_allegati(modulo): continue
+                # allegato = BytesIO()
+                # logger.info('Protocollazione Domanda {} - allegato {}'.format(domanda_bando,
+                                                                              # modulo.pk))
+                # allegato.write(download_modulo_inserito_pdf(request, bando_id, modulo.pk).content)
+                # allegato.seek(0)
+                # wsclient.aggiungi_allegato(nome="domanda_{}_{}-{}.pdf".format(dipendente,
+                                                                              # bando.pk,
+                                                                              # modulo.pk),
+                                           # descrizione='{} - {}'.format(modulo.descrizione_indicatore.id_code,
+                                                                        # modulo.get_identificativo_veloce()),
+                                           # fopen=allegato)
             # print(wsclient.is_valid())
-            if settings.DEBUG: print(wsclient.render_dataXML())
+            logger.debug(wsclient.render_dataXML())
             prot_resp = wsclient.protocolla()
             domanda_bando.numero_protocollo = wsclient.numero
+            logger.info('Avvenuta Protocollazione Domanda {} numero: {}'.format(domanda_bando,
+                                                                                domanda_bando.numero_protocollo))
             domanda_bando.data_protocollazione = timezone.localtime()
             # se non torna un numero di protocollo emerge l'eccezione
             assert wsclient.numero
