@@ -126,9 +126,9 @@ Molto probabilmente non ne avrai bisogno e in futuro questo script verrà rimoss
 Primo accesso al sistema
 ------------------------
 ````
-./manage.py createsuperuser
 ./manage.py makemigrations # (se CSA replica le migrations rimangono private)
 ./manage migrate
+./manage.py createsuperuser
 ./manage.py runserver
 ````
 

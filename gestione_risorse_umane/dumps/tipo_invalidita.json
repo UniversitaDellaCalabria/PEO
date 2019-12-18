@@ -1,1 +1,2 @@
+OpenSSL 1.0.2g  1 Mar 2016
 [{"model": "gestione_risorse_umane.tipoinvalidita", "pk": 1, "fields": {"nome": "P", "identificativo": "P", "descrizione": ""}}, {"model": "gestione_risorse_umane.tipoinvalidita", "pk": 2, "fields": {"nome": "H", "identificativo": "H", "descrizione": ""}}]
