@@ -49,15 +49,7 @@ class ModuloDomandaBandoInLines(admin.StackedInline):
     def get_modulo_anteprima(self, obj):
         json_dict = json.loads(obj.modulo_compilato)
         data = get_as_dict(json_dict, allegati=False)
-        # data = obj.get_as_dict(allegati=False)
-        # allegati = obj.get_allegati()
         allegati = get_allegati(obj)
-        #form = obj.descrizione_indicatore.get_form(data=data,
-        #                                           files=None,
-        #                                           domanda_id=obj.domanda_bando.pk,
-        #                                           remove_filefields=True)
-
-        # form = obj.compiled_form_readonly(show_title=True)
         form = SavedFormContent.compiled_form_readonly(obj.compiled_form())
 
         table_tmpl = '<table margin-left: 15px;">{}</table>'

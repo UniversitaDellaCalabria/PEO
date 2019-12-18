@@ -4,49 +4,12 @@
 {% load i18n %}
 
 {% block page_sub_title %}
-<h2 class="ui header">Domanda {{ domanda_peo }}</h2>
+<h2 class="ui header">Domanda {{ domanda_bando }}</h2>
 {% endblock page_sub_title %}
 
 {% block top_buttons %}
-<div class="ui segment">
-        {% if modulo_domanda_bando.disabilita %}
-        <form method='post' class="ui form error">
-        <div class="ui error message">
-            <div class="header">Attenzione</div>
-            <p>L'inserimento è attualmente disabilitato con questa motivazione:<br>
-            <i>{{ modulo_domanda_bando.motivazione }}</i></p>
-        </div>
-        <div class="field">
-            <button class="ui positive button" name="disabilita_abilita_inserimento" type="submit" value=1>
-                <i class="ban icon"></i>
-                Abilita inserimento
-            </button>
-        </div>
-        {% else %}
-        <form method='post' class="ui form info">
-        <div class="field">
-            <label for="id_motivazione">Motivazione:</label>
-            <textarea name="motivazione" rows="1" id="id_motivazione" required></textarea>
-            <div class="ui info message">
-                <div class="header">Attenzione</div>
-                <p>Il testo inserito in questo campo sarà reso visibile al
-                dipendente dopo la chiusura del Bando e motiverà eventuali
-                revisioni sul calcolo e l'assegnazione del punteggio</p>
-            </div>
-        </div>
-        <div class="field">
-            <button class="ui negative button" name="disabilita_abilita_inserimento" type="submit" value=1>
-                <i class="ban icon"></i>
-                Disabilita inserimento
-            </button>
-        </div>
-        {% endif %}
-        <input type="hidden" id="disable_input" name="disable_input" value="1">
-        {% csrf_token %}
-    </form>
-</div>
+    {% include 'commissione_disabilita_inserimento_form.html' with disable_input=1 %}
 {% endblock top_buttons %}
-
 
 {% block content_size %}
     <div class="ui section divider white"></div>
@@ -101,7 +64,7 @@
                         {% endif %}
                         </td>
                         <td class="right aligned collapsing">
-                            <a download href="{% url 'gestione_peo:commissione_download_allegato' commissione_id=commissione.pk domanda_id=domanda_peo.pk modulo_id=modulo_domanda_bando.pk allegato=k  %}">
+                            <a download href="{% url 'gestione_peo:commissione_download_allegato' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=modulo_domanda_bando.pk allegato=k  %}">
                                 <div class="ui small button">
                                     <i class="icon download"></i>
                                     Vedi allegato
@@ -134,7 +97,7 @@
             {% for k,v in allegati.items %}
                 <div class="ui basic modal" id="modal_allegato_{{ k }}">
                     <div class="ui icon header">
-                        <i class="trash icon"></i>
+                        <i class="trash alternate icon"></i>
                         Cancellazione allegato
                         <h5>{{ k }}: {{ v }}</h5>
                     </div>
@@ -168,19 +131,26 @@
 {% endblock allegati %}
 
 {% block formbuttons_back %}
-    <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+    <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
         <div class="ui button">
-            <i class="reply icon"></i>
+            <i class="step backward icon"></i>
             Torna alla Domanda
         </div>
     </a>
 {% endblock formbuttons_back %}
 
 {% block formbuttons_pdf %}
-    <a href="{% url 'domande_peo:download_modulo_inserito_pdf' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id %}">
+    <a href="{% url 'domande_peo:download_modulo_inserito_pdf' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.pk %}">
         <div class="ui button">
             <i class="print icon"></i>
             Scarica PDF
+        </div>
+    </a>
+
+    <a href="{% url 'gestione_peo:commissione_domanda_duplica_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=modulo_domanda_bando.pk %}">
+        <div class="ui primary button">
+            <i class="copy icon"></i>
+            Duplica inserimento
         </div>
     </a>
 {% endblock formbuttons_pdf %}

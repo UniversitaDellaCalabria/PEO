@@ -1,4 +1,4 @@
-{% if domanda_peo.data_chiusura %}
+{% if domanda_bando.data_chiusura %}
 <div class="ui segment">
     <div class="item">
         <div class="content">
@@ -7,18 +7,18 @@
                 Questa Domanda di Partecipazione è stata completata e consegnata:
                 <ol class="ui list" style="padding-left: 23px;">
                     <li value="*">
-                        Giorno: <b>{{ domanda_peo.data_chiusura }}</b>
+                        Giorno: <b>{{ domanda_bando.data_chiusura }}</b>
                     </li>
-                    {% if domanda_peo.numero_protocollo %}
+                    {% if domanda_bando.numero_protocollo %}
                         <li value="*">
-                            <i>Numero Protocollo</i>: {{ domanda_peo.numero_protocollo }}
+                            <i>Numero Protocollo</i>: {{ domanda_bando.numero_protocollo }}
                         </li>
                         <li value="*">
-                            <i>Data Protocollo</i>: {{ domanda_peo.data_protocollazione }}
+                            <i>Data Protocollo</i>: {{ domanda_bando.data_protocollazione }}
                         </li>
                     {% else %}
                         <li value="*">
-                            <i>Numero</i>: <b>{{ domanda_peo.pk }}</b>
+                            <i>Numero</i>: <b>{{ domanda_bando.pk }}</b>
                         </li>
                     {% endif %}
                 </ol>
@@ -28,7 +28,7 @@
 </div>
 {% endif %}
 
-{% if domanda_peo.rettificadomandabando_set.all  %}
+{% if domanda_bando.rettificadomandabando_set.all  %}
 <div style="margin-top: 13px; margin-bottom: 13px;" class="ui fluid styled accordion">
     <div class="title" style="color: #000000;">
         <i class="dropdown icon"></i>
@@ -37,7 +37,7 @@
     </div>
     <div class="content">
         <div class="ui relaxed divided list">
-            {% for rett in domanda_peo.rettificadomandabando_set.all %}
+            {% for rett in domanda_bando.rettificadomandabando_set.all %}
                 <div class="item" style="">
                     <div class="content">
                         <div class="description">
@@ -59,6 +59,6 @@
                 </div>
             {% endfor %}
         </div>
-    </div>   
+    </div>
 </div>
 {% endif %}

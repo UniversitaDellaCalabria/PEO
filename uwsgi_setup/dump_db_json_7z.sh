@@ -8,7 +8,7 @@ export PASSWORD=$(python -c "from django_peo import settingslocal; print(setting
 export USERNAME=$(python -c "from django_peo import settingslocal; print(settingslocal.DATABASES['default']['USER'])")
 export DB=$(python -c "from django_peo import settingslocal; print(settingslocal.DATABASES['default']['NAME'])")
 
-BACKUP_DIR="/opt/django_peo_dumps"
+BACKUP_DIR="/mnt/peo_volume/django_peo_dumps"
 BACKUP_DIR_JSON=$BACKUP_DIR"/json"
 BACKUP_DIR_SQL=$BACKUP_DIR"/sql"
 BACKUP_DIR_MEDIA=$BACKUP_DIR"/media"
@@ -24,4 +24,5 @@ mysqldump -u $USERNAME --password=$PASSWORD $DB | 7z a $BACKUP_DIR_SQL/$FNAME.sq
 # 7z x $BACKUP_DIR/$FNAME.7z -p$PASSWORD
 
 # media files
-rsync -avu --delete /opt/django_peo/data/media $BACKUP_DIR_MEDIA
+#rsync -avu --delete /opt/django_peo/data/media $BACKUP_DIR_MEDIA
+rsync -avu /opt/django_peo/data/media $BACKUP_DIR_MEDIA

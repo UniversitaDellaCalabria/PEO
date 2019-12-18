@@ -1,0 +1,15 @@
+1.0
+---
+
+- django-form-builder come applicazione separata
+- csa come applicazione separata
+- pannello gestione commissioni
+  - schermata clausole 
+  - possibilità di disabilitare moduli con motivazione 
+  - possibilità di creare nuovi moduli
+  - log delle azioni
+  - possibilità di duplicare/spostare un modulo (con traccia del log della disabilitazione dell'originario)
+  - modalità multima di navazione delle domande, compressa o estesa
+  - filtri di ricerca per categorie, livello e dipendente
+  - marcatura presa visione
+- revisione generale del codice

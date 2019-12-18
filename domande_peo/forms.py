@@ -19,16 +19,18 @@ class GenericPeoForm(forms.Form):
 
 class AccettazioneClausoleForm(forms.Form):
 	accettazione = forms.BooleanField(label='')
-	
+
+
 class AllegatoForm(forms.Form):
     allegato = forms.FileField(label='Allegato')
-                        
-    
+
+
 class TitoliForm(forms.Form):
     denominazione_titolo = forms.CharField(label='Denominazione del Titolo',
                                            max_length='200')
-    tipologia_titolo = forms.ModelChoiceField(queryset=Bando.objects.all(), 
+    tipologia_titolo = forms.ModelChoiceField(queryset=Bando.objects.all(),
                                               label='Tipologia Titolo')
+
 
 class TitoloPeoForm(AllegatoForm, TitoliForm, GenericPeoForm):
     pass

@@ -82,7 +82,7 @@
         {% if not form.is_valid %}
             <div class="ui error message">
                 <div class="header">
-                    ATTENZIONE, Sono stati riscontrati i seguenti errori di compilazione:
+                    ATTENZIONE, sono stati riscontrati i seguenti errori di compilazione:
                 </div>
                 {% if labeled_errors %}
                 <ul class="list">
@@ -118,13 +118,13 @@
             {% block formbuttons_back %}
                 <a href="{% url 'domande_peo:dashboard_domanda' bando.slug %}#{{ bando.slug }}">
                     <div class="ui button">
-                        <i class="home icon"></i>
+                        <i class="fast backward icon"></i>
                         Torna alla Domanda
                     </div>
                 </a>
                 <a href="{% url 'domande_peo:scelta_titolo_da_aggiungere' bando.slug %}">
                     <div class="ui button">
-                        <i class="reply icon"></i>
+                        <i class="step backward icon"></i>
                         Torna indietro
                     </div>
                 </a>

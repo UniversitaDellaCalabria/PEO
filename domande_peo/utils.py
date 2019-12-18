@@ -22,6 +22,7 @@ from django_form_builder.utils import (get_allegati,
 
 from domande_peo.models import *
 from gestione_peo.models import Bando, IndicatorePonderato, DescrizioneIndicatore
+from gestione_peo.settings import ETICHETTA_INSERIMENTI_ID
 from gestione_risorse_umane.models import Dipendente, PosizioneEconomica, LivelloPosizioneEconomica
 
 
@@ -176,7 +177,7 @@ def aggiungi_titolo_form(request,
                          log=False):
     form = descrizione_indicatore.get_form(data=request.POST,
                                            files=request.FILES,
-                                           domanda_id=domanda_bando.id)
+                                           domanda_bando=domanda_bando)
     if form.is_valid():
         # qui chiedere conferma prima del salvataggio
         json_data = get_POST_as_json(request)
@@ -208,7 +209,8 @@ def aggiungi_titolo_form(request,
         set_as_dict(mdb, json_stored)
         # mdb.set_as_dict(json_stored)
         domanda_bando.mark_as_modified()
-        msg = 'Inserimento {} effettuato con successo!'.format(mdb)
+        msg = 'Inserimento {} - Etichetta: {} - effettuato con successo!'.format(mdb,
+                                                                                 request.POST.get(ETICHETTA_INSERIMENTI_ID))
         #Allega il messaggio al redirect
         messages.success(request, msg)
         if log:
@@ -241,7 +243,7 @@ def modifica_titolo_form(request,
     # rimuovo solo gli allegati che sono stati già inseriti
     form = descrizione_indicatore.get_form(data=json_response,
                                            files=request.FILES,
-                                           domanda_id=mdb.domanda_bando.id,
+                                           domanda_bando=mdb.domanda_bando,
                                            remove_filefields=allegati)
     if form.is_valid():
         if request.FILES:
@@ -258,12 +260,12 @@ def modifica_titolo_form(request,
             json_response["allegati"] = allegati
 
         # salva il modulo
-        # mdb.set_as_dict(json_response)
         set_as_dict(mdb, json_response)
         # data di modifica
         mdb.mark_as_modified()
         #Allega il messaggio al redirect
-        msg = 'Modifica {} effettuata con successo!'.format(mdb)
+        msg = 'Modifica {} - Etichetta: {} - effettuata con successo!'.format(mdb,
+                                                                              request.POST.get(ETICHETTA_INSERIMENTI_ID))
         messages.success(request, msg)
         if log:
             LogEntry.objects.log_action(user_id = request.user.pk,
@@ -305,8 +307,10 @@ def elimina_allegato_from_mdb(request,
                                       mdb.pk)
     # Rimuove l'allegato dal disco
     elimina_file(path_allegato, nome_file)
-
-    msg = 'Allegato {} eliminato con successo da {}'.format(nome_file, mdb)
+    etichetta = mdb.get_identificativo_veloce()
+    msg = 'Allegato {} eliminato con successo da {} - Etichetta: {}'.format(nome_file,
+                                                                            mdb,
+                                                                            etichetta)
     if log:
         LogEntry.objects.log_action(user_id = request.user.pk,
                                     content_type_id = ContentType.objects.get_for_model(mdb.domanda_bando).pk,
@@ -329,7 +333,8 @@ def cancella_titolo_from_domanda(request,
     # Rimuove la folder relativa al modulo compilato,
     # comprensiva di allegati ('modulo_compilato_id' passato come argomento)
     elimina_directory(dipendente.matricola, bando.slug, mdb.pk)
-    msg = 'Modulo {} rimosso con successo!'.format(mdb)
+    etichetta = mdb.get_identificativo_veloce()
+    msg = 'Modulo {} - Etichetta: {} - rimosso con successo!'.format(mdb, etichetta)
     if log:
         LogEntry.objects.log_action(user_id = request.user.pk,
                                     content_type_id = ContentType.objects.get_for_model(mdb.domanda_bando).pk,

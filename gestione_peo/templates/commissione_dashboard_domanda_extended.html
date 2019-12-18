@@ -1,0 +1,99 @@
+{% extends 'commissione_dashboard_domanda.html' %}
+
+{% load domande_peo_tags %}
+{% load static %}
+
+{% block js_head %}
+<script type="text/javascript" src="{% static '/js/textarea-autosize_legacy.js' %}"></script>
+{% endblock js_head %}
+
+{% block extended_compressed_view %}
+<a href="{% url 'gestione_peo:commissione_domanda_manage_extended' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
+    <button class="ui primary basic button">
+        <i class="compress icon"></i>
+        Visualizzazione compressa
+    </button>
+</a>
+{% endblock %}
+
+{% block elenco_moduli_domanda %}
+{% for modulo_domanda_bando in domanda_bando.modulodomandabando_set.all %}
+    <div class="ui raised {% if modulo_domanda_bando.disabilita %}red{% else %}blue{% endif %} segment" id="{{ modulo_domanda_bando.pk }}">
+        {% if not modulo_domanda_bando.added_by_user %}
+            <div class="ui warning message">
+                  <i class="icon info circle"></i>
+                  Inserito manualmente dai commissari
+            </div>
+        {% endif %}
+        <h5>{{ modulo_domanda_bando.get_identificativo_veloce|upper }}</h3>
+        <p style="color:#000">
+            <i>
+                {{ modulo_domanda_bando.descrizione_indicatore.indicatore_ponderato }}:
+                ({{ modulo_domanda_bando.descrizione_indicatore.id_code }})
+                {{ modulo_domanda_bando.descrizione_indicatore.nome }}
+            </i>
+        </p>
+        <p style="color:#000">{{ modulo_domanda_bando.descrizione_indicatore.note_as_html|safe }}</p>
+        <form class="ui form">
+            {% domanda_bando_readonly modulo_domanda_bando as form %}
+
+            {% for field in form %}
+            <div class="field">
+                {{ field.label_tag }}
+                {{ field.errors }}
+                {{ field }}
+                {% if field.help_text %}
+                <div class="ui help">
+                    <p style="color: grey;">
+                        <i>{{ field.help_text|safe }}</i>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </form>
+        {% block allegati %}
+            {% get_allegati_modulo modulo_domanda_bando as allegati_modulo %}
+            {% if allegati_modulo %}
+            <div class="ui section divider" ></div>
+            <div>
+                <label style="color:#000;">Allegati</label>
+                {% for k,v in allegati_modulo %}
+                    <div class="field" style="color:#000;">
+                        <p style="margin-bottom: 3px; margin-top: 7px;">{{k}}</p>
+                        <a style="color: #4183c4;"
+                           href="{% url 'domande_peo:download_allegato' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.pk allegato=k  %}">{{v}}</a>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endblock allegati %}
+
+        {% include 'commissione_disabilita_inserimento_form.html' with disable_input=modulo_domanda_bando.pk %}
+
+        <div style="text-align:right">
+            {% if not modulo_domanda_bando.added_by_user %}
+            <button class="ui negative button" id="cancella_ind_{{ modulo_domanda_bando.pk }}">
+                <i class="trash alternate icon"></i>
+                Cancella
+            </button>
+
+            <a style="color: white;"
+               href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=modulo_domanda_bando.pk %}">
+                <div class="ui primary button">
+                    <i class="edit icon"></i>
+                    Modifica
+                </div>
+            </a>
+            {% endif %}
+            <a href="{% url 'gestione_peo:commissione_domanda_duplica_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=modulo_domanda_bando.pk %}">
+                <div class="ui primary button">
+                    <i class="copy icon"></i>
+                    Duplica inserimento
+                </div>
+            </a>
+        </div>
+
+    </div>
+{% endfor %}
+{% endblock elenco_moduli_domanda %}

@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% load static %}
 
+{% block content %}
 <h2 class="ui header">{{ commissione }}
     <span style="font-size:0.5em;font-weight:normal">
         {% include 'stato_commissione.html' %}
@@ -30,16 +31,63 @@
         {% endif %}
 
         <div class="ui horizontal divider"></div>
-        <h3 class="ui header item">Domande presentate ({{ domande|length }})</h3>
-        <div class="ui grid stackable grid">
-            <div class="six wide column right floated">
+        <h3 class="ui header item">
+            Domande presentate ({{ domande|length }})
+        </h3>
+        {% if request.GET.poseco %}
+            [Posizione: {{ request.GET.poseco }} -
+             Livello: {{ request.GET.livello }}]
+        {% endif %}
+        <div class="ui grid basic segment">
+            <div class="four wide column left aligned right floated" style="margin:0;padding-left:0;">
+                <form method="post" id="lockbutton_form" action="#">
+                    <input type="hidden" name="calcola_punteggio" value=1 />
+                    <button class="ui positive button lockbutton_submit"
+                            type="submit"
+                            value=1>
+                        <i class="calculator icon"></i>
+                            Calcola tutti i punteggi
+                    </button>
+                    {% csrf_token %}
+                </form>
+            </div>
+            <div class="nine wide column right aligned right floated" style="padding-right:0;">
                 <form method="get" class="ui form info">
-                    <div class="field">
-                        <input type="text"
-                               name="search"
-                               id="id_search"
-                               value="{{ search|default_if_none:"" }}"
-                               placeholder="cerca per numero di protocollo o matricola, cognome, nome dell'utente..."/>
+                    <div class="fields">
+                        <div class="field">
+                            <select onchange="this.form.submit();" name="poseco">
+                                <option value="">- Posizione economica -</option>
+                                {% for poseco in posizioni_economiche %}
+                                    <option value="{{ poseco.nome }}"
+                                        {% if request.session.poseco == poseco.nome %}
+                                            selected
+                                        {% endif %}>
+                                        {{ poseco.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <select onchange="this.form.submit();" name="livello">
+                                <option value="">- Livello -</option>
+                                {% for livello in livelli_posizione %}
+                                    <option value="{{ livello.nome }}"
+                                        {% if request.session.livello == livello.nome %}
+                                            selected
+                                        {% endif %}>
+                                        {{ livello.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <input type="text"
+                                   name="search"
+                                   id="id_search"
+                                   size="50"
+                                   value="{{ request.session.search }}"
+                                   placeholder="cerca per numero di protocollo o matricola, cognome, nome dell'utente..."/>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -54,7 +102,17 @@
                     <th>Nome</th>
                     <th>Data chiusura</th>
                     <th>Ultimo Protocollo</th>
+<!--
                     <th>Prog. accettata</th>
+-->
+                    <th class="right aligned">Punteggio</th>
+                    <th class="center aligned">
+                        Stato
+                    </th>
+                    <th class="center aligned">
+                        <i class="eye icon"
+                           title="Ultima visualizzazione"></i>
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -64,20 +122,62 @@
                     <td>{{ domanda.dipendente.matricola }}</td>
                     <td>{{ domanda.dipendente.cognome }}</td>
                     <td>{{ domanda.dipendente.nome }}</td>
-                    <td>{{ domanda.data_chiusura|default_if_none:"-" }}</td>
+                    <td>
+                        {% if domanda.data_chiusura %}
+                            {{ domanda.data_chiusura }}
+                        {% elif domanda.numero_protocollo %}
+                            <div class="ui negative message">
+                                <p>Domanda riaperta e mai conclusa.<br>
+                                Fare riferimento al protocollo
+                                {{ domanda.numero_protocollo }} del
+                                {{ domanda.data_protocollazione|date:"d F Y" }}</p>
+                            </div>
+                        {% else %}
+                            <div class="ui negative message">
+                                <p>Domanda mai chiusa</p>
+                            </div>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if domanda.numero_protocollo %}
                             {{ domanda.numero_protocollo }} del
                             {{ domanda.data_protocollazione|date:"d F Y" }}
                         {% else %}
-                            -
+                            <div class="ui negative message">
+                                <p>Domanda non protocollata</p>
+                            </div>
                         {% endif %}
                     </td>
+<!--
                     <td>
                         {% if domanda.progressione_accettata %}
                         <i class="check circle icon" style="color:green"></i>
                         {% else %}
                         <i class="ban icon" style="color:red"></i>
+                        {% endif %}
+                    </td>
+-->
+                    <td class="right aligned">
+                        {{ domanda.punteggio_calcolato|default_if_none:"-" }}
+                    </td>
+                    <td class="center aligned">
+                        {% if domanda.is_active %}
+                            <i class="check circle icon"
+                               style="color:green"
+                               title="Abilitata"></i>
+                        {% else %}
+                            <i class="minus circle icon"
+                               style="color:red"
+                               title="Disabilitata"></i>
+                        {% endif %}
+                    </td>
+                    <td class="center aligned">
+                        {% if domanda.presa_visione_utente %}
+                            <i class="check circle icon"
+                               style="color:green"
+                               title="{{ domanda.presa_visione_utente}} - {{ domanda.presa_visione_data }}"></i>
+                        {% else %}
+                            <i class="minus circle icon" style="color:red"></i>
                         {% endif %}
                     </td>
                     <td>
@@ -92,6 +192,11 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+            <div class="ui negative message">
+                <p>Nessuna domanda presente o corrispondente ai filtri di ricerca</p>
+            </div>
+
         {% endif %}
     </div>
 
@@ -100,3 +205,7 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block bottom_scripts %}
+<script type="text/javascript" src="{% static 'js/lockbutton.js' %}"></script>
+{% endblock bottom_scripts %}

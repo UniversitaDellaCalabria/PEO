@@ -10,7 +10,6 @@ from django.shortcuts import render
 from gestione_peo.models import *
 from gestione_peo.utils import get_commissioni_attive, get_commissioni_in_corso
 from gestione_risorse_umane.models import Dipendente, Avviso
-from unical_accounts.models import User
 from unical_template.decorators import site_not_in_manteinance
 from unical_template.breadcrumbs import BreadCrumbs
 
@@ -86,7 +85,6 @@ def upload_carta_identita(request):
     dipendente = Dipendente.objects.filter(matricola=request.user.matricola).first()
 
     if request.method == 'POST':
-        # print(request.FILES)
         form = CartaIdentitaForm(request.POST, request.FILES)
         if form.is_valid():
             dipendente.carta_identita_front = request.FILES['carta_identita_front']

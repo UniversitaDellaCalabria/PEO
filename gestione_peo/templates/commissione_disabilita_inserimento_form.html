@@ -1,0 +1,37 @@
+<div class="ui segment" style="background:#f7f7f7">
+    {% if modulo_domanda_bando.disabilita %}
+    <form method='post' class="ui form error">
+        <div class="ui error message">
+            <div class="header">Attenzione</div>
+            <p>L'inserimento è attualmente disabilitato con questa motivazione:<br>
+            <i>{{ modulo_domanda_bando.motivazione }}</i></p>
+        </div>
+        <div class="field">
+            <button class="ui positive button" name="disabilita_abilita_inserimento" type="submit" value=1>
+                <i class="check icon"></i>
+                Abilita inserimento
+            </button>
+        </div>
+    {% else %}
+    <form method='post' class="ui form info">
+        <div class="field">
+            <label for="id_motivazione">Motivazione:</label>
+            <textarea name="motivazione" rows="1" id="id_motivazione" required></textarea>
+            <div class="ui info message">
+                <div class="header">Attenzione</div>
+                <p>Il testo inserito in questo campo sarà reso visibile al
+                dipendente dopo la chiusura del Bando e motiverà eventuali
+                revisioni sul calcolo e l'assegnazione del punteggio</p>
+            </div>
+        </div>
+        <div class="field">
+            <button class="ui negative button" name="disabilita_abilita_inserimento" type="submit" value=1>
+                <i class="ban icon"></i>
+                Disabilita inserimento
+            </button>
+        </div>
+    {% endif %}
+        <input type="hidden" id="disable_input" name="disable_input" value="{{ disable_input }}">
+        {% csrf_token %}
+    </form>
+</div>

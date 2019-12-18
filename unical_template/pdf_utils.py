@@ -30,7 +30,7 @@ def response_as_pdf(response, pdf_fname):
     pdf_path = settings.TMP_DIR + os.path.sep + pdf_fname
 
     options = {
-        'dpi':90,
+        'dpi':70,
         #'page-width': 2024,
         #'enable-smart-width': True,
         'page-size': 'A4',
@@ -42,6 +42,7 @@ def response_as_pdf(response, pdf_fname):
         'margin-bottom': '0.3in',
         'margin-left': '0in',
         'footer-center': '[page] di [topage]',
+#        'enable-forms': 1
     }
     # print(html_page_rewritten)
     pdf_stream = pdfkit.from_string(html_page_rewritten,

@@ -272,23 +272,6 @@ class PunteggioDomandaBando(object):
         if not self.dipendente:
             return 0
 
-        # patch
-        # DA RIMUOVERE
-
-        # if not self.livello:
-            # self.livello = self.dipendente.livello
-            # self.save()
-
-        # if not self.data_presa_servizio:
-            # self.data_presa_servizio = self.dipendente.get_data_presa_servizio_csa()
-            # self.save()
-
-        # if not self.data_ultima_progressione:
-            # self.data_ultima_progressione = self.dipendente.get_data_presa_servizio_csa()
-            # self.save()
-
-        # end patch
-
         punteggio = self.calcolo_punteggio_tot_moduli_compilati()
 
         if save:

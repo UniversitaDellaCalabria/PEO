@@ -1,6 +1,7 @@
 {% extends 'dashboard_domanda.html' %}
 
 {% load static %}
+{% load user_tags %}
 
 {% block dettagli_bando %}{% endblock dettagli_bando %}
 
@@ -15,13 +16,23 @@
 
 {% block top_buttons %}
 <div class="ui right aligned basic segment" style="padding-right:0;padding-left:0">
-    <a href="{% url 'gestione_peo:commissione_domanda_scegli_titolo' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+
+    {% block extended_compressed_view %}
+    <a href="{% url 'gestione_peo:commissione_domanda_manage_extended' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
+        <button class="ui primary basic button">
+            <i class="expand icon"></i>
+            Visualizzazione estesa
+        </button>
+    </a>
+    {% endblock %}
+
+    <a href="{% url 'gestione_peo:commissione_domanda_scegli_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
         <button class="ui primary button" name="calcola_punteggio">
             <i class="plus circle icon"></i>
             Aggiungi inserimento
         </button>
     </a>
-    {% if domanda_peo.is_active %}
+    {% if domanda_bando.is_active %}
     <button class="ui left floated negative button" id="disabilita_domanda">
         <i class="ban icon"></i>
             Disabilita domanda
@@ -55,12 +66,12 @@
             previsti dal Bando per ogni singolo Indicatore ponderato.
         </div>
         <div class="two wide column" style="text-align:right">
-            <b>{{ domanda_peo.punteggio_calcolato|default_if_none:"" }}</b>
+            <b>{{ domanda_bando.punteggio_calcolato|default_if_none:"" }}</b>
         </div>
     </div>
 </div>
 
-{% if domanda_peo.bando.indicatore_con_anzianita %}
+{% if domanda_bando.bando.indicatore_con_anzianita %}
     <div class="ui message" style="padding-bottom:0; background:#fff">
         <div class="header">
             Punteggio anzianità di servizio presso
@@ -73,7 +84,7 @@
                 direttamente dall'Area Risorse Umane
             </div>
             <div class="two wide column" style="text-align:right">
-                <b>{{ domanda_peo.get_punteggio_anzianita }}</b>
+                <b>{{ domanda_bando.get_punteggio_anzianita }}</b>
             </div>
         </div>
     </div>
@@ -81,11 +92,13 @@
 {% endblock punteggio_domanda %}
 
 {% block inserimenti_domanda %}
-    {% if domanda_peo.modulodomandabando_set.all %}
+    {% if domanda_bando.modulodomandabando_set.all %}
     <p>
         Di seguito sono riportati i moduli che hai compilato
         per la presentazione della tua Domanda {{ bando }}.
     </p>
+
+    {% block elenco_moduli_domanda %}
     <table class="ui celled striped selectable table visible">
         <thead>
             <tr>
@@ -96,8 +109,8 @@
             </tr>
         </thead>
         <tbody>
-            {% for ins in domanda_peo.modulodomandabando_set.all %}
-                <tr>
+            {% for ins in domanda_bando.modulodomandabando_set.all %}
+                <tr id="{{ ins.pk }}">
                     <td>
                         {% if not ins.added_by_user %}
                             <div class="ui warning message">
@@ -112,7 +125,7 @@
                             </div>
                             <br>
                         {% endif %}
-                        <a class="header" href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_peo.pk modulo_id=ins.pk %}">
+                        <a class="header" href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=ins.pk %}">
                             {{ ins.get_identificativo_veloce }}
                         </a>
                         <div class="ui list" style="color: grey;">
@@ -124,31 +137,31 @@
                         <h5>({{ ins.descrizione_indicatore.indicatore_ponderato.id_code }}) {{ ins.descrizione_indicatore.indicatore_ponderato }}</h5>
                         <i>({{ ins.descrizione_indicatore.id_code }}) {{ ins.descrizione_indicatore.nome }}</i>
                     </td>
-                    {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
-                        <td class="right aligned">
-                            {% if ins.disabilita %}
-                                <div class="ui error message">
-                                    <div class="header">Inserimento non valutato</div>
-                                    <p>{{ ins.motivazione }}</p>
-                                </div>
-                            {% elif ins.punteggio_calcolato %}
-                                {{ ins.punteggio_calcolato }}
-                            {% else %}
-                                --
-                            {% endif %}
-                        </td>
-                    {% endif %}
+
+                    <td class="right aligned">
+                        {% if ins.disabilita %}
+                            <div class="ui error message">
+                                <div class="header">Inserimento non valutato</div>
+                                <p>{{ ins.motivazione }}</p>
+                            </div>
+                        {% elif ins.punteggio_calcolato %}
+                            {{ ins.punteggio_calcolato }}
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
+
                     <td class="right aligned">
                         {% if not ins.added_by_user %}
                             <div class="ui buttons">
                                 <button class="ui negative button" id="cancella_ind_{{ ins.pk }}">Cancella</button>
                                 <div class="or" data-text="o"></div>
-                                <a style="color: white;" href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_peo.pk modulo_id=ins.pk %}">
+                                <a style="color: white;" href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=ins.pk %}">
                                     <button style="border-top-left-radius:0;border-bottom-left-radius:0" class="ui button primary">Modifica</button>
                                 </a>
                             </div>
                         {% else %}
-                            <a style="color: white;" href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_peo.pk modulo_id=ins.pk %}">
+                            <a style="color: white;" href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=ins.pk %}">
                                 <button class="ui button primary">Gestione</button>
                             </a>
                         {% endif %}
@@ -157,8 +170,34 @@
             {% endfor %}
         </tbody>
     </table>
+    {% endblock elenco_moduli_domanda %}
 {% endif%}
 {% endblock inserimenti_domanda %}
+
+{% block bottom_extra_content %}
+<div class="ui fluid styled accordion" style="margin-top:20px">
+    <div class="title" style="color:#000;">
+        <i class="dropdown icon"></i>
+        Log azioni commissione {{ commissione }}
+    </div>
+    <div class="content">
+        <div class="ui relaxed divided list">
+            {% for log in log_domanda %}
+            <div class="item" style="padding:10px 0">
+                <i class="large edit middle aligned icon"></i>
+                <div class="content">
+                    <a class="header">{{ log.change_message }}</a>
+                    <div class="description">
+                        {% user_from_pk log.user_id as user %}
+                        {{ user }} - {{ log.action_time }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock bottom_extra_content %}
 
 {% block buttons_domanda %}{% endblock buttons_domanda %}
 
@@ -183,7 +222,7 @@
     // Mostra il pannello modal
     // per la conferma di cancellazione di un inserimento
     $(function(){
-        {% for ins in domanda_peo.modulodomandabando_set.all %}
+        {% for ins in domanda_bando.modulodomandabando_set.all %}
             $("#cancella_ind_{{ ins.pk }}").click(function(){
                 $('#modal_ind_{{ ins.pk }}')
                     .modal('show');

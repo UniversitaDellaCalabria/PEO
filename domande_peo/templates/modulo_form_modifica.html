@@ -30,14 +30,14 @@
 {% block formbuttons_back %}
     <a href="{% url 'domande_peo:dashboard_domanda' bando.slug %}#{{ bando.slug }}">
         <div class="ui button">
-            <i class="reply icon"></i>
+            <i class="step backward icon"></i>
             Torna alla Domanda
         </div>
     </a>
 {% endblock formbuttons_back %}
 
 {% block formbuttons_pdf %}
-    <a href="{% url 'domande_peo:download_modulo_inserito_pdf' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id %}">
+    <a href="{% url 'domande_peo:download_modulo_inserito_pdf' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.pk %}">
         <div class="ui button">
             <i class="print icon"></i>
             Scarica PDF
@@ -110,7 +110,7 @@ la cancellazione degli allegati vengono prodotti
                         {% endif %}
                         </td>
                         <td class="right aligned collapsing">
-                            <a download href="{% url 'domande_peo:download_allegato' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id allegato=k  %}">
+                            <a download href="{% url 'domande_peo:download_allegato' bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.pk allegato=k  %}">
                                 <div class="ui small button">
                                     <i class="icon download"></i>
                                     Vedi allegato
@@ -143,7 +143,7 @@ la cancellazione degli allegati vengono prodotti
             {% for k,v in allegati.items %}
                 <div class="ui basic modal" id="modal_allegato_{{ k }}">
                     <div class="ui icon header">
-                        <i class="trash icon"></i>
+                        <i class="trash alternate icon"></i>
                         Cancellazione allegato
                         <h5>{{ k }}: {{ v }}</h5>
                     </div>
@@ -163,7 +163,7 @@ la cancellazione degli allegati vengono prodotti
                             No
                         </div>
 
-                        <a style="color: white;" href="{% url 'domande_peo:elimina_allegato' allegato=k bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.id  %}">
+                        <a style="color: white;" href="{% url 'domande_peo:elimina_allegato' allegato=k bando_id=bando.slug modulo_compilato_id=modulo_domanda_bando.pk  %}">
                             <div class="ui red ok inverted button">
                                 <i class="checkmark icon"></i>
                                 Si, sono sicuro: CANCELLA

@@ -324,8 +324,6 @@ class DescrizioneIndicatore(TimeStampedModel):
         Ritorna l'ordinamento dei fields che compongono il form associato,
         definito da backend
         """
-        # print(get_fields_types(peo_formfields))
-
         fields_order = [ETICHETTA_INSERIMENTI_ID,]
         for i in self.moduloinserimentocampi_set.all():
             appended = False
@@ -354,22 +352,20 @@ class DescrizioneIndicatore(TimeStampedModel):
                  files=None,
                  remove_filefields=False,
                  remove_datafields=False,
+                 force_sorting=True,
                  **kwargs):
         """
         files solitamente request.FILES vedi domande_peo.views.aggiungi_titolo
         """
         moduli_inserimento = self.moduloinserimentocampi_set.all()
         if not moduli_inserimento: return None
+
         # Static method of DynamicFieldMap
         constructor_dict = DynamicFieldMap.build_constructor_dict(moduli_inserimento)
-
-        # TODO: refactor di questo if all'interno di un metodo della classe Domanda
-        domanda_bando = None
-        if kwargs.get('domanda_id'):
-            domanda_model = apps.get_model(app_label='domande_peo', model_name='DomandaBando')
-            domanda_bando = domanda_model.objects.get(pk=kwargs['domanda_id'])
-        custom_params = {'domanda_bando': domanda_bando,
+        custom_params = {'domanda_bando': kwargs.get('domanda_bando'),
                          'descrizione_indicatore': self}
+
+        fields_order=self.get_fields_order() if force_sorting else []
         form = DynamicFieldMap.get_form(PeoDynamicForm,
                                         constructor_dict=constructor_dict,
                                         custom_params=custom_params,
@@ -377,7 +373,7 @@ class DescrizioneIndicatore(TimeStampedModel):
                                         files=files,
                                         remove_filefields=remove_filefields,
                                         remove_datafields=remove_datafields,
-                                        fields_order=self.get_fields_order())
+                                        fields_order=fields_order)
         return form
 
     def is_available_for_cateco(self, cateco):
@@ -560,8 +556,6 @@ class Punteggio_TitoloStudio(TimeStampedModel):
     titolo = models.ForeignKey(TitoloStudio,
                                on_delete=models.CASCADE,
                                blank=False, null=False, default=1)
-    # categoria_titolo = models.ForeignKey(CategoriaTitolo,
-                                         # on_delete=models.CASCADE)
     bando = models.ForeignKey(Bando, on_delete=models.CASCADE,
                               blank=False, null=False, default=1)
     punteggio = models.PositiveIntegerField()

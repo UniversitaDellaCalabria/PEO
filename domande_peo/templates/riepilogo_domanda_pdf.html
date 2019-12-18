@@ -2,6 +2,13 @@
 {% load static %}
 {% load domande_peo_tags %}
 
+{% block extra_head %}
+    <style>
+        .help { display: none; }
+        .field :disabled {opacity: 1 !important;}
+    </style>
+{% endblock %}
+
 {% block  modulo_head %}
 <h2 class="ui header">Domanda di partecipazione {{ bando }}</h2>
 {% endblock modulo_head %}

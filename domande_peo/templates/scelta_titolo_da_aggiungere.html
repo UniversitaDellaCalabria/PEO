@@ -21,7 +21,9 @@
             {% include "dettaglio_bando_peo_fields.html" %}
         {% endcomment %}
 
+        {% block action_title %}
         <h2 class="ui" id="{{ bando.slug }}">Selezione Modulo di Inserimento</h2>
+        {% endblock action_title %}
 
         {% if indicatori_ponderati %}
             <h5>Titolo, Certificato, Esperienza Professionale o Formativa</h5>
@@ -79,7 +81,7 @@
                             {% if descrizione_indicatore.get_form %}
                             <div class="item" style="margin-bottom: 15px;">
 
-                                {% domanda_bando_num_max_descrind domanda_peo descrizione_indicatore as max_inserimenti %}
+                                {% domanda_bando_num_max_descrind domanda_bando descrizione_indicatore as max_inserimenti %}
                                 {% descrizione_indicatore_available descrizione_indicatore dipendente.livello.posizione_economica dipendente.ruolo as available_descrind %}
 
                                 <div class="content">
@@ -145,7 +147,7 @@
 
         {% block bottom_buttons %}
         <br>
-        <div class="ui red button" id="but_cancella_domanda_{{domanda_peo.pk}}">
+        <div class="ui red button" id="but_cancella_domanda_{{domanda_bando.pk}}">
             <i class="delete icon"></i> Distruggi la tua Domanda
         </div>
         <a href="{% url 'risorse_umane:dashboard' %}">
@@ -155,7 +157,7 @@
         </a>
         <a href="{% url 'domande_peo:dashboard_domanda' bando_id=bando.slug %}#{{ bando.slug }}">
             <button class="ui button">
-                <i class="reply icon"></i> Torna alla Domanda
+                <i class="step backward icon"></i> Torna alla Domanda
             </button>
         </a>
         {% endblock bottom_buttons %}
@@ -179,8 +181,8 @@ $('.ui.accordion').accordion();
 // Mostra il pannello modal
 // per la conferma di cancellazione della domanda
 $(function(){
-    $("#but_cancella_domanda_{{ domanda_peo.pk }}").click(function(){
-        $('#cancella_domanda_{{ domanda_peo.pk }}')
+    $("#but_cancella_domanda_{{ domanda_bando.pk }}").click(function(){
+        $('#cancella_domanda_{{ domanda_bando.pk }}')
             .modal('show');
     });
 });

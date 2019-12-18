@@ -105,10 +105,7 @@ class PEO_PunteggioFloatField(PositiveFloatField):
             if not p_max:
                 p_max = descrizione_indicatore.indicatore_ponderato. \
                     get_pmax_pos_eco(posizione_economica)
-            #if p_max and not any(isinstance(x, MaxValueValidator)
-            #                     for x in self.default_validators):
             if p_max:
-                #self.default_validators.append(MaxValueValidator(p_max))
                 self.validators.append(MaxValueValidator(p_max))
 
 

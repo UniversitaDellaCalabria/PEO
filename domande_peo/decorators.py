@@ -41,26 +41,18 @@ def domanda_modificabile(func_to_decorate):
         domanda = None
 
         if original_kwargs.get('modulo_compilato_id'):
-            # views.modifica_titolo(request, bando_id, modulo_compilato_id)
-            # views.cancella_titolo(request, bando_id, modulo_compilato_id)
-            # views.elimina_allegato(request, bando_id, modulo_compilato_id, allegato)
-            mdb = ModuloDomandaBando.objects.filter(pk=original_kwargs['modulo_compilato_id']).first()
-            if mdb:
-                domanda = mdb.domanda_bando
-            else:
-                raise Http404()
+            mdb = get_object_or_404(ModuloDomandaBando,
+                                    pk=original_kwargs['modulo_compilato_id'])
+            domanda = mdb.domanda_bando
         elif original_kwargs.get('domanda_bando_id'):
-            domanda = DomandaBando.objects.get(pk=original_kwargs['domanda_bando_id'])
+            domanda = get_object_or_404(DomandaBando,
+                                        pk=original_kwargs['domanda_bando_id'])
         elif original_kwargs.get('bando_id'):
-            # views.aggiungi_titolo(request, bando_id, descrizione_indicatore_id)
-            # views.modifica_titolo(request, bando_id, modulo_compilato_id)
-            # views.cancella_titolo(request, bando_id, modulo_compilato_id)
-            # views.elimina_allegato(request, bando_id, modulo_compilato_id, allegato)
-            # views.cancella_domanda(request, bando_id, domanda_bando_id)
             bando = _get_bando_queryset(original_kwargs['bando_id']).first()
             dipendente = get_object_or_404(Dipendente, matricola=request.user.matricola)
-            domanda = DomandaBando.objects.get(bando=bando,
-                                               dipendente=dipendente)
+            domanda = get_object_or_404(DomandaBando,
+                                        bando=bando,
+                                        dipendente=dipendente)
         if request.method == 'GET':
             return func_to_decorate(*original_args, **original_kwargs)
         elif request.method == 'POST':
@@ -98,7 +90,7 @@ def modulo_compilato_cancellabile(func_to_decorate):
     """
     def new_func(*original_args, **original_kwargs):
         request = original_args[0]
-        dipendente = get_object_or_404(Dipendente, matricola = request.user.matricola)
+        dipendente = get_object_or_404(Dipendente, matricola=request.user.matricola)
         mdb = get_object_or_404(ModuloDomandaBando,
                                 pk=original_kwargs['modulo_compilato_id'],
                                 domanda_bando__is_active=True,

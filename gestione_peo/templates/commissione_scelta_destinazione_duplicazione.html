@@ -1,11 +1,11 @@
-{% extends 'scelta_titolo_da_aggiungere.html' %}
+{% extends 'commissione_scelta_titolo_da_aggiungere.html' %}
 
 {% load domande_peo_tags %}
 {% load indicatori_ponderati_tags %}
 
-{% block page_sub_title %}
-<h2 class="ui header">Integrazione domanda {{ domanda_bando }}</h2>
-{% endblock page_sub_title %}
+{% block action_title %}
+<h2 class="ui">{{ page_title }}</h2>
+{% endblock action_title %}
 
 {% block lista_indicatori %}
 {% for indicatore_ponderato in indicatori_ponderati %}
@@ -37,7 +37,7 @@
                             ({{ descrizione_indicatore.id_code }}) {{ descrizione_indicatore.nome }}
                         </p>
                         {% else %}
-                        <a href="{% url 'gestione_peo:commissione_domanda_aggiungi_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk descrizione_indicatore_id=descrizione_indicatore.id %}"
+                        <a href="{% url 'gestione_peo:commissione_domanda_duplica_titolo_confirm' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=mdb.pk descrizione_indicatore_id=descrizione_indicatore.id %}"
                            class="header">({{ descrizione_indicatore.id_code }}) {{ descrizione_indicatore.nome }}
                         </a>
                         {% endif %}
@@ -53,7 +53,7 @@
                         consentiti per questo modulo
                     </button>
                 {% elif available_descrind %}
-                    <a href="{% url 'gestione_peo:commissione_domanda_aggiungi_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk descrizione_indicatore_id=descrizione_indicatore.id %}">
+                    <a href="{% url 'gestione_peo:commissione_domanda_duplica_titolo_confirm' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=mdb.pk descrizione_indicatore_id=descrizione_indicatore.id %}">
                         <button class="ui right floated blue button">
                             <i class="plus square outline icon"></i>
                             Aggiungi
@@ -89,7 +89,12 @@
 <br>
 <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione.pk domanda_bando.pk %}">
     <button class="ui button">
-        <i class="step backward icon"></i> Torna alla Domanda
+        <i class="fast backward icon"></i> Torna alla Domanda
+    </button>
+</a>
+<a href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=mdb.pk %}">
+    <button class="ui button">
+        <i class="step backward icon"></i> Torna all'Inserimento
     </button>
 </a>
 {% endblock bottom_buttons %}

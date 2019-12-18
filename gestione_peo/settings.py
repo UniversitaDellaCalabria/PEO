@@ -9,7 +9,7 @@ NUMERAZIONI_CONSENTITE = [
                             'Delibera del Senato',
                             'Delibera del C.D.A.',
                          ]
-                        
+
 # Campo testo "Etichetta" di default, creato automaticamente in ogni form
 # di inserimento. Serve per l'individuazione rapida del modulo
 # inserito da parte dell'utente ('id' e 'label' del field)
@@ -31,3 +31,6 @@ Ti ricordiamo che attraverso la piattaforma sarà possibile
 riaprire la domanda e ritrasmetterla fino alla data
 di scadenza del bando.
 """
+
+MOTIVAZIONE_DISABILITAZIONE_DUPLICAZIONE = "Disabilitazione per duplicazione in ({}) {}"
+LOG_DUPLICAZIONE_MESSAGE = "Inserimento {origine} disabilitato e duplicato nella destinazione {destinazione}"

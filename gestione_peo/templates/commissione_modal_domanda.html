@@ -4,13 +4,13 @@
         <i class="trash icon"></i>
         Disabilitazione domanda
         <h5>
-            <b>{{ domanda_peo }}</b>
+            <b>{{ domanda_bando }}</b>
         </h5>
     </div>
     <div class="content">
         <p>Stai per disabilitare questa
-            domanda, creata giorno {{ domanda_peo.created }},
-            dal dipendente {{ domanda_peo.dipendente }}.
+            domanda, creata giorno {{ domanda_bando.created }},
+            dal dipendente {{ domanda_bando.dipendente }}.
         </p>
         <h5>
             Sei veramente sicuro di questa scelta?
@@ -22,7 +22,7 @@
             No
         </div>
 
-        <a style="color: white;" href="{% url 'gestione_peo:commissione_disabilita_domanda' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+        <a style="color: white;" href="{% url 'gestione_peo:commissione_disabilita_domanda' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
             <div class="ui red ok inverted button">
                 <i class="checkmark icon"></i>
                 Si, sono sicuro: DISABILITA
@@ -37,13 +37,13 @@
         <i class="trash icon"></i>
         Abilitazione domanda
         <h5>
-            <b>{{ domanda_peo }}</b>
+            <b>{{ domanda_bando }}</b>
         </h5>
     </div>
     <div class="content">
         <p>Stai per bilitare questa
-            domanda, creata giorno {{ domanda_peo.created }},
-            dal dipendente {{ domanda_peo.dipendente }}.
+            domanda, creata giorno {{ domanda_bando.created }},
+            dal dipendente {{ domanda_bando.dipendente }}.
         </p>
         <h5>
             Sei veramente sicuro di questa scelta?
@@ -55,7 +55,7 @@
             No
         </div>
 
-        <a style="color: white;" href="{% url 'gestione_peo:commissione_abilita_domanda' commissione_id=commissione.pk domanda_id=domanda_peo.pk %}">
+        <a style="color: white;" href="{% url 'gestione_peo:commissione_abilita_domanda' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
             <div class="ui green ok inverted button">
                 <i class="checkmark icon"></i>
                 Si, sono sicuro: ABILITA
@@ -65,10 +65,10 @@
     </div>
 </div>
 
-{% for ins in domanda_peo.modulodomandabando_set.all %}
+{% for ins in domanda_bando.modulodomandabando_set.all %}
 <div class="ui basic modal" id="modal_ind_{{ ins.pk }}">
     <div class="ui icon header">
-        <i class="trash icon"></i>
+        <i class="trash alternate icon"></i>
         Cancellazione inserimento
         <h5>
             <b>{{ ins.get_identificativo_veloce }}</b>

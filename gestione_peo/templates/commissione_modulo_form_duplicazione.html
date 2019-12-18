@@ -1,0 +1,26 @@
+{% extends 'commissione_modulo_form.html' %}
+
+{% block formbuttons_back %}
+    <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
+        <div class="ui button">
+            <i class="fast backward icon"></i>
+            Torna alla Domanda
+        </div>
+    </a>
+    <a href="{% url 'gestione_peo:commissione_modulo_domanda_modifica' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=mdb.pk %}">
+        <button class="ui button">
+            <i class="step backward icon"></i>
+            Torna all'Inserimento
+        </button>
+    </a>
+    <a href="{% url 'gestione_peo:commissione_domanda_duplica_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk modulo_id=mdb.pk %}">
+        <div class="ui button">
+            <i class="reply icon"></i>
+            Torna alla selezione della destinazione
+        </div>
+    </a>
+{% endblock formbuttons_back %}
+
+{% block submit_button %}
+    <input class="ui button green" type="submit" value="Inserisci e disabilita inserimento di origine" />
+{% endblock submit_button %}

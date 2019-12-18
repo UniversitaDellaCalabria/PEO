@@ -66,11 +66,11 @@ def _user_is_staff_or_in_commission(user, bando):
     for commissione in commissioni:
         if not commissione.is_in_corso(): continue
         commissione_utente = CommissioneGiudicatriceUsers.objects.filter(commissione=commissione,
-                                                                         user=request.user,
+                                                                         user=user,
                                                                          is_active=True).first()
         if not commissione_utente: continue
         if not commissione_utente.ha_accettato_clausole(): continue
-        if commissione_utente.user==user: return True
+        return True
     return False
 
 @login_required
@@ -86,25 +86,25 @@ def dashboard_domanda(request, bando_id):
     bando = _get_bando_queryset(bando_id).first()
 
     # recupero la domanda peo del dipendente
-    domanda_peo = DomandaBando.objects.filter(bando=bando,
-                                              dipendente=dipendente)
+    domanda_bando = DomandaBando.objects.filter(bando=bando,
+                                                dipendente=dipendente)
 
     # se non c'è alcuna domanda, la creo
     # se la domanda c'è ma is_active==False, ritorno un messaggio di errore
     # altrimenti si prosegue con la domanda attualmente presente
-    if domanda_peo:
-        domanda_peo = domanda_peo.last()
-    elif not domanda_peo:
+    if domanda_bando:
+        domanda_bando = domanda_bando.last()
+    elif not domanda_bando:
         url = reverse('domande_peo:scelta_titolo_da_aggiungere',
                       args=[bando.slug])
         return HttpResponseRedirect(url)
 
-    if not domanda_peo.modulodomandabando_set.all() and not domanda_peo.bando.indicatore_con_anzianita():
+    if not domanda_bando.modulodomandabando_set.all() and not domanda_bando.bando.indicatore_con_anzianita():
         url = reverse('domande_peo:scelta_titolo_da_aggiungere',
                       args=[bando.slug])
         return HttpResponseRedirect(url)
 
-    if not domanda_peo.is_active:
+    if not domanda_bando.is_active:
         return render(request, 'custom_message.html',
                       {'avviso': ("La tua Domanda è stata sospesa. Per avere "
                                   "informazioni contatta l' Area Risorse Umane.")})
@@ -119,7 +119,7 @@ def dashboard_domanda(request, bando_id):
                'breadcrumbs': _breadcrumbs,
                'bando': bando,
                'dipendente': dipendente,
-               'domanda_peo': domanda_peo}
+               'domanda_bando': domanda_bando}
     return render(request, "dashboard_domanda.html",context=context)
 
 
@@ -137,28 +137,25 @@ def scelta_titolo_da_aggiungere(request, bando_id):
     bando = _get_bando_queryset(bando_id).first()
     indicatori_ponderati = bando.indicatoreponderato_set.all().order_by('id_code')
     # recupero la domanda peo del dipendente
-    domanda_peo = DomandaBando.objects.filter(bando=bando,
-                                              dipendente=dipendente)
+    domanda_bando = DomandaBando.objects.filter(bando=bando,
+                                                dipendente=dipendente)
 
     # se non c'è alcuna domanda, la creo
     # se la domanda c'è ma is_active==False, ritorno un messaggio di errore
     # altrimenti si prosegue con la domanda attualmente presente
-    if domanda_peo:
-        domanda_peo = domanda_peo.last()
-    elif not domanda_peo:
-        domanda_peo = DomandaBando.objects.create(bando=bando,
-                                                  dipendente=dipendente,
-                                                  modified=timezone.localtime(),
-                                                  livello=dipendente.livello,
-                                                  data_presa_servizio=dipendente.get_data_presa_servizio_csa(),
-                                                  data_ultima_progressione=dipendente.get_data_progressione())
-    if not domanda_peo.is_active:
+    if domanda_bando:
+        domanda_bando = domanda_bando.last()
+    elif not domanda_bando:
+        domanda_bando = DomandaBando.objects.create(bando=bando,
+                                                    dipendente=dipendente,
+                                                    modified=timezone.localtime(),
+                                                    livello=dipendente.livello,
+                                                    data_presa_servizio=dipendente.get_data_presa_servizio_csa(),
+                                                    data_ultima_progressione=dipendente.get_data_progressione())
+    if not domanda_bando.is_active:
         return render(request, 'custom_message.html',
                       {'avviso': ("La tua Domanda è stata sospesa. Per avere "
                                   "informazioni contatta l' Area Risorse Umane.")})
-
-    #categorie_titoli = CategoriaTitolo.objects.filter(Bando=Bando_id).order_by('ordinamento')
-
 
     dashboard_domanda_title = 'Partecipazione Bando {}'.format(bando.nome)
     dashboard_domanda_url = reverse('domande_peo:dashboard_domanda',
@@ -175,7 +172,7 @@ def scelta_titolo_da_aggiungere(request, bando_id):
         'breadcrumbs': _breadcrumbs,
         'bando': bando,
         'dipendente': dipendente,
-        'domanda_peo': domanda_peo,
+        'domanda_bando': domanda_bando,
         'indicatori_ponderati': indicatori_ponderati,
         #"categorie_titoli": categorie_titoli,
     }
@@ -188,7 +185,7 @@ def anteprima_modulo_inserimento(request, bando_id, descrizione_indicatore_id):
     """
 
     descrizione_indicatore = get_object_or_404(DescrizioneIndicatore, pk=descrizione_indicatore_id)
-    bando = get_object_or_404(Bando, pk=bando_id)
+    bando = _get_bando_queryset(bando_id).first()
     dipendente = Dipendente.objects.filter(matricola=request.user.matricola).first()
 
     form = descrizione_indicatore.get_form()
@@ -213,7 +210,7 @@ def anteprima_modulo_inserimento_frontend(request, bando_id, descrizione_indicat
         usato in admin per avere una anteprima dei campi scelti
     """
     descrizione_indicatore = get_object_or_404(DescrizioneIndicatore, pk=descrizione_indicatore_id)
-    bando = get_object_or_404(Bando, pk=bando_id)
+    bando = _get_bando_queryset(bando_id).first()
     dipendente = Dipendente.objects.filter(matricola=request.user.matricola).first()
     form = descrizione_indicatore.get_form()
     if request.method == 'POST':
@@ -237,7 +234,7 @@ def vedi_modulo_inserito(request, bando_id, modulo_domanda_bando_id):
         usato in admin per avere una anteprima dei campi scelti
     """
     modulo_domanda_bando = get_object_or_404(ModuloDomandaBando, pk=modulo_domanda_bando_id)
-    bando = get_object_or_404(Bando, pk=bando_id)
+    bando = _get_bando_queryset(bando_id).first()
     descrizione_indicatore = modulo_domanda_bando.descrizione_indicatore
     json_dict = json.loads(modulo_domanda_bando.modulo_compilato)
     data = get_as_dict(json_dict, allegati=False)
@@ -349,7 +346,7 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
 
     form = descrizione_indicatore.get_form(data=None,
                                            files=None,
-                                           domanda_id=domanda_bando.id)
+                                           domanda_bando=domanda_bando)
 
     dashboard_domanda_title = 'Partecipazione Bando {}'.format(bando.nome)
     dashboard_domanda_url = reverse('domande_peo:dashboard_domanda',
@@ -385,7 +382,8 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
             for k in result:
                 d[k] = result[k]
 
-    d['labeled_errors'] = get_labeled_errors(form)
+    d['labeled_errors'] = get_labeled_errors(d['form'])
+
     return render(request, 'modulo_form.html', d)
 
 @login_required
@@ -410,7 +408,6 @@ def modifica_titolo(request, bando_id,
                             domanda_bando__is_active=True,
                             domanda_bando__dipendente=dipendente)
 
-    # json_data = mdb.get_as_dict(allegati=False)
     descrizione_indicatore = mdb.descrizione_indicatore
 
     # Creo il form con i campi files=None e remove_filefields=False
@@ -420,14 +417,9 @@ def modifica_titolo(request, bando_id,
     # form = mdb.compiled_form(files=None, remove_filefields=False)
     allegati = get_allegati_dict(mdb)
     form = mdb.compiled_form(remove_filefields=allegati)
+
     # form con i soli campi File da dare in pasto al tag della firma digitale
     form_allegati = descrizione_indicatore.get_form(remove_datafields=True)
-    # allegati = mdb.get_allegati_dict()
-
-    # se non ci sono allegati preesistenti evita di distruggere il campo per
-    # l'eventuale inserimento di un allegato
-    # if allegati:
-        # form.remove_files(allegati)
 
     # Nonostante sia reperibile anche da 'modulo_domanda_bando',
     # nel contesto devo passare anche 'descrizione_indicatore', altrimenti
@@ -478,7 +470,8 @@ def modifica_titolo(request, bando_id,
             for k in result:
                 d[k] = result[k]
 
-    d['labeled_errors'] = get_labeled_errors(form)
+    d['labeled_errors'] = get_labeled_errors(d['form'])
+
     return render(request, 'modulo_form_modifica.html', d)
 
 
@@ -562,25 +555,27 @@ def elimina_allegato(request, bando_id, modulo_compilato_id, allegato):
                                      log=False)
 
 @login_required
-@abilitato_a_partecipare
+# @abilitato_a_partecipare
 def download_allegato(request, bando_id, modulo_compilato_id, allegato):
     """
         Download del file allegato, dopo aver superato i check di proprietà
     """
-    # se scarica un utente staff può accedervi
-    if request.user.is_staff:
+    bando = _get_bando_queryset(bando_id).first()
+
+    # se scarica un utente staff o la commissione può accedervi
+    if _user_is_staff_or_in_commission(request.user, bando):
         mdb = get_object_or_404(ModuloDomandaBando,
                                 pk=modulo_compilato_id)
-        dipendente = get_object_or_404(Dipendente, matricola = mdb.domanda_bando.dipendente.matricola)
+        dipendente = get_object_or_404(Dipendente,
+                                       matricola=mdb.domanda_bando.dipendente.matricola)
     # altrimenti solo se l'utente è il proprietario e la domanda è attiva
     else:
-        dipendente = get_object_or_404(Dipendente, matricola = request.user.matricola)
+        dipendente = get_object_or_404(Dipendente,
+                                       matricola=request.user.matricola)
         mdb = get_object_or_404(ModuloDomandaBando,
                                 pk=modulo_compilato_id,
                                 domanda_bando__is_active=True,
                                 domanda_bando__dipendente=dipendente)
-
-    bando = mdb.domanda_bando.bando
 
     return download_allegato_from_mdb(bando,
                                       mdb,
@@ -620,7 +615,7 @@ def riepilogo_domanda(request, bando_id, domanda_bando_id, pdf=None):
         'breadcrumbs': _breadcrumbs,
         'bando': bando,
         'dipendente': domanda_bando.dipendente,
-        'domanda_peo': domanda_bando,
+        'domanda_bando': domanda_bando,
         'MEDIA_URL': settings.MEDIA_URL}
     if pdf:
         return render(request, 'riepilogo_domanda_pdf.html', d)
@@ -838,7 +833,7 @@ def chiudi_apri_domanda(request, bando_id,
 
     _breadcrumbs.add_url(('#', 'Chiusura Domanda'))
     d = { 'bando': domanda_bando.bando,
-          'domanda_peo': domanda_bando,
+          'domanda_bando': domanda_bando,
           'dipendente': dipendente,
           'MEDIA_URL': settings.MEDIA_URL }
     return render(request, 'chiusura_domanda.html', d)

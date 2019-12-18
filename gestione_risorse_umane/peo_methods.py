@@ -25,11 +25,11 @@ class PeoMethods(object):
         """
         torna l'ultima domanda
         """
-        domanda_peo_model = apps.get_model(app_label='domande_peo',
-                                           model_name='DomandaBando')
-        domande_peo = domanda_peo_model.objects.filter(dipendente=self,
-                                                       is_active=True).order_by('-created')
-        return domande_peo
+        domanda_bando_model = apps.get_model(app_label='domande_peo',
+                                             model_name='DomandaBando')
+        domande_bando = domanda_bando_model.objects.filter(dipendente=self,
+                                                           is_active=True).order_by('-created')
+        return domande_bando
 
     def get_last_domanda_progressione(self):
         dp = self.get_domande_progressione()
@@ -79,9 +79,9 @@ class PeoMethods(object):
 
         # Verifico che il dipendente abbia o meno fatto domande di progressione
         # Se non ne ha eseguito nessuna, allora lo considero idoneo
-        domande_peo = self.get_domande_progressione()
-        if domande_peo:
-            domanda_peo = domande_peo.latest('data_chiusura')
+        domande_bando = self.get_domande_progressione()
+        if domande_bando:
+            domanda_bando = domande_bando.latest('data_chiusura')
 
         if not self.get_data_progressione():
             # non ha fatto alcuna progressione

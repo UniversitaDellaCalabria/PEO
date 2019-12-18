@@ -6,6 +6,7 @@
 {% block extra_head %}
     <style>
         .help { display: none; }
+        .field :disabled {opacity: 1 !important;}
     </style>
 {% endblock %}
 
@@ -18,15 +19,15 @@
 
     {% block dati_istanza %}
         <div class="ui list" style="color: grey;">
-                <div class=""><i>Istanza</i>: {{ domanda_peo.bando }}</div>
-            {% if domanda_peo.numero_protocollo %}
-                <div class=""><i>Numero Protocollo</i>: {{ domanda_peo.numero_protocollo }}</div>
-                <div class=""><i>Data Protocollo</i>: {{ domanda_peo.data_protocollazione }}</div>
+                <div class=""><i>Istanza</i>: {{ domanda_bando.bando }}</div>
+            {% if domanda_bando.numero_protocollo %}
+                <div class=""><i>Numero Protocollo</i>: {{ domanda_bando.numero_protocollo }}</div>
+                <div class=""><i>Data Protocollo</i>: {{ domanda_bando.data_protocollazione }}</div>
             {% else %}
-                <div class=""><i>Numero</i>: {{ domanda_peo.pk }}</div>
+                <div class=""><i>Numero</i>: {{ domanda_bando.pk }}</div>
             {% endif %}
-            <div class=""><i>Creazione</i>: {{ domanda_peo.created|date:"j F Y H:i" }}</div>
-            <div class=""><i>Ultima modifica</i>: {{ domanda_peo.modified|date:"j F Y H:i" }}</div>
+            <div class=""><i>Creazione</i>: {{ domanda_bando.created|date:"j F Y H:i" }}</div>
+            <div class=""><i>Ultima modifica</i>: {{ domanda_bando.modified|date:"j F Y H:i" }}</div>
         </div>
     {% endblock %}
 
@@ -43,14 +44,14 @@
     </div>
 
     <div class="ui section divider" style="border-color: white;"></div>
-    {% if domanda_peo.bando.clausolebando_set.all %}
+    {% if domanda_bando.bando.clausolebando_set.all %}
     <div class="content">
-        {% if domanda_peo.bando.accettazione_clausole_text %}
-            <h2>{{ domanda_peo.bando.accettazione_clausole_text }}</h2>
+        {% if domanda_bando.bando.accettazione_clausole_text %}
+            <h2>{{ domanda_bando.bando.accettazione_clausole_text }}</h2>
         {% else %}
             <h2>Dichiara di aver preso visione e accettato le seguenti modalità</h2>
         {% endif %}
-        {% for cl in domanda_peo.bando.clausolebando_set.all %}
+        {% for cl in domanda_bando.bando.clausolebando_set.all %}
             <div class="ui raised segment">
                 <h5>{{ cl.titolo }}</h5>
                 <p>{{ cl.corpo_as_html|safe }}</p>
@@ -67,16 +68,16 @@
     {% block preview_table %}
 
         {% comment %}
-        {% if domanda_peo.bando.indicatore_con_anzianita %}
+        {% if domanda_bando.bando.indicatore_con_anzianita %}
         <h2 class="">Punteggio anzianità di servizio calcolata</h2>
             <p="ui header" style="color: grey;">
                 Questo valore verrà sommato, se presente, al punteggio assegnato a
-                <i>{{ domanda_peo.bando.indicatore_con_anzianita }}</i>,
+                <i>{{ domanda_bando.bando.indicatore_con_anzianita }}</i>,
                 tenendo conto delle soglie da rispettare
             </p>
             <form class="ui form">
                 <div class="field">
-                    <input value="{{ domanda_peo.get_punteggio_anzianita }}" readonly="">
+                    <input value="{{ domanda_bando.get_punteggio_anzianita }}" readonly="">
                 </div>
             </form>
         <div class="ui section divider" ></div>
@@ -85,7 +86,7 @@
 
         <div class="ui section divider" style="border-color: white;"></div>
         <h2>Moduli compilati</h2>
-        {% for ins in domanda_peo.modulodomandabando_set.all %}
+        {% for ins in domanda_bando.modulodomandabando_set.all %}
             <div class="ui raised segment">
                 <h5>{{ ins.get_identificativo_veloce|upper }}</h3>
                 <p><i>{{ ins.descrizione_indicatore.indicatore_ponderato }}: ({{ ins.descrizione_indicatore.id_code }}) {{ ins.descrizione_indicatore.nome }}</i></p>
@@ -142,7 +143,7 @@
         </div>
     </a>
 
-    <a href="{% url 'domande_peo:download_domanda_pdf' bando.id domanda_peo.id %}" class="lockbutton_single">
+    <a href="{% url 'domande_peo:download_domanda_pdf' bando.id domanda_bando.id %}" class="lockbutton_single">
         <div class="ui primary button">
             <i class="print icon"></i>
             Scarica in formato PDF

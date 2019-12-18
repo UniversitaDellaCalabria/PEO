@@ -29,12 +29,17 @@ urlpatterns = [
     path('commissioni/<int:commissione_id>/', commissione_dettaglio, name='dettaglio_commissione'),
     path('commissioni/<int:commissione_id>/gestisci', commissione_manage, name='manage_commissione'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>', commissione_domanda_manage, name='commissione_domanda_manage'),
+    path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/extended', commissione_domanda_manage_extended, name='commissione_domanda_manage_extended'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/modulo/<int:modulo_id>/download_allegato/<str:allegato>/',commissione_download_allegato, name='commissione_download_allegato'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/modulo/<int:modulo_id>/elimina_allegato/<str:allegato>/',commissione_elimina_allegato, name='commissione_elimina_allegato'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/abilita', commissione_abilita_domanda, name='commissione_abilita_domanda'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/disabilita', commissione_disabilita_domanda, name='commissione_disabilita_domanda'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/aggiungi', commissione_domanda_scegli_titolo, name='commissione_domanda_scegli_titolo'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/aggiungi/<int:descrizione_indicatore_id>', commissione_domanda_aggiungi_titolo, name='commissione_domanda_aggiungi_titolo'),
+
+    path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/modulo/<int:modulo_id>/duplica', commissione_domanda_duplica_titolo, name='commissione_domanda_duplica_titolo'),
+    path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/modulo/<int:modulo_id>/duplica/<int:descrizione_indicatore_id>', commissione_domanda_duplica_titolo_confirm, name='commissione_domanda_duplica_titolo_confirm'),
+
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/modulo/<int:modulo_id>/modifica', commissione_modulo_domanda_modifica, name='commissione_modulo_domanda_modifica'),
     path('commissioni/<int:commissione_id>/gestisci/domande/<int:domanda_id>/modulo/<int:modulo_id>/cancella', commissione_cancella_titolo, name='commissione_cancella_titolo'),
 ]

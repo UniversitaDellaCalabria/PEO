@@ -25,10 +25,10 @@
 
         {% block top_buttons %}{% endblock top_buttons %}
 
-        {% if domanda_peo.modulodomandabando_set.all or domanda_peo.bando.indicatore_con_anzianita %}
+        {% if domanda_bando.modulodomandabando_set.all or domanda_bando.bando.indicatore_con_anzianita %}
 
             {% comment %}
-                {% if domanda_peo.modulodomandabando_set.all|length > 5 %}
+                {% if domanda_bando.modulodomandabando_set.all|length > 5 %}
                     {% include "buttons_domanda_peo.html" %}
                 {% endif %}
             {% endcomment %}
@@ -36,7 +36,7 @@
             <div class="content" style="overflow-x: auto;">
 
                 {% block punteggio_domanda %}
-                {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
+                {% if domanda_bando.bando.pubblica_punteggio and domanda_bando.numero_protocollo %}
                     <div class="ui info message" style="padding-bottom:0">
                         <div class="header">
                             Punteggio calcolato
@@ -49,12 +49,12 @@
                                 previsti dal Bando per ogni singolo Indicatore ponderato.
                             </div>
                             <div class="two wide column" style="text-align:right">
-                                <b>{{ domanda_peo.punteggio_calcolato|default_if_none:"" }}</b>
+                                <b>{{ domanda_bando.punteggio_calcolato|default_if_none:"" }}</b>
                             </div>
                         </div>
                     </div>
 
-                    {% if domanda_peo.bando.indicatore_con_anzianita %}
+                    {% if domanda_bando.bando.indicatore_con_anzianita %}
                         <div class="ui message" style="padding-bottom:0; background:#fff">
                             <div class="header">
                                 Punteggio anzianità di servizio presso
@@ -67,7 +67,7 @@
                                     direttamente dall'Area Risorse Umane
                                 </div>
                                 <div class="two wide column" style="text-align:right">
-                                    <b>{{ domanda_peo.get_punteggio_anzianita }}</b>
+                                    <b>{{ domanda_bando.get_punteggio_anzianita }}</b>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                 {% endblock punteggio_domanda %}
 
                 {% block inserimenti_domanda %}
-                {% if domanda_peo.modulodomandabando_set.all %}
+                {% if domanda_bando.modulodomandabando_set.all %}
                 <p>
                     Di seguito sono riportati i moduli che hai compilato
                     per la presentazione della tua Domanda {{ bando }}.
@@ -90,12 +90,12 @@
                             <th>
                                 Indicatore Ponderato
                             </th>
-                            {% if domanda_peo.modificabile %}
+                            {% if domanda_bando.modificabile %}
                                 <th class="center aligned">
                                     Azione
                                 </th>
                             {% endif %}
-                            {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
+                            {% if domanda_bando.bando.pubblica_punteggio and domanda_bando.numero_protocollo %}
                                 <th class="right aligned">
                                     Punteggio calcolato
                                 </th>
@@ -103,7 +103,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for ins in domanda_peo.modulodomandabando_set.all %}
+                        {% for ins in domanda_bando.modulodomandabando_set.all %}
                             <tr>
                                 <td>
                                     {% if not ins.added_by_user %}
@@ -131,7 +131,7 @@
                                     <h5>({{ ins.descrizione_indicatore.indicatore_ponderato.id_code }}) {{ ins.descrizione_indicatore.indicatore_ponderato }}</h5>
                                     <i>({{ ins.descrizione_indicatore.id_code }}) {{ ins.descrizione_indicatore.nome }}</i>
                                 </td>
-                                {% if domanda_peo.modificabile %}
+                                {% if domanda_bando.modificabile %}
                                     <td class="right aligned">
                                         {% if ins.descrizione_indicatore.non_cancellabile %}
                                             <a style="color: white;" href="{% url 'domande_peo:modifica_titolo' bando_id=ins.domanda_bando.bando.slug modulo_compilato_id=ins.pk  %}">
@@ -149,7 +149,7 @@
                                     </td>
                                 {% endif %}
 
-                                {% if domanda_peo.bando.pubblica_punteggio and domanda_peo.numero_protocollo %}
+                                {% if domanda_bando.bando.pubblica_punteggio and domanda_bando.numero_protocollo %}
                                     <td class="right aligned">
                                         {% if ins.disabilita %}
                                             <div class="ui error message">
@@ -175,10 +175,11 @@
             {% endblock buttons_domanda %}
             </div>
 
+            {% block bottom_extra_content %}{% endblock bottom_extra_content %}
         {% endif %}
 
         {% comment %}
-            end if domanda_peo.modulodomandabando_set.all
+            end if domanda_bando.modulodomandabando_set.all
         {% endcomment %}
 
         {% block bottom_buttons %}
@@ -210,7 +211,7 @@ $('.ui.accordion').accordion();
 // Mostra il pannello modal
 // per la conferma di cancellazione di un inserimento
 $(function(){
-    {% for ins in domanda_peo.modulodomandabando_set.all %}
+    {% for ins in domanda_bando.modulodomandabando_set.all %}
         $("#cancella_ind_{{ ins.pk }}").click(function(){
             $('#modal_ind_{{ ins.pk }}')
                 .modal('show');
@@ -221,8 +222,8 @@ $(function(){
 // Mostra il pannello modal
 // per la conferma di cancellazione della domanda
 $(function(){
-    $("#but_cancella_domanda_{{ domanda_peo.pk }}").click(function(){
-        $('#cancella_domanda_{{ domanda_peo.pk }}')
+    $("#but_cancella_domanda_{{ domanda_bando.pk }}").click(function(){
+        $('#cancella_domanda_{{ domanda_bando.pk }}')
             .modal('show');
     });
 });
@@ -230,8 +231,8 @@ $(function(){
 // Mostra il pannello modal
 // per la conferma di chiusura di un inserimento
 $(function(){
-    $("#but_chiudi_domanda_{{ domanda_peo.pk }}").click(function(){
-        $('#chiudi_domanda_{{ domanda_peo.pk }}')
+    $("#but_chiudi_domanda_{{ domanda_bando.pk }}").click(function(){
+        $('#chiudi_domanda_{{ domanda_bando.pk }}')
             .modal('show');
     });
 });
@@ -240,8 +241,8 @@ $(function(){
 // per la visualizzazione dei moduli non compilati che impediscono
 // la chiusura della domanda
 $(function(){
-    $("#check_chiudi_domanda_{{ domanda_peo.pk }}").click(function(){
-        $('#check_domanda_{{ domanda_peo.pk }}')
+    $("#check_chiudi_domanda_{{ domanda_bando.pk }}").click(function(){
+        $('#check_domanda_{{ domanda_bando.pk }}')
             .modal('show');
     });
 });
@@ -249,8 +250,8 @@ $(function(){
 // Mostra il pannello modal
 // per la conferma di riapertura della domanda
 $(function(){
-    $("#but_rettifica_domanda_{{ domanda_peo.pk }}").click(function(){
-        $('#rettifica_domanda_{{ domanda_peo.pk }}')
+    $("#but_rettifica_domanda_{{ domanda_bando.pk }}").click(function(){
+        $('#rettifica_domanda_{{ domanda_bando.pk }}')
             .modal('show');
     });
 });

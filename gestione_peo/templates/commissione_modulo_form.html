@@ -7,13 +7,13 @@
 {% block formbuttons_back %}
     <a href="{% url 'gestione_peo:commissione_domanda_manage' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
         <div class="ui button">
-            <i class="home icon"></i>
+            <i class="fast backward icon"></i>
             Torna alla Domanda
         </div>
     </a>
     <a href="{% url 'gestione_peo:commissione_domanda_scegli_titolo' commissione_id=commissione.pk domanda_id=domanda_bando.pk %}">
         <div class="ui button">
-            <i class="reply icon"></i>
+            <i class="step backward icon"></i>
             Torna indietro
         </div>
     </a>

@@ -81,6 +81,11 @@ class DomandaBando(TimeStampedModel, PunteggioDomandaBando):
                                                     " dipendente dopo la chiusura del Bando"
                                                     " e motiverà eventuali revisioni sul"
                                                     " calcolo e l'assegnazione del punteggio")
+    presa_visione_utente = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                             on_delete=models.SET_NULL,
+                                             null=True, blank=True)
+    presa_visione_data = models.DateTimeField(help_text="ultima presa visione da parte della commissione",
+                                                     blank=True, null=True)
     is_active = models.BooleanField(default=True,
                                     help_text=("Per eventuale disabilitazione d'ufficio"
                                                " come ad esempio una esclusione coatta dovuta a contenziosi"
@@ -301,18 +306,22 @@ class ModuloDomandaBando(PunteggioModuloDomandaBando,
             l.append(fname)
         return l
 
-    def compiled_form(self, files=None, remove_filefields=True):
+    def compiled_form(self,
+                      files=None,
+                      remove_filefields=True,
+                      other_form_source=None):
         """
         Restituisce il form compilato senza allegati
         Integra django_form_builder.models.SavedFormContent.compiled_form
         """
         # imposta la classe che fornirà il metodo get_form()
-        form_source = self.descrizione_indicatore
+        # other_form_source è una DescrizioneIndicatore forzata come argomento
+        form_source = other_form_source or self.descrizione_indicatore
         form = SavedFormContent.compiled_form(data_source=self.modulo_compilato,
                                               files=files,
                                               remove_filefields=remove_filefields,
                                               form_source=form_source,
-                                              domanda_id=self.domanda_bando.pk)
+                                              domanda_bando=self.domanda_bando)
         return form
 
     # def compiled_form_as_table(self):

@@ -25,23 +25,8 @@ class PeoDynamicForm(BaseDynamicForm):
                  **kwargs):
 
         self.fields = {}
-        # custom_params = {}
-
-        # Recupero i campi peculiari di PEO rimuovendoli da kwargs
-        # Saranno passati al costruttore di super() tramite custom_params={}
-        # self.domanda_bando = kwargs.pop('domanda_bando')
-        # self.descrizione_indicatore = kwargs.pop('descrizione_indicatore')
-        # custom_params['domanda_bando'] = self.domanda_bando
-        # custom_params['descrizione_indicatore'] = self.descrizione_indicatore
-
         self.domanda_bando = custom_params.get('domanda_bando')
         self.descrizione_indicatore = custom_params.get('descrizione_indicatore')
-
-        # HiddenField con riferimento alla domanda
-        if self.domanda_bando:
-            constructor_dict['Domanda Bando ID'] = ('CustomHiddenField',
-                                                    {'label': ''},
-                                                    self.domanda_bando.pk)
 
         # Inserimento manuale del field ETICHETTA
         etichetta_id = format_field_name(ETICHETTA_INSERIMENTI_ID)
@@ -60,4 +45,4 @@ class PeoDynamicForm(BaseDynamicForm):
                          *args, **kwargs)
 
     def clean(self, *args, **kwargs):
-        cleaned_data = super().clean(domanda_bando=self.domanda_bando)
+        super().clean(domanda_bando=self.domanda_bando)

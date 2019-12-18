@@ -1236,4 +1236,8 @@ ul.errorlist {color:red !important;}
 .error_ribbon {
     position: absolute !important;
     left: 0 !important;
+
+.ui.button {
+    cursor: pointer;
+}
 }
