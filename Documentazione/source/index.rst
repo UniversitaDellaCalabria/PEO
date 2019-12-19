@@ -33,7 +33,7 @@ PEO - Documentazione ufficiale
 
 .. toctree::
    :maxdepth: 2
-   :caption: Compilazione e gestione domande
+   :caption: Compilazione e gestione domanda
 
    guida/utenti/domanda-peo.rst
    guida/utenti/dashboard-domanda.rst
@@ -41,6 +41,16 @@ PEO - Documentazione ufficiale
    guida/utenti/chiusura-domanda.rst
    guida/utenti/riepiloghi.rst
    guida/utenti/500.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Commissioni Giudicatrici
+
+   guida/commissioni/descrizione.rst
+   guida/commissioni/dashboard.rst
+   guida/commissioni/elenco-domande.rst
+   guida/commissioni/gestione-domanda.rst
+   guida/commissioni/gestione-modulo.rst
 
 .. toctree::
    :maxdepth: 2

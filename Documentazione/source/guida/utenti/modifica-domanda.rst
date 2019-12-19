@@ -12,7 +12,7 @@ Dalla schermata di dashboard della domanda, infatti, l'utente ha la possibilità
 
 * **modificare i dati inseriti** relativi a un particolare modulo e/o **eliminare un singolo modulo** di inserimento;
 .. thumbnail:: images/modifica_domanda.png
-* **distruggere l'intera domanda**: questa operazione cancella la domanda e tutti gli inserimenti ad essa collegati, compresi gli eventuali allegati. 
+* **distruggere l'intera domanda**: questa operazione cancella la domanda e tutti gli inserimenti ad essa collegati, compresi gli eventuali allegati.
  .. image:: images/distruggi_domanda.png
 
 
