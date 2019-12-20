@@ -137,7 +137,7 @@ DB Backup
 
 ````
 # exclude auth.permission and contenttypes per evitare integrity errors on previously migrated db
-./manage.py dumpdata --exclude auth.permission --exclude contenttypes > db.json
+./manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude sessions > db.json
 ````
 
 Hai inoltre uno script che esegue il backup crittografato in formato json e SQL.
