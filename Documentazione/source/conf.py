@@ -49,7 +49,7 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['peo_templates']
 
-html_logo = "peo_static/logo_unical.png"
+html_logo = "peo_static/unical_logo.svg"
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:

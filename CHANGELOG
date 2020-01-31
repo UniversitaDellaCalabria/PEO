@@ -1,4 +1,10 @@
-1.0
+v1.1.0
+-----
+
+- Azioni di backend domanda per il debug del calcolo del punteggio. Offre informazioni sui totali senza e con disabilitazioni di titoli e le decurtazioni di punteggio sulla base delle soglie
+
+
+v1.0.0
 ---
 
 - django-form-builder come applicazione separata

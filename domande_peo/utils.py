@@ -105,7 +105,8 @@ def elimina_directory(matricola, bando_slug, modulo_compilato_id = None):
 
 def export_graduatoria_csv(queryset, fopen,
                            delimiter=';', quotechar='"',
-                           replace_dot_with = '.'):
+                           replace_dot_with='.',
+                           ignora_disabilitati=False):
     """
     Esporta la graduatoria dei partecipanti,
     fopen può essere un oggetto response oppure un fopen
@@ -136,34 +137,54 @@ def export_graduatoria_csv(queryset, fopen,
     # Per ogni posizione economica, controllo se ci sono domande
     # cosi da ordinarle e avere una graduatoria
     for pos_eco in posizioni_economiche:
-        livelli = LivelloPosizioneEconomica.objects.filter(posizione_economica = pos_eco).all().order_by('nome')
+        livelli = LivelloPosizioneEconomica.objects.filter(posizione_economica=pos_eco).all().order_by('nome')
         for livello in livelli:
+            # Filtro solo le domande con il livello economico che mi interessa
+            domande_queryset = queryset.filter(livello=livello)
+            # Se non ci sono domande nel livello, non scrivo righe
+            if not domande_queryset: continue
             writer.writerow('')
             index = 1
             # Per ogni domanda del bando, recupero quelle fatte per
             # un singolo Livello Economico
-            for domanda in queryset:
+            for domanda in domande_queryset:
                 # Se la domanda non è stata chiusa almeno una volta
-                if not domanda.numero_protocollo:
-                    continue
-                if domanda.dipendente.livello == livello:
-                    riga = [index,
-                            domanda.dipendente.cognome,
-                            domanda.dipendente.nome,
-                            livello.__str__()]
-                    # Per ogni DescrInd nell'intestazione
-                    for descr in lista_id_descr:
-                        # Recupero l'oggetto
-                        d = descr_ind.filter(id_code = descr).first()
-                        # Recupero il punteggio max assegnato nella domanda
-                        punteggio = domanda.calcolo_punteggio_max_descr_ind(d, domanda.dipendente.livello)
-                        riga.append(punteggio.__str__().replace('.', replace_dot_with))
-                    # Anzianità Dipendente Università
-                    riga.append(domanda.get_punteggio_anzianita().__str__().replace('.', replace_dot_with))
-                    # Punteggio totale
-                    riga.append(domanda.punteggio_calcolato.__str__().replace('.', replace_dot_with))
-                    writer.writerow(riga)
-                    index += 1
+                if not domanda.numero_protocollo: continue
+                riga = [index,
+                        domanda.dipendente.cognome,
+                        domanda.dipendente.nome,
+                        livello.__str__()]
+                # Per ogni DescrInd nell'intestazione
+                for descr in lista_id_descr:
+                    # Recupero l'oggetto
+                    d = descr_ind.filter(id_code=descr).first()
+                    # Recupero il punteggio max assegnato nella domanda
+                    punteggio = domanda.calcolo_punteggio_max_descr_ind(descr_ind=d,
+                                                                        categoria_economica=livello,
+                                                                        ignora_disabilitati=ignora_disabilitati)[1]
+                    riga.append(punteggio.__str__().replace('.', replace_dot_with))
+                # Anzianità Dipendente Università
+                riga.append(domanda.get_punteggio_anzianita().__str__().replace('.', replace_dot_with))
+
+                # Punteggio totale
+
+                # In origine il valore del punteggio totale era quello
+                # impostato dal calcolo punteggio effettuato in precedenza.
+                # Ma se questo non esiste o se si sceglie di ignorare gli inserimenti
+                # disabilitati, il dato non sarebbe affidabile.
+                # Allora si recupera dinamicamente il punteggio
+                # tramite il metodo domanda.calcolo_punteggio_domanda(ignora_disabilitati=ignora_disabilitati)
+                # con parametro save=False di default, in modo che questa operazione
+                # non vada a sovrascrivere un eventuale punteggio calcolato in precedenza.
+                # Questo comporta naturalmente un aggravio prestazionale.
+
+                # riga.append(domanda.punteggio_calcolato.__str__().replace('.', replace_dot_with))
+                punteggio_domanda = domanda.calcolo_punteggio_domanda(ignora_disabilitati=ignora_disabilitati)[1]
+                punteggio_str = punteggio_domanda.__str__().replace('.', replace_dot_with)
+                riga.append(punteggio_str)
+
+                writer.writerow(riga)
+                index += 1
             writer.writerow('')
     return fopen
 

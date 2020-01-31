@@ -260,7 +260,7 @@ def commissione_manage(request, commissione_id,
             msg_ok = '{}, punteggio: {}'
             for domanda_bando in domande_bando:
                 try:
-                    punteggio = domanda_bando.calcolo_punteggio_domanda(save=True)
+                    punteggio = domanda_bando.calcolo_punteggio_domanda(save=True)[1]
                     num += 1
                     msg = msg_ok.format(domanda_bando, domanda_bando.punteggio_calcolato)
                     LogEntry.objects.log_action(user_id         = request.user.pk,
@@ -368,7 +368,8 @@ def commissione_domanda_manage(request, commissione_id, domanda_id,
     for uc in utenti_commissione:
         if uc.is_active and uc.ha_accettato_clausole():
             lista_commissari.append(uc.user.pk)
-    log_domanda = LogEntry.objects.filter(object_id=domanda_bando.pk,
+    log_domanda = LogEntry.objects.filter(content_type_id=ContentType.objects.get_for_model(domanda_bando).pk,
+                                          object_id=domanda_bando.pk,
                                           user_id__in=lista_commissari,
                                           action_time__range=(commissione.data_inizio, commissione.data_fine),)
 
@@ -386,7 +387,7 @@ def commissione_domanda_manage(request, commissione_id, domanda_id,
     if request.method == 'POST':
         # azione di calcolo punteggio
         if request.POST.get('calcola_punteggio'):
-            punteggio = domanda_bando.calcolo_punteggio_domanda(save=True)
+            punteggio = domanda_bando.calcolo_punteggio_domanda(save=True)[1]
             msg = ("Punteggio calcolato con successo "
                    "({}) per la domanda {}").format(punteggio,
                                                     domanda_bando)

@@ -11,9 +11,13 @@ from django_form_builder.utils import get_allegati, get_as_dict
 from unical_template.admin import ReadOnlyAdmin
 
 from .admin_actions import (calcolo_punteggio_domanda,
+                            calcolo_punteggio_domanda_ignora_disabilitati,
                             download_report_graduatoria,
+                            download_report_graduatoria_ignora_disabilitati,
                             progressione_accettata,
-                            verifica_allegati)
+                            verifica_allegati,
+                            verifica_punteggio_domanda,
+                            verifica_punteggio_domanda_ignora_disabilitati)
 from .models import *
 
 
@@ -72,7 +76,7 @@ class ModuloDomandaBandoInLines(admin.StackedInline):
     #    domanda = obj.domanda_bando
     #    pos_eco = domanda.dipendente.livello.posizione_economica
     #    punteggio_raggiunto = domanda.calcolo_punteggio_max_descr_ind(obj.descrizione_indicatore,
-    #                                                                  pos_eco)
+    #                                                                  pos_eco)[1]
     #    return punteggio_raggiunto
     #get_punteggio_reale.short_description = 'Punteggio Assegnabile'
 
@@ -202,8 +206,14 @@ class DomandaBandoAdmin(admin.ModelAdmin):
                        'get_dipendente_matricola',
                        'get_dipendente_nome',
                        'get_dipendente_cognome',)
-    actions = [calcolo_punteggio_domanda, download_report_graduatoria,
-               progressione_accettata, verifica_allegati]
+    actions = [calcolo_punteggio_domanda,
+               calcolo_punteggio_domanda_ignora_disabilitati,
+               download_report_graduatoria,
+               download_report_graduatoria_ignora_disabilitati,
+               progressione_accettata,
+               verifica_allegati,
+               verifica_punteggio_domanda,
+               verifica_punteggio_domanda_ignora_disabilitati]
     date_hierarchy = 'created'
     fields = (
                 ('dipendente', 'bando'),

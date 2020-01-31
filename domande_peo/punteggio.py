@@ -17,6 +17,8 @@ class PunteggioDomandaBando(object):
     DomandaBando
     """
 
+    _warning_message = 'SOGLIA SUPERATA : {} - Dichiarato: {} / Max: {} / Decurtato: {}'
+
     def calcola_punteggio_anzianita_automatico(self):
         """
         Torna il punteggio assegnato all'anzianità di servizio
@@ -93,6 +95,12 @@ class PunteggioDomandaBando(object):
         valuta se la somma dei punteggi ha raggiunto la soglia
         massima ammissibile
         """
+        # Lista ritornata come risultato
+        # [0] = punteggio ottenuto senza tener conto di alcuna soglia
+        # [1] = punteggio reale assegnato (max)
+        # [2] = eventuale messaggio di sforamento
+        punteggi = [0, 0, '']
+
         # Recupero l'id del sub_descr
         sub_id = mdb.contain_sub_descr_ind()
         # Recupero l'oggetto
@@ -104,22 +112,35 @@ class PunteggioDomandaBando(object):
             # Se avevo già valutato inserimento dello stesso
             # sub_descr_ind sommo il punteggio
             if sub_descr_valutati.get(sub_id):
-                sub_descr_valutati[sub_id] += calcolo
+                sub_descr_valutati[sub_id][0] += calcolo
             # Se è la prima occorrenza del descr_ind che
             # trovo nella domanda, memorizzo un riferimento
             else:
-                sub_descr_valutati[sub_id] = calcolo
+                sub_descr_valutati[sub_id] = punteggi
+                sub_descr_valutati[sub_id][0] = calcolo
 
+            punteggio_accumulato = sub_descr_valutati[sub_id][0]
             # Controllo che non venga superata la soglia massima
-            if sub_descr_valutati.get(sub_id) > p_max_sub_descr:
-                sub_descr_valutati[sub_id] = p_max_sub_descr
-
+            if punteggio_accumulato > p_max_sub_descr:
+                sub_descr_valutati[sub_id][1] = p_max_sub_descr
+                sub_descr_valutati[sub_id][2] = self._warning_message.format('({}) {} - {}'.format(sub_descr_ind.descrizione_indicatore.id_code,
+                                                                                                   sub_descr_ind.descrizione_indicatore,
+                                                                                                   sub_descr_ind),
+                                                                             float("{:.2f}".format(punteggio_accumulato)),
+                                                                             p_max_sub_descr,
+                                                                             float("{:.2f}".format(punteggio_accumulato-p_max_sub_descr))
+                                                                            )
+            # Se non viene superata la soglia, attribuisco il punteggio accumulato
+            else:
+                sub_descr_valutati[sub_id][1] = punteggio_accumulato
             return sub_descr_valutati
 
 
     def calcolo_punteggio_max_descr_ind(self,
                                         descr_ind,
-                                        categoria_economica):
+                                        categoria_economica,
+                                        ignora_disabilitati=False,
+                                        save=False):
         """
         Per ogni DescrizioneIndicatore, calcola i punteggi dei relativi
         ModuliCompilati, restituendo il punteggio MAX in base alle soglie
@@ -127,13 +148,28 @@ class PunteggioDomandaBando(object):
         """
         p_max_descr_ind = descr_ind.get_pmax_pos_eco(categoria_economica)
 
+        # Punteggio assegnato alla DescrizioneIndicatore
         p_descrizione_indicatore = 0
+        # Punteggio assegnato alla DescrizioneIndicatore senza soglie
+        p_descrizione_indicatore_senza_soglie = 0
+        # Eventuale lista di messaggi di sforamento soglie
+        messaggi = []
+        # Lista ritornata come risultato
+        # [0] = punteggio ottenuto senza tener conto di alcuna soglia
+        # [1] = punteggio reale assegnato (max)
+        # [2] = eventuale messaggio di sforamento
+        results = [p_descrizione_indicatore_senza_soglie,
+                   p_descrizione_indicatore,
+                   messaggi]
 
         # Parametri valutazione titolo di studio più alto (o cumulativo)
         p_titolo_studio = p_titolo_studio_cumulato = 0
         priorita_titoli = self.bando.priorita_titoli_studio
         titoli_valutati = []
 
+        # Dizionario che, per ogni SubDescrizioneIndicatore valutato,
+        # contiene i punteggi ad esso assegnati e gli eventuali
+        # messaggi di sforamento (vedi calcolo_punteggio_sub_descr())
         sub_descr_valutati = {}
 
         # Per ogni ModuloCompilato della Domanda,
@@ -144,12 +180,13 @@ class PunteggioDomandaBando(object):
             for mdb in self.modulodomandabando_set.filter(descrizione_indicatore=descr_ind):
 
                 # Se il Modulo è stato disabilitato
-                if mdb.disabilita:
+                # e si deve tener conto dei titoli disabilitati
+                if mdb.disabilita and not ignora_disabilitati:
                     continue
 
                 # Lancio il metodo calcolo_punteggio che mi setta
                 # il punteggio del modulo sul backend
-                calcolo = mdb.calcolo_punteggio()
+                calcolo = mdb.calcolo_punteggio(save=save)
 
                 # Se si tratta di valutare un titolo di studio
                 titolo = mdb.punteggio_titolo_studio()
@@ -207,77 +244,157 @@ class PunteggioDomandaBando(object):
                 else:
                     p_descrizione_indicatore += calcolo
 
+            # Imposto il punteggio calcolato senza soglie
+            # uguale a quello fino ad ora cumulato
+            # Non sono ancora state effettuate verifiche sulle soglie
+            p_descrizione_indicatore_senza_soglie = p_descrizione_indicatore
+
             # Sommo al punteggio della DescrizioneIndicatore i "massimi"
-            # ottenuti dai sub_descr valutati
+            # ottenuti dai sub_descr valutati (se esistono)
             if len(sub_descr_valutati)>0:
                 for p_max in sub_descr_valutati:
-                    p_descrizione_indicatore += sub_descr_valutati.get(p_max)
+                    # Cumulo i punteggi calcolati senza soglie
+                    p_descrizione_indicatore_senza_soglie += sub_descr_valutati[p_max][0]
+                    # Cumulo i punteggi che tengono conto delle soglie
+                    p_descrizione_indicatore += sub_descr_valutati[p_max][1]
+                    # Popolo la lista dei messaggi
+                    messaggio_sub_descr = sub_descr_valutati[p_max][2]
+                    if messaggio_sub_descr:
+                        messaggi.append(messaggio_sub_descr)
+
+            # Aggiorno la lista da ritornare
+            results = [p_descrizione_indicatore_senza_soglie,
+                       p_descrizione_indicatore,
+                       messaggi]
 
             # Infine, rispetto la soglia MAX della DescrizioneIndicatore
-            if p_max_descr_ind > 0 and p_descrizione_indicatore >= p_max_descr_ind:
-                p_descrizione_indicatore = p_max_descr_ind
-
-        return p_descrizione_indicatore
+            if p_max_descr_ind > 0 and p_descrizione_indicatore > p_max_descr_ind:
+                messaggi.append(self._warning_message.format('({}) {}'.format(descr_ind.id_code, descr_ind),
+                                                             float("{:.2f}".format(p_descrizione_indicatore)),
+                                                             p_max_descr_ind,
+                                                             float("{:.2f}".format(p_descrizione_indicatore-p_max_descr_ind))
+                                                            ))
+                # Imposto come punteggio di cui tener conto il max
+                results[1] = p_max_descr_ind
+                # Imposto la lista dei messaggi
+                results[2] = messaggi
+        return results
 
     def calcolo_punteggio_max_indicatore(self,
                                          indicatore,
-                                         categoria_economica):
+                                         categoria_economica,
+                                         ignora_disabilitati=False,
+                                         save=False):
         """
         Per ogni IndicatorePonderato, calcola i punteggi dei relativi
         ModuliCompilati, restituendo il punteggio MAX in base alle soglie
         (di ogni Indicatore) definite in fase di configurazione
         """
+        # Soglia massima assegnabile
         p_max_indicatore = indicatore.get_pmax_pos_eco(categoria_economica)
+        # Punteggio assegnato all'Indicatore Ponderato
         p_indicatore = 0
+        # Punteggio assegnato all'Indicatore Ponderato senza soglie
+        p_indicatore_senza_soglie = 0
+        # Eventuale lista di messaggi di sforamento soglie
+        messaggi = []
+        # Lista ritornata come risultato
+        # [0] = punteggio ottenuto senza tener conto di alcuna soglia
+        # [1] = punteggio reale assegnato (max)
+        # [2] = eventuale messaggio di sforamento
+        results = [p_indicatore_senza_soglie,
+                   p_indicatore,
+                   messaggi]
 
         # Se si somma punteggio anzianità di servizio interna
         if indicatore.add_punteggio_anzianita:
             p_indicatore = self.get_punteggio_anzianita()
+            p_indicatore_senza_soglie = self.get_punteggio_anzianita()
 
         # Per ogni DescrizioneIndicatore dell'Indicatore in questione
         # con calcolo_punteggio_automatico = True
+
         if indicatore.descrizioneindicatore_set.filter(calcolo_punteggio_automatico=True):
             for descr_ind in indicatore.descrizioneindicatore_set.filter(calcolo_punteggio_automatico=True):
                 # Punteggio DescrInd incrementa punteggio Indicatore
-                p_indicatore += self.calcolo_punteggio_max_descr_ind(descr_ind,
-                                                                     categoria_economica)
-                # Controllo sul Max punteggio CatEco IndicatorePonderato
-                if p_max_indicatore > 0 and p_indicatore >= p_max_indicatore:
-                    p_indicatore = p_max_indicatore
-                    break
+                results_descr_ind = self.calcolo_punteggio_max_descr_ind(descr_ind=descr_ind,
+                                                                     categoria_economica=categoria_economica,
+                                                                     ignora_disabilitati=ignora_disabilitati,
+                                                                     save=save)
+                # Cumulo i punteggi che non tengono conto delle soglie
+                p_indicatore_senza_soglie += results_descr_ind[0]
+                # Cumulo i punteggi che tengono conto delle soglie
+                p_indicatore += results_descr_ind[1]
+                # Popolo la lista dei messaggi
+                messaggi.extend(results_descr_ind[2])
 
-        return p_indicatore
+            # Aggiorno la lista da ritornare
+            results = [p_indicatore_senza_soglie,
+                       p_indicatore,
+                       messaggi]
 
-    def calcolo_punteggio_tot_moduli_compilati(self):
+            # Controllo sul Max punteggio CatEco IndicatorePonderato
+            if p_max_indicatore > 0 and p_indicatore > p_max_indicatore:
+                messaggi.append(self._warning_message.format('({}) {}'.format(indicatore.id_code, indicatore),
+                                                             float("{:.2f}".format(p_indicatore)),
+                                                             p_max_indicatore,
+                                                             float("{:.2f}".format(p_indicatore-p_max_indicatore))
+                                                            ))
+                # Imposto come punteggio reale la soglia max
+                results[1] = p_max_indicatore
+                # Imposto i messaggi
+                results[2] = messaggi
+        return results
+
+    def calcolo_punteggio_tot_moduli_compilati(self,
+                                               ignora_disabilitati=False,
+                                               save=False):
         """
         Torna il punteggio totale relativo ai ModuliCompilati
         riferiti a DescrizioneIndicatori con calcolo_punteggio_automatico=True
         """
         punteggio = 0
+        punteggio_senza_soglie = 0
+        messaggi = []
+
         if self.modulodomandabando_set.first() or self.bando.indicatore_con_anzianita():
             categoria_economica = self.get_livello_dipendente().posizione_economica
 
             # Per ogni IndicatorePonderato del Bando
             for indicatore in self.bando.indicatoreponderato_set.all():
 
-                p_indicatore = self.calcolo_punteggio_max_indicatore(indicatore,
-                                                                     categoria_economica)
+                results_indicatore = self.calcolo_punteggio_max_indicatore(indicatore=indicatore,
+                                                                     categoria_economica=categoria_economica,
+                                                                     ignora_disabilitati=ignora_disabilitati,
+                                                                     save=save)
+                # Punteggio cumulato senza tener conto delle soglie
+                punteggio_senza_soglie += results_indicatore[0]
+                # Punteggio che tiene conto di tutte le soglie
+                punteggio += results_indicatore[1]
+                # Messaggi
+                messaggi.extend(results_indicatore[2])
 
-                punteggio += p_indicatore
+        punteggio = float("{:.2f}".format(punteggio))
+        punteggio_senza_soglie = float("{:.2f}".format(punteggio_senza_soglie))
+        results = [punteggio_senza_soglie,
+                   punteggio,
+                   messaggi]
+        return results
 
-        return float("{:.2f}".format(punteggio))
-
-    def calcolo_punteggio_domanda(self, save=False):
+    def calcolo_punteggio_domanda(self,
+                                  save=False,
+                                  ignora_disabilitati=False):
 
         if not self.dipendente:
-            return 0
+            return [0, 0, []]
 
-        punteggio = self.calcolo_punteggio_tot_moduli_compilati()
+        results = self.calcolo_punteggio_tot_moduli_compilati(ignora_disabilitati=ignora_disabilitati,
+                                                              save=save)
 
         if save:
-            self.punteggio_calcolato = punteggio
+            self.punteggio_calcolato = results[1]
             self.save()
-        return punteggio
+        return results
 
 
 class PunteggioModuloDomandaBando(object):
@@ -422,7 +539,7 @@ class PunteggioModuloDomandaBando(object):
         if "sub_descrizione_indicatore" in dati_inseriti:
             return dati_inseriti.get("sub_descrizione_indicatore")
 
-    def calcolo_punteggio(self):
+    def calcolo_punteggio(self, save=False):
         """
         Calcolo automatico del punteggio assegnato al Modulo Compilato
         che è collegato a una particolare DescrizioneIndicatore
@@ -472,7 +589,11 @@ class PunteggioModuloDomandaBando(object):
             # Se la DescrizioneIndicatore prevede un punteggio per durata temporale
             # WARNING: stiamo usando costanti, da ricodare con metodi che tornano i valori/tipi
             elif descr_ind.punteggio_descrizioneindicatore_timedelta_set.first():
-                durata_inserita = int(dati_inseriti.get("durata_come_intero", 0))
+                try:
+                    durata_inserita = int(dati_inseriti.get("durata_come_intero", 0))
+                except ValueError as excp:
+                    durata_inserita = 0
+                    # aggiungere logger.error in ogni dove ...
                 durata = self.get_durata_int(durata_inserita,
                                              dati_inseriti.get("data_inizio_dyn_inner"),
                                              dati_inseriti.get("data_fine_dyn_inner"),
@@ -481,6 +602,7 @@ class PunteggioModuloDomandaBando(object):
                                              dati_inseriti.get("data_fine_dyn_out"))
                 punteggio = self.punteggio_descr_timedelta(cat_eco, durata)
 
-        self.punteggio_calcolato = punteggio
-        self.save()
+        if save:
+            self.punteggio_calcolato = punteggio
+            self.save()
         return punteggio
