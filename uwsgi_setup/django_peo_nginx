@@ -112,6 +112,12 @@ server {
     location / {
         uwsgi_pass  django_peo;
         uwsgi_param HTTP_X_FORWARDED_PROTOCOL https;
+	# Enable HTTP Strict Transport Security with a 2 year duration
+	Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains;"
+	
+	# deny iFrame
+	add_header X-Frame-Options "DENY";
+	
 	uwsgi_read_timeout 724;
         include     /opt/django_peo/uwsgi_setup/uwsgi_params; # the uwsgi_params file you installed
     }
