@@ -1,4 +1,4 @@
-django==2.2.9
+django==2.2.10
 django-model-utils
 ipython
 mysqlclient>1.3.12
