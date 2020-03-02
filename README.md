@@ -17,6 +17,10 @@ La piattaforma è composta da diversi moduli indipendenti e da due interfacce:
 - Frontend, dedicato agli utenti partecipanti;
 - Backend, dedicato agli utenti staff e amministratori, ovvero coloro i quali configureranno i bandi e valuteranno i moduli protocollati dai partecipanti;
 
+Documentazione all'uso:
+
+[https://peo.unical.it/docs](https://peo.unical.it/docs)
+
 Galleria
 --------
 ![Home](data/gallery/home.png)
