@@ -16,8 +16,9 @@ from unical_template.breadcrumbs import BreadCrumbs
 from .forms import *
 from .decorators import matricola_in_csa
 
-# per stampare in produzione usare logger
-# _logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__)
+
 
 @site_not_in_manteinance
 @login_required
