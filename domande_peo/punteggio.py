@@ -36,6 +36,7 @@ class PunteggioDomandaBando(object):
 
         # Presa servizio
         presa_servizio = self.get_presa_servizio_dipendente()
+
         mesi_servizio = differenza_date_in_mesi_aru(presa_servizio,
                                                     data_limite)
         if mesi_servizio == 0:

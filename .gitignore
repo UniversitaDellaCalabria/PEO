@@ -1,3 +1,4 @@
+db.sqlite3
 *.pyc
 *~
 *__pycache__
@@ -14,7 +15,7 @@ data/media/domande_peo/*
 data/media/domande-peo/*
 data/media/allegati_clausola_partecipazione/*
 !data/media/allegati_clausola_partecipazione/README.md
-django_peo_cache/*.djcache
+django_peo_cache/*
 !django_peo_cache/README.md
 !data/media/dipendenti_unical/README.md
 !data/media/domande_peo/README.md

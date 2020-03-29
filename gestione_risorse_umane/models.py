@@ -11,8 +11,14 @@ from unical_template.utils import differenza_date_in_mesi_aru
 
 from .decorators import is_apps_installed
 from .peo_methods import PeoMethods
-from  csa.models import RUOLI
-from .csa_methods import CSAMethods
+
+
+if 'csa' in settings.INSTALLED_APPS:
+    from  csa.models import RUOLI
+    from .csa_methods import CSAMethods as CareerMethods
+else:
+    from .career_methods import CareerMethods
+    RUOLI = settings.RUOLI
 
 
 class Avviso(TimeStampedModel):
@@ -115,8 +121,8 @@ class LivelloPosizioneEconomica(models.Model):
                                             on_delete=models.CASCADE,
                                             blank=True, null=True)
     nome = models.CharField('Livello Posizione Economica', max_length=255, blank=False, null=False,
-                            help_text="Tradizionalmente: 1,2,3,4,5,6 ma"
-                                      " diamo spazio ad opportune generalizzazioni")
+                            help_text="Tradizionalmente: 1, 2, 3, 4, 5, 6 ma"
+                                      " o qualsivoglia valore")
     class Meta:
         verbose_name = _('Livello Categoria')
         verbose_name_plural = _('Livelli Categoria')
@@ -179,7 +185,7 @@ def _ci_upload(instance, filename):
     return os.path.join('dipendenti_unical/{}/carta_identita/{}'.format(  instance.matricola,
                                                          filename))
 
-class Dipendente(TimeStampedModel, PeoMethods, CSAMethods):
+class Dipendente(TimeStampedModel, PeoMethods, CareerMethods):
     matricola = models.CharField(max_length=6, blank=False, null=False)
     utente = models.ForeignKey(settings.AUTH_USER_MODEL,
                                on_delete=models.SET_NULL,

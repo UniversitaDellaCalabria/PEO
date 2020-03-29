@@ -2,7 +2,7 @@ import inspect
 import operator
 import sys
 
-from csa.models import RUOLI
+
 from django.apps import apps
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
@@ -27,6 +27,10 @@ from .settings import (ETICHETTA_INSERIMENTI_ID,
                        ETICHETTA_INSERIMENTI_LABEL,
                        ETICHETTA_INSERIMENTI_HELP_TEXT)
 
+if 'csa' in settings.INSTALLED_APPS:
+    from csa.models import RUOLI
+else:
+    RUOLI = settings.RUOLI
 
 _UNITA_TEMPORALI = (('h', _('ore')),
                     ('d', _('giorni')),

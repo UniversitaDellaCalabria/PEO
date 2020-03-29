@@ -4,6 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    
+    atomic = False
 
     dependencies = [
         ('gestione_risorse_umane', '0013_auto_20180604_1507'),

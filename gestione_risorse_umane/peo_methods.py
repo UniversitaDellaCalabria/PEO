@@ -4,7 +4,6 @@ from django.apps import apps
 from django.db.models import Q
 from django.utils import timezone
 from unical_template.utils import differenza_date_in_mesi_aru
-from csa.models import CARRIERA_FIELDS_MAP
 from .decorators import is_apps_installed
 
 def bando_redazione():
@@ -39,27 +38,8 @@ class PeoMethods(object):
         # torna la data in cui è avvenuta l'ultima progressione
         if self.data_ultima_progressione_manuale:
             return self.data_ultima_progressione_manuale
-
-        c = self.get_carriera_csa()
-        if not c: return False
-
-        if debug:
-            for i in c:
-                print(i['data_inizio'],
-                      i['inquadramento'],
-                      i['attività'])
-
-        _ultima = {'dt_ini': c[0]['data_inizio'],
-                   'inquadr': c[0]['inquadramento']}
-        for i in c:
-            # se esiste nella carriera un evento di fine rapporto, non andare oltre
-            # 0020 è troppo brusco, non posso usarlo
-            # if i['attivita'] in ['0020', ]:
-                # break
-            if _ultima['inquadr'] == i['inquadramento']:
-                _ultima['dt_ini'] = i['data_inizio']
-
-        return timezone.get_current_timezone().localize(_ultima['dt_ini']).date()
+        else:
+            return self.data_presa_servizio_manuale or self.data_presa_servizio
 
     @is_apps_installed(['gestione_peo', ])
     def idoneita_peo(self):

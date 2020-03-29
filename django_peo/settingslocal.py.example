@@ -5,11 +5,74 @@ import os
 #       manage.py generate_secret_key
 SECRET_KEY = 'y-=_s@k0lgvexa!w9c)qun(!*@t8cwoffopvfv8sv3fj#&wwsp'
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# used for pdf creation and other temporary files
+CACHE_DIR='django_peo_cache'
+TMP_DIR = os.path.sep.join((BASE_DIR, CACHE_DIR, 'tmp'))
+CACHED = False
+
 # gittest
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 PRODUCTION = False
 MANTEINANCE = False
+
+# Application definition
+INSTALLED_APPS = [
+    # customizzazione gestione degli utenti
+    'unical_accounts',
+
+    'adminactions',
+
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+
+    # attivo solo se DEBUG = True
+    'django.contrib.staticfiles',
+
+    # 'django_countries',
+    'advanced_filters',
+    'django_admin_multiple_choice_list_filter',
+
+    # external libs
+    'nested_admin',
+    'rangefilter',
+
+    # our apps
+    'unical_template',
+
+    # oracle dblink for cineca CSA if CSA_MODE == CSA_NATIVE
+    # if CSA_MODE == CSA_REPLICA data will be copied in default DB
+    'csa',
+
+    # Django Form Builder
+    'django_form_builder',
+
+    # se un giorno dovessimo interrompere con cineca qui la gestione delle strutture/sedi
+    # 'unical_strutture',
+
+    'gestione_risorse_umane',
+    'gestione_peo',
+
+    # inserimenti dipendenti domanda peo
+    'domande_peo',
+
+    # Libreria per la generazione dei PDF
+    'wkhtmltopdf',
+
+    # SAML2 SP
+    'djangosaml2',
+    'saml2_sp',
+
+    # protocollo webservice in uso
+    # ogni università dovrebbe interfacciare il proprio
+    # 'protocollo_ws',
+    ]
 
 if PRODUCTION:
     SESSION_EXPIRE_AT_BROWSER_CLOSE=True
@@ -27,20 +90,24 @@ WKHTMLTOPDF_CMD = '/usr/local/bin/wkhtmltopdf'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django_peo',
+#         'HOST': 'localhost',
+#         'USER': 'USERNAMEHERE',
+#         'PASSWORD': 'PASSWDHERE',
+#         'PORT': ''
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_peo',
-        'HOST': 'localhost',
-        'USER': 'USERNAMEHERE',
-        'PASSWORD': 'PASSWDHERE',
-        'PORT': ''
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
-
-## CSA
-=======
 # CSA conf
 CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
 CSA_V_CARRIERA = 'V_CARRIERA'
@@ -72,8 +139,19 @@ elif CSA_MODE == CSA_REPLICA:
     CSA_REPL_SCRIPT = 'csa.sqlalchemy_repl'
 else:
     raise Exception('CSA_MODE non configured in settings.py')
-
 # END CSA
+
+RUOLI = [('ND', 'ND - Personale non docente'),
+         ('DC', 'DC - Dirigente a contratto'),
+         ('NB', 'NB - ND Centro Residenziale'),
+         ('D0', 'D0 - Dirigenti Superiori'),
+         ('NM', 'NM - Non docenti a tempo det.-Tesoro'),
+         ('NG', 'NG - Addetti ufficio stampa'),
+         ('PO', 'PO - Professori Ordinari'),
+         ('PA', 'PA - Professori Associati'),
+         ('RU', 'RU - Ricercatori Universitari'),
+         ('RM', 'RM - Ricercatori a tempo det-Tesoro'),
+         ('RD', 'RD - Ricercatori Legge 240/10 - t.det.')]
 
 LANGUAGE_CODE = 'it-it'
 TIME_ZONE = 'Europe/Rome'

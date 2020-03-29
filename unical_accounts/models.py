@@ -36,7 +36,7 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['username']
-        verbose_name_plural = _("Utenti PEO UNICAL")
+        verbose_name_plural = _("Utenti PEO")
     
     def __str__(self):
         return '%s - %s %s' % (self.matricola, self.first_name, self.last_name)

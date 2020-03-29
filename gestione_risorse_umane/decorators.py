@@ -4,19 +4,19 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import gettext as _
 
-from csa.models import V_ANAGRAFICA, _get_matricola
+#from csa.models import V_ANAGRAFICA, _get_matricola
 from django_form_builder.utils import _successivo_ad_oggi
 
-def matricola_in_csa(func_to_decorate):
-    def new_func(*original_args, **original_kwargs):
-        request = original_args[0]
-        if not getattr(request.user, 'matricola') or \
-        not getattr(request.user, 'first_name') or \
-        not getattr(request.user, 'last_name') or \
-        not V_ANAGRAFICA.objects.filter(matricola=_get_matricola(request.user.matricola)):
-            return render(request, 'utente_non_valido.html')
-        return func_to_decorate(*original_args, **original_kwargs)
-    return new_func
+#def matricola_in_csa(func_to_decorate):
+    #def new_func(*original_args, **original_kwargs):
+        #request = original_args[0]
+        #if not getattr(request.user, 'matricola') or \
+        #not getattr(request.user, 'first_name') or \
+        #not getattr(request.user, 'last_name') or \
+        #not V_ANAGRAFICA.objects.filter(matricola=_get_matricola(request.user.matricola)):
+            #return render(request, 'utente_non_valido.html')
+        #return func_to_decorate(*original_args, **original_kwargs)
+    #return new_func
 
 class is_apps_installed(object):
     """

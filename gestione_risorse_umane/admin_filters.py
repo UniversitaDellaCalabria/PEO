@@ -1,14 +1,20 @@
 import datetime
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib import messages
 from django.utils import timezone
 from django_admin_multiple_choice_list_filter.list_filters import MultipleChoiceListFilter
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
-from csa.models import RUOLI
 from . models import *
 from .peo_methods import bando_redazione
+
+
+if 'csa' in settings.INSTALLED_APPS:
+    from csa.models import RUOLI
+else:
+    RUOLI = settings.RUOLI
 
 
 class RuoloListFilter(MultipleChoiceListFilter):
