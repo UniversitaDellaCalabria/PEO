@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 'django_countries',
-    'advanced_filters',
+    # 'advanced_filters',
     'django_admin_multiple_choice_list_filter',
 
     # external libs
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
     # oracle dblink for cineca CSA if CSA_MODE == CSA_NATIVE
     # if CSA_MODE == CSA_REPLICA data will be copied in default DB
-    'csa',
+    # 'csa',
 
     # Django Form Builder
     'django_form_builder',
