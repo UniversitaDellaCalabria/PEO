@@ -12,13 +12,11 @@ cffi
 git+https://github.com/knaperek/djangosaml2.git
 
 # Admin nested inlines
-#git+https://github.com/peppelinux/django-nested-admin.git
 git+https://github.com/theatlantic/django-nested-admin.git
 
 # advanced filters
-#git+https://github.com/modlinltd/django-advanced-filters.git
-git+https://github.com/brack3t/django-braces.git
-git+https://github.com/peppelinux/django-advanced-filters.git
+#git+https://github.com/brack3t/django-braces.git
+#git+https://github.com/peppelinux/django-advanced-filters.git
 
 django_admin_multiple_choice_list_filter
 
@@ -55,7 +53,7 @@ pypdf2
 zeep
 
 # csa model 
-git+https://github.com/UniversitaDellaCalabria/django-cineca-csa.git
+#git+https://github.com/UniversitaDellaCalabria/django-cineca-csa.git
 
 # auto serializer
 git+https://github.com/peppelinux/django-auto-serializer.git
@@ -67,4 +65,4 @@ git+https://github.com/peppelinux/pyWSArchiPRO.git
 git+https://github.com/peppelinux/FileSignatureValidator.git
 
 # django-form-builder
-git+https://github.com/UniversitaDellaCalabria/django-form-builder
+django-form-builder==0.8.0
