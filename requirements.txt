@@ -65,4 +65,4 @@ git+https://github.com/peppelinux/pyWSArchiPRO.git
 git+https://github.com/peppelinux/FileSignatureValidator.git
 
 # django-form-builder
-django-form-builder==0.8.0
+git+https://github.com/UniversitaDellaCalabria/django-form-builder.git@static_name_fields
