@@ -329,7 +329,8 @@ def aggiungi_titolo(request, bando_id, descrizione_indicatore_id):
                                                pk=descrizione_indicatore_id)
 
     # From gestione_peo/templatetags/indicatori_ponderati_tags
-    if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
+    # if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
+    if not descrizione_indicatore.is_available_for_cat_role(domanda_bando.livello.posizione_economica,
                                                             dipendente.ruolo):
         return render(request, 'custom_message.html',
                       {'avviso': ("La tua posizione o il tuo ruolo"

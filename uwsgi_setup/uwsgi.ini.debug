@@ -1,0 +1,45 @@
+[uwsgi]
+project     = django_peo
+base        = /opt
+
+chdir       = %(base)/%(project)
+
+uid         = wert
+gid         = wert
+
+socket      = 127.0.0.1:3000
+master      = true
+processes   = 1
+#threads     = 2
+
+# set max connections to 1000 in uWSGI (set sysctl somaxconn!)
+listen = 768
+
+# se installato con pip non serve il plugin perchè embedded
+#plugins    = python
+
+# con virtualenv non serve
+#pythonpath     = %(base)/%(project)/%(project)
+
+virtualenv  = %(base)/%(project).env
+
+# equivalente a daemonize|logto
+#daemonize		= /var/log/uwsgi/%(project)_uwsgi.log
+
+honour-stdin = True
+
+module      = %(project).wsgi:application
+vacuum		= True 
+
+# respawn processes after serving 5000 requests
+max-requests    = 5000
+
+# respawn processes taking more than takes more then ... seconds (12 minutes!!)
+harakiri    = 72400
+
+env         = DJANGO_SETTINGS_MODULE = %(project).settings
+
+touch-reload    = %(base)/%(project)/django_peo/settings.py
+pidfile     = /tmp/%(project).pid
+stats       = 127.0.0.1:9191
+stats-http      = True

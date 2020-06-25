@@ -189,8 +189,10 @@ class DomandaBandoAdmin(admin.ModelAdmin):
                    'bando__nome',
                    'created',
                    'data_chiusura',
-                   'dipendente__livello__posizione_economica__nome',
-                   'dipendente__livello__nome',
+                   # 'dipendente__livello__posizione_economica__nome',
+                   # 'dipendente__livello__nome',
+                   'livello__posizione_economica__nome',
+                   'livello__nome',
                    )
 
     search_fields = ('dipendente__cognome', 'dipendente__matricola',)

@@ -246,10 +246,10 @@ def commissione_manage(request, commissione_id,
         livelli_posizione = LivelloPosizioneEconomica.objects.filter(posizione_economica__nome=poseco)
 
         if livello:
-            domande_bando = domande_bando.filter(dipendente__livello__posizione_economica__nome=poseco,
-                                                 dipendente__livello__nome=livello)
+            domande_bando = domande_bando.filter(livello__posizione_economica__nome=poseco,
+                                                 livello__nome=livello)
         else:
-            domande_bando = domande_bando.filter(dipendente__livello__posizione_economica__nome=poseco)
+            domande_bando = domande_bando.filter(livello__posizione_economica__nome=poseco)
 
     if request.method == 'POST':
         # azione di calcolo punteggio
@@ -557,7 +557,8 @@ def commissione_domanda_aggiungi_titolo(request, commissione_id,
                                                pk = descrizione_indicatore_id)
 
     # From gestione_peo/templatetags/indicatori_ponderati_tags
-    if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
+    # if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
+    if not descrizione_indicatore.is_available_for_cat_role(domanda_bando.livello.posizione_economica,
                                                             dipendente.ruolo):
         return render(request, 'custom_message.html',
                       {'avviso': ("La posizione o il ruolo del dipendente"
@@ -900,7 +901,8 @@ def commissione_domanda_duplica_titolo_confirm(request, commissione_id,
                             pk=modulo_id,
                             domanda_bando__dipendente=dipendente)
     # From gestione_peo/templatetags/indicatori_ponderati_tags
-    if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
+    # if not descrizione_indicatore.is_available_for_cat_role(dipendente.livello.posizione_economica,
+    if not descrizione_indicatore.is_available_for_cat_role(domanda_bando.livello.posizione_economica,
                                                             dipendente.ruolo):
         return render(request, 'custom_message.html',
                       {'avviso': ("La posizione o il ruolo del dipendente"

@@ -12,7 +12,8 @@ salva = False
 
 for dom in DomandaBando.objects.filter(bando=bando):
     dipendente = dom.dipendente
-    pos_eco = dipendente.livello.posizione_economica
+    # pos_eco = dipendente.livello.posizione_economica
+    pos_eco = dom.livello.posizione_economica
     punteggio_titoli_pos_eco = bando.get_punteggio_titoli_pos_eco(pos_eco)
     for mdb in dom.modulodomandabando_set.all():
         if mdb.disabilita: continue

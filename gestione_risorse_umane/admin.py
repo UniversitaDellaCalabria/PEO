@@ -1,4 +1,4 @@
-from advanced_filters.admin import AdminAdvancedFiltersMixin
+#from advanced_filters.admin import AdminAdvancedFiltersMixin
 
 from django.contrib import admin
 from django.contrib import messages
@@ -65,7 +65,7 @@ class TipoContrattoAdmin(admin.ModelAdmin):
     list_filter = ('nome',)
 
 @admin.register(Dipendente)
-class DipendenteAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
+class DipendenteAdmin(admin.ModelAdmin):
 
     list_display = ('matricola', 'nome', 'cognome', 'livello',
                     # 'profilo',

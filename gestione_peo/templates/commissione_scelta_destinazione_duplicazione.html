@@ -28,7 +28,7 @@
             <div class="item" style="margin-bottom: 15px;">
 
                 {% domanda_bando_num_max_descrind domanda_bando descrizione_indicatore as max_inserimenti %}
-                {% descrizione_indicatore_available descrizione_indicatore dipendente.livello.posizione_economica dipendente.ruolo as available_descrind %}
+                {% descrizione_indicatore_available descrizione_indicatore domanda_bando.livello.posizione_economica dipendente.ruolo as available_descrind %}
 
                 <div class="content">
                     <p>

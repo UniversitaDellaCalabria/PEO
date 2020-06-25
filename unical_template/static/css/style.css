@@ -36,9 +36,8 @@
 {
 	list-style-image: none ;
 }
-/*utilizzata solo nel cmas*/
+/*utilizzata solo nel cms*/
 .contenitore_body .ul_lista_red li {
-	list-style-image:url("/portale/images/gt_red2.png");
 	list-style-position: inside;
 }
 .li_1punto5
@@ -441,7 +440,6 @@ nav{
 	padding-left:0px;
 }
 .contenitore_body ul li{
-	list-style-image:url("/portale/images/gt2.png");
 	list-style-position: inside;
 }
 a:link, a:hover, a:visited, a:active{
@@ -1112,7 +1110,6 @@ background_D6DFD7{
 	cursor: pointer;
 }
 .menu_head:before{
-	content: url("/portale/images/gt2.png");
 	margin-right: 5px;
 }
 .menu_body{
@@ -1212,7 +1209,6 @@ a .comunicazione:before
 }
 .freccia_nera_puntatore
 {
-	background-image: url("/portale/images/gt2.png");
 	background-size: 5px auto;
 }
 

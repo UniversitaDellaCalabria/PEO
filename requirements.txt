@@ -17,8 +17,8 @@ git+https://github.com/theatlantic/django-nested-admin.git
 
 # advanced filters
 #git+https://github.com/modlinltd/django-advanced-filters.git
-git+https://github.com/brack3t/django-braces.git
-git+https://github.com/peppelinux/django-advanced-filters.git
+#git+https://github.com/brack3t/django-braces.git
+#git+https://github.com/peppelinux/django-advanced-filters.git
 
 django_admin_multiple_choice_list_filter
 
@@ -32,7 +32,7 @@ git+https://github.com/silentsokolov/django-admin-rangefilter.git
 git+https://github.com/UniversitaDellaCalabria/django-cineca-csa.git
 
 # Oracle CSA support
-cx_Oracle
+#cx_Oracle
 
 # SQL Alchemy
 sqlalchemy

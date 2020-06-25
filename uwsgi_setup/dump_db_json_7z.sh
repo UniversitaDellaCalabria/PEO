@@ -15,7 +15,7 @@ BACKUP_DIR_MEDIA=$BACKUP_DIR"/media"
 FNAME="peo.$(date +"%Y-%m-%d_%H%M%S")"
 
 # JSON dump, encrypt and compress
-./manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude csa --indent 2  | 7z a $BACKUP_DIR_JSON/$FNAME.json.7z -si -p$PASSWORD
+./manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude csa --exclude sessions --exclude admin.logentry --indent 2  | 7z a $BACKUP_DIR_JSON/$FNAME.json.7z -si -p$PASSWORD
 
 # SQL dump, encrypt and compress
 mysqldump -u $USERNAME --password=$PASSWORD $DB | 7z a $BACKUP_DIR_SQL/$FNAME.sql.7z -si -p$PASSWORD

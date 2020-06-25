@@ -25,14 +25,7 @@ from django.urls import include, path, re_path
 
 from unical_template.views import *
 
-# Logging
-# logger = logging.getLogger(__name__)
-# hdlr = logging.handlers.SysLogHandler( address = '/dev/log',
-                                       # facility = logging.handlers.SysLogHandler.LOG_USER )
-# logger.addHandler( hdlr )
-# formatter = logging.Formatter('%(name)s: %(levelname)s %(message)s')
-# hdlr.setFormatter( formatter )
-# logger.setLevel( logging.INFO )
+logger = logging.getLogger(__name__)
 
 # admin labels
 admin.site.site_header = 'Amministrazione'
@@ -110,14 +103,3 @@ if 'domande_peo' in settings.INSTALLED_APPS:
 if 'saml2_sp' in settings.INSTALLED_APPS:
     import saml2_sp.urls
     urlpatterns += path('', include((saml2_sp.urls, 'sp',))),
-
-# PER TROVARE UN BUG che appare solo in produzione con il girotondo di import e urlpatterns
-# for i in urlpatterns:
-    # _logger.error('\n')
-    # _logger.error(i)
-    # _logger.error(i.__dict__.get('namespace'))
-    # if i.__dict__.get('url_patterns'):
-        # for up in i.__dict__.get('url_patterns'):
-            # _logger.error(('    ', up))
-    # else:
-        # _logger.error('... has no url patterns!!!!')

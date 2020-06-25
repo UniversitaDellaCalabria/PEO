@@ -17,12 +17,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 # Logging
 logger = logging.getLogger(__name__)
-hdlr = logging.handlers.SysLogHandler( address = '/dev/log',
-                                       facility = logging.handlers.SysLogHandler.LOG_USER )
-logger.addHandler( hdlr )
-formatter = logging.Formatter('%(name)s: %(levelname)s %(message)s')
-hdlr.setFormatter( formatter )
-logger.setLevel( logging.INFO )
 
 def redirect(request):
     return HttpResponseRedirect('http://www.example.org')
@@ -63,9 +57,6 @@ def protected_serve(request, path):
     its_owner = False
     if hasattr(request.user, 'matricola'):
         its_owner = request.user.matricola in folders
-    
-    #logging.info(request.user)
-    #logging.info(its_owner)
     
     # check se la matricola dell'utente corrisponde all'utente loggato
     # se REMOTE_ADDRESS == SERVER_ADDR significa che è una richiesta di produzione pdf

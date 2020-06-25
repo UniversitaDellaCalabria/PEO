@@ -35,6 +35,8 @@ _**Frontend**: Un modulo di inserimento con allegato_
 ![Alt text](data/gallery/costruzione_modulo.png)
 _**Backend**: Interfaccia per la costruzione dinamica dei moduli, per ogni Descrizione di Indicatore Ponderato_
 
+![Alt text](data/gallery/valutazione_punteggio.png)
+_**Backend**: Valutazione dettagliata del punteggio di ogni domanda, con eventuali decurtazioni dovute a soglie superate_
 
 Requirements
 ------------

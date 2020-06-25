@@ -131,7 +131,8 @@ class DomandaBando(TimeStampedModel, PunteggioDomandaBando):
         di_mancanti = []
         for ip in self.bando.indicatoreponderato_set.all():
             for di in ip.descrizioneindicatore_set.filter(is_required=True):
-                if not di.is_available_for_cateco(self.dipendente.livello.posizione_economica):
+                # if not di.is_available_for_cateco(self.dipendente.livello.posizione_economica):
+                if not di.is_available_for_cateco(self.livello.posizione_economica):
                     continue
                 if di not in [ i.descrizione_indicatore for i in self.modulodomandabando_set.all()]:
                     di_mancanti.append(di)
