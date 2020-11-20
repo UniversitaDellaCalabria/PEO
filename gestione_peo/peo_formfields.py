@@ -574,7 +574,7 @@ class PEO_ProtocolloField(ProtocolloField):
             # per cui la data del protocollo deve essere sempre precedente
             # all'ultima progressione effettuata
             if not data_inizio:
-                if ultima_progr and self.data_protocollo < ultima_progr:
+                if ultima_progr and value < ultima_progr:
                     errors.append("La data del protocollo è precedente "
                                   "all'ultima progressione effettuata: "
                                   "{}".format(ultima_progr))
