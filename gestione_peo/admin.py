@@ -62,7 +62,9 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
              ('Date, termini, scadenze e soglie temporali specifiche',
                                 {
                                 'fields' : (
-                                            ('data_validita_titoli_fine'),
+                                            ('data_validita_titoli_inizio',
+                                             'considera_ultima_progressione',
+                                             'data_validita_titoli_fine'),
                                             ('ultima_progressione', 'anni_servizio_minimi'),
                                            )
                                 },

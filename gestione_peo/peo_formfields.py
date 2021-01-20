@@ -18,14 +18,28 @@ from gestione_risorse_umane.models import Dipendente, TitoloStudio
 from .settings import NUMERAZIONI_CONSENTITE
 
 
+def _inizio_validita_titoli(bando, ultima_progressione):
+    """
+    Torna 'inizio_validita_titoli' del bando a cui la domanda
+    si riferisce
+    """
+    data_inizio_validita = bando.data_validita_titoli_inizio
+    if data_inizio_validita:
+        if not ultima_progressione: return data_inizio_validita
+        if bando.considera_ultima_progressione:
+            if data_inizio_validita <= ultima_progressione:
+                return ultima_progressione
+        return data_inizio_validita
+    return ultima_progressione
+
+
 def _limite_validita_titoli(domanda_bando):
     """
     Torna 'limite_validita_titoli' del bando a cui la domanda
     si riferisce
     """
     bando = domanda_bando.bando
-    limite_validita_titoli = bando.data_validita_titoli_fine
-    return limite_validita_titoli
+    return bando.data_validita_titoli_fine
 
 
 def _get_livello_dipendente(domanda_bando):
@@ -225,11 +239,15 @@ class PEO_DateInRangeComplexField(PEO_DateStartEndComplexField):
         """
         domanda_bando = kwargs.get('domanda_bando')
         if not domanda_bando: return []
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
+
         ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
         data_presa_servizio = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[1]
+
+        inizio_validita_titoli = _inizio_validita_titoli(domanda_bando.bando,
+                                                         ultima_progressione)
+        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
 
         errors = []
         # Recupero la lista di errori proveniente dai controlli del super
@@ -269,10 +287,10 @@ class PEO_DateInRangeComplexField(PEO_DateStartEndComplexField):
         # Si valuta 'Data Fine'
         elif name == self.end.name:
             # Se la data di fine è precedente all'ultima progressione
-            if value < ultima_progressione:
-                errors.append("La data di fine è precedente all'ultima"
-                              " progressione effettuata:"
-                              " {}".format(ultima_progressione))
+            # o al limite imposto dal bando
+            if value < inizio_validita_titoli:
+                errors.append("La data di fine è precedente alla data:"
+                              " {}".format(inizio_validita_titoli))
         return errors
 
 
@@ -315,11 +333,11 @@ class PEO_DateInRangeInCorsoComplexField(PEO_DateInRangeComplexField):
         """
         domanda_bando = kwargs.get('domanda_bando')
         if not domanda_bando: return []
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
-        ultima_progressione = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[0]
-        data_presa_servizio = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[1]
+        # limite_validita_titoli = _limite_validita_titoli(domanda_bando)
+        # ultima_progressione = \
+            # _ultima_progressione_data_presa_servizio(domanda_bando)[0]
+        # data_presa_servizio = \
+            # _ultima_progressione_data_presa_servizio(domanda_bando)[1]
 
         errors = []
 
@@ -340,7 +358,6 @@ class PEO_DateInRangeInCorsoComplexField(PEO_DateInRangeComplexField):
             errors = errors + (super().raise_error(name,
                                                    cleaned_data,
                                                    **kwargs))
-
         return errors
 
 
@@ -367,9 +384,6 @@ class PEO_DateOutOfRangeComplexField(PEO_DateStartEndComplexField):
         """
         domanda_bando = kwargs.get('domanda_bando')
         if not domanda_bando: return []
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
-        ultima_progressione = \
-            _ultima_progressione_data_presa_servizio(domanda_bando)[0]
         data_presa_servizio = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[1]
 
@@ -415,14 +429,17 @@ class PEO_DataLowerThanBandoField(PEO_BaseDateField):
         """
         domanda_bando = kwargs.get('domanda_bando')
         if not domanda_bando: return []
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
         ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
         data_presa_servizio = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[1]
 
-        if ultima_progressione == data_presa_servizio:
-            ultima_progressione = False
+        inizio_validita_titoli = _inizio_validita_titoli(domanda_bando.bando,
+                                                         ultima_progressione)
+        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
+
+        # if ultima_progressione == data_presa_servizio:
+            # ultima_progressione = False
 
         errors = []
         value = cleaned_data
@@ -432,14 +449,18 @@ class PEO_DataLowerThanBandoField(PEO_BaseDateField):
 
         # Se la data è successiva al termine imposto dal bando
         if value > limite_validita_titoli:
-            errors.append("La data non può essere successiva"
-                          " al limite imposto dal bando:"
-                          " {}".format(limite_validita_titoli))
+            errors.append("La data non può essere successiva "
+                          "al limite imposto dal bando: "
+                          "{}".format(limite_validita_titoli))
+        # Se la data è precedente a inizio_validita_titoli
+        if inizio_validita_titoli and value < inizio_validita_titoli:
+            errors.append("La data non può essere precedente"
+                          " a: {}".format(inizio_validita_titoli))
         # Se la data è precedente all'ultima progressione
-        if ultima_progressione and (value < ultima_progressione):
-            errors.append("La data non può essere precedente all'ultima "
-                          "progressione effettuata: {} "
-                          .format(ultima_progressione))
+        # elif ultima_progressione and (value < ultima_progressione):
+            # errors.append("La data non può essere precedente all'ultima "
+                          # "progressione effettuata: {} "
+                          # .format(ultima_progressione))
         # Se la data è precedente alla presa di servizio
         if value < data_presa_servizio:
             errors.append("La data non può essere precedente alla presa "
@@ -464,14 +485,17 @@ class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
         """
         domanda_bando = kwargs.get('domanda_bando')
         if not domanda_bando: return []
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
         ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
         data_presa_servizio = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[1]
 
-        if ultima_progressione == data_presa_servizio:
-            ultima_progressione = False
+        inizio_validita_titoli = _inizio_validita_titoli(domanda_bando.bando,
+                                                         ultima_progressione)
+        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
+
+        # if ultima_progressione == data_presa_servizio:
+            # ultima_progressione = False
 
         errors = []
         # value = cleaned_data.get(name)
@@ -484,13 +508,19 @@ class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
         if value > limite_validita_titoli.year:
             errors.append("Questo anno non può essere superiore a "
                           "quello della data limite imposta dal bando: "
-                          "{}".format(_limite_validita_titoli(domanda_bando).year))
+                          "{}".format(limite_validita_titoli.year))
+
+        # Se è precedente a inizio_validita_titoli
+        if inizio_validita_titoli and value < inizio_validita_titoli.year:
+                errors.append("Questo anno non può essere precedente a "
+                              "{}".format(inizio_validita_titoli.year))
         # Se è successivo all'anno dell'ultima progressione
-        if ultima_progressione and (value < ultima_progressione.year):
-            errors.append("Questo anno non può essere precedente a "
-                          "quello dell'ultima progressione effettuata: "
-                          "{}".format(ultima_progressione.year))
-        # Se è successivo all'anno della presa di servizio
+        # elif ultima_progressione and (value < ultima_progressione.year):
+            # errors.append("Questo anno non può essere precedente a "
+                          # "quello dell'ultima progressione effettuata: "
+                          # "{}".format(ultima_progressione.year))
+
+        # Se è precedente all'anno della presa di servizio
         if value < data_presa_servizio.year:
             errors.append("Questo anno non può essere precedente a "
                           "quello della presa di servizio: "
@@ -514,11 +544,14 @@ class PEO_ProtocolloField(ProtocolloField):
         """
         domanda_bando = kwargs.get('domanda_bando')
         if not domanda_bando: return []
-        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
-        ultima_progr = \
+        ultima_progressione = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[0]
         data_presa_servizio = \
             _ultima_progressione_data_presa_servizio(domanda_bando)[1]
+
+        inizio_validita_titoli = _inizio_validita_titoli(domanda_bando.bando,
+                                                         ultima_progressione)
+        limite_validita_titoli = _limite_validita_titoli(domanda_bando)
 
         if ultima_progr == data_presa_servizio:
             ultima_progr = False
@@ -533,18 +566,18 @@ class PEO_ProtocolloField(ProtocolloField):
             errors = []
             # Se la data è successiva al limite imposto dal bando
             if value > limite_validita_titoli:
-                errors.append("La data di protocollo non può"
-                              " essere successiva al"
-                              " {}".format(limite_validita_titoli))
+                errors.append("La data di protocollo non può "
+                              "essere successiva al "
+                              "{}".format(limite_validita_titoli))
             # Se la data è successiva ad oggi
             if _successivo_ad_oggi(value):
-                errors.append("La data di protocollo non può essere"
-                              " successiva ad oggi")
+                errors.append("La data di protocollo non può essere "
+                              "successiva ad oggi")
             # Se la data è precedente alla presa di servizio
             if value < data_presa_servizio:
-                errors.append("La data di protocollo non può essere"
-                              " precedente alla presa di servizio:"
-                              " {}".format(data_presa_servizio))
+                errors.append("La data di protocollo non può essere "
+                              "precedente alla presa di servizio: "
+                              "{}".format(data_presa_servizio))
 
             # Serve interfacciarsi con DateInRangeInCorsoComplexField
             d = PEO_DateInRangeInCorsoComplexField()
@@ -561,21 +594,20 @@ class PEO_ProtocolloField(ProtocolloField):
             # Se NON è stato checkato il campo "fino_ad_oggi"
             # e la data di fine è precedente all'ultima progressione,
             # l'incarico non è continuativo
-            if not in_corso:
-                if ultima_progr and data_fine and data_fine < ultima_progr:
-                    if value < ultima_progr:
+            if not in_corso and inizio_validita_titoli:
+                if data_fine and data_fine < inizio_validita_titoli:
+                    if value < inizio_validita_titoli:
                         errors.append("La data del protocollo "
-                                      "è precedente all'ultima "
-                                      "progressione effettuata: "
-                                      "{}".format(ultima_progr))
+                                      "è precedente alla data: "
+                                      "{}".format(inizio_validita_titoli))
 
             # Se non esistono i campi Data allora non
             # siamo in grado di capire se l'incarico è di tipo continuativo,
-            # per cui la data del protocollo deve essere sempre precedente
-            # all'ultima progressione effettuata
-            if not data_inizio:
-                if ultima_progr and value < ultima_progr:
+            # per cui la data del protocollo deve essere sempre successiva
+            # all'ultima progressione effettuata, a meno che non sia
+            # settata la data di inizio validità titoli
+            if not data_inizio and inizio_validita_titoli:
+                if value < inizio_validita_titoli:
                     errors.append("La data del protocollo è precedente "
-                                  "all'ultima progressione effettuata: "
-                                  "{}".format(ultima_progr))
+                                  "alla data: {}".format(inizio_validita_titoli))
             return errors

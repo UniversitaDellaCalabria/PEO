@@ -76,6 +76,18 @@ class Bando(TimeStampedModel):
                                                help_text=("Anni di servizio minimi"
                                                           " per poter partecipare"
                                                           " al bando"))
+    data_validita_titoli_inizio = models.DateField("Data inizio validità titoli",
+                                                   blank=True, null=True,
+                                                   help_text=("Data dalla quale"
+                                                              " i titoli sono accettati."
+                                                              " Se vuoto, viene considerata "
+                                                              " la data di ultima progressione."))
+    considera_ultima_progressione = models.BooleanField(default=False,
+                                                        help_text=("Se selezionato, verranno confrontate "
+                                                                   "le date di ultima_progressione "
+                                                                   "del dipendente e "
+                                                                   "data_validita_titoli_inizio e scelta "
+                                                                   "la più recente"))
     data_validita_titoli_fine = models.DateField("Data fine validità titoli",
                                                  help_text=("Data fino alla quale"
                                                             " i titoli sono accettati"))
