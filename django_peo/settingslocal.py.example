@@ -110,7 +110,7 @@ DATABASES = {
 
 
 ## CSA
-=======
+# =======
 # CSA conf
 CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
 CSA_V_CARRIERA = 'V_CARRIERA'

@@ -54,7 +54,7 @@ pypdf2
 # SOAP Client protocollazione
 zeep
 
-# csa model 
+# csa model
 git+https://github.com/UniversitaDellaCalabria/django-cineca-csa.git
 
 # auto serializer

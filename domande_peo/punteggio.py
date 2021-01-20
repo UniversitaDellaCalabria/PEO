@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from django_form_builder.utils import get_as_dict
 from gestione_peo.models import Punteggio_TitoloStudio
+from gestione_peo.peo_formfields import _inizio_validita_titoli
 from unical_template.utils import (differenza_date_in_mesi_aru,
                                    parse_date_string as parse_date)
 
@@ -442,8 +443,13 @@ class PunteggioModuloDomandaBando(object):
         """
         # Format Date e controllo "fino ad oggi" e ultima_progressione
         inizio = termine = None
+
         dipendente = self.domanda_bando.dipendente
         ultima_progressione = self.domanda_bando.get_ultima_progressione_dipendente()
+
+        # soglia data inizio validità titoli
+        soglia = _inizio_validita_titoli(self.domanda_bando.bando,
+                                         ultima_progressione)
 
         if durata_inserita:
             return durata_inserita
@@ -451,8 +457,8 @@ class PunteggioModuloDomandaBando(object):
         # Se nel form è stato inserito il campo "intervallo date IN RANGE Bando"
         elif data_inizio:
             inizio = parse_date(data_inizio)
-            if ultima_progressione and (inizio < ultima_progressione):
-                inizio = ultima_progressione
+            if soglia and (inizio < soglia):
+                inizio = soglia
             if data_fine:
                 termine = parse_date(data_fine)
                 # Se la data di fine va oltre il termine di validità
