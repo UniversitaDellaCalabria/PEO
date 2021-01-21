@@ -438,8 +438,8 @@ class PEO_DataLowerThanBandoField(PEO_BaseDateField):
                                                          ultima_progressione)
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
 
-        # if ultima_progressione == data_presa_servizio:
-            # ultima_progressione = False
+        if inizio_validita_titoli == data_presa_servizio:
+            inizio_validita_titoli = False
 
         errors = []
         value = cleaned_data
@@ -494,8 +494,8 @@ class PEO_AnnoInRangeOfCarrieraField(PositiveIntegerField):
                                                          ultima_progressione)
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
 
-        # if ultima_progressione == data_presa_servizio:
-            # ultima_progressione = False
+        if inizio_validita_titoli == data_presa_servizio:
+            inizio_validita_titoli = False
 
         errors = []
         # value = cleaned_data.get(name)
@@ -553,8 +553,8 @@ class PEO_ProtocolloField(ProtocolloField):
                                                          ultima_progressione)
         limite_validita_titoli = _limite_validita_titoli(domanda_bando)
 
-        if ultima_progr == data_presa_servizio:
-            ultima_progr = False
+        if inizio_validita_titoli == data_presa_servizio:
+            inizio_validita_titoli = False
 
         value = cleaned_data.get(name)
 
