@@ -1,4 +1,4 @@
-from advanced_filters.admin import AdminAdvancedFiltersMixin
+#from advanced_filters.admin import AdminAdvancedFiltersMixin
 
 from django.contrib import admin
 from django.contrib import messages

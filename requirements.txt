@@ -21,7 +21,8 @@ git+https://github.com/theatlantic/django-nested-admin.git
 django_admin_multiple_choice_list_filter
 
 #adminactions
-git+https://github.com/peppelinux/django-adminactions.git
+git+https://github.com/saxix/django-adminactions.git
+#git+https://github.com/peppelinux/django-adminactions.git
 
 # rangefilter
 git+https://github.com/silentsokolov/django-admin-rangefilter.git
