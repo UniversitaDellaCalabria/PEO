@@ -13,7 +13,7 @@ from django.views.static import serve
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.http import is_safe_url
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 # Logging
 logger = logging.getLogger(__name__)

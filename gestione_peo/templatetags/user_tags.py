@@ -2,7 +2,7 @@ import datetime, pytz
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django import template
 
 register = template.Library()

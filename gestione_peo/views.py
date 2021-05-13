@@ -12,8 +12,7 @@ from django.db.models import Q
 
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import (get_object_or_404, render,
-                              render_to_response, redirect)
+from django.shortcuts import (get_object_or_404, render, redirect)
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import is_safe_url
