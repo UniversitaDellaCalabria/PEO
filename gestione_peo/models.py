@@ -25,7 +25,9 @@ from . import peo_formfields
 from .forms import PeoDynamicForm
 from .settings import (ETICHETTA_INSERIMENTI_ID,
                        ETICHETTA_INSERIMENTI_LABEL,
-                       ETICHETTA_INSERIMENTI_HELP_TEXT)
+                       ETICHETTA_INSERIMENTI_HELP_TEXT,
+                       MODALITA_BONUS_ANZIANITA,
+                       RANGE_APPLICAZIONE_BONUS)
 
 if 'csa' in settings.INSTALLED_APPS:
     from csa.models import RUOLI
@@ -91,23 +93,15 @@ class Bando(TimeStampedModel):
     data_validita_titoli_fine = models.DateField("Data fine validità titoli",
                                                  help_text=("Data fino alla quale"
                                                             " i titoli sono accettati"))
-    agevolazione_soglia_anni = models.IntegerField( "Anni permanenza per bonus"
-                                                    " punteggio anzianità",
-                                                    default=3,
-                                                    help_text=("Anzianità di servizio"
-                                                        " nella stessa posizione economica"
-                                                        " per usufruire della moltiplicazione"
-                                                        " del punteggio relativo all'anzianità"
-                                                        " di servizio"))
-    agevolazione_fatmol = models.IntegerField( "Fattore moltiplicazione per bonus"
-                                               " punteggio anzianità",
-                                               default=3,
-                                               help_text=("Fattore di moltiplicazione"
-                                                          " del punteggio relativo all'anzianità"
-                                                          " di servizio nel caso di permanenza"
-                                                          " maggiore o uguale alla soglia stabilita."
-                                                          "Serve per agevolare i dipendenti che da N anni"
-                                                          " non superano la progressione"))
+    agevolazione_modalita = models.IntegerField('Modalità bonus',
+                                                choices=MODALITA_BONUS_ANZIANITA,
+                                                default=0,
+                                                help_text=("La moltiplicazione "
+                                                           "prenderà in considerazione "
+                                                           "il fattore specificato. "
+                                                           "L'assegnazione del punteggio "
+                                                           "invece si basa sull'impostazione "
+                                                           "di PUNTEGGI PER BONUS ANZIANITÀ DI SERVIZIO"))
     priorita_titoli_studio = models.BooleanField("Valuta solo titolo di studio"
                                                  " più elevato",
                                                  default=True,
@@ -619,6 +613,95 @@ class Punteggio_Anzianita_Servizio(TimeStampedModel):
     def __str__(self):
         return '{} - {} ogni {}'.format(self.posizione_economica,
                                         self.punteggio, self.unita_temporale)
+
+
+class Punteggio_Anzianita_Servizio_Bonus(TimeStampedModel):
+    """
+    qui docstring :)
+    """
+    bando = models.ForeignKey(Bando, on_delete=models.CASCADE,
+                              blank=False, null=False, default=1)
+    posizione_economica = models.ForeignKey(PosizioneEconomica,
+	                                        verbose_name='Categoria',
+                                            on_delete=models.CASCADE)
+    agevolazione_soglia_anni = models.IntegerField( "Anni permanenza minimi per bonus"
+                                                    " punteggio anzianità",
+                                                    default=3,
+                                                    help_text=("Anzianità di servizio"
+                                                        " nella stessa posizione economica"
+                                                        " per usufruire del bonus"))
+    # SI CONSIDERANO SEMPRE I MESI
+    # unita_temporale = models.CharField('Unita temporale di riferimento',
+                                       # max_length=1, choices=_UNITA_TEMPORALI,
+                                       # default="m")
+
+    range_applicazione = models.IntegerField('Applicazione bonus',
+                                             choices=RANGE_APPLICAZIONE_BONUS,
+                                             default=2,
+                                             help_text=("Specifica il range "
+                                                        "di applicazione del bonus"))
+
+    # Valore min. 0.0.1 perchè se l'anzianità viene valutata in base
+    # ai mesi (anni in 12min) allora i punteggi sono frazioni di quelli
+    # definiti nel bando (che sono assegnati agli anni)
+    punteggio = models.FloatField(_("Punteggio per ogni mese"),
+                                  help_text=("punteggio attribuito per ogni mese"
+                                             " di servizio. Deve essere un numero"
+                                             " positivo moltiplicabile per la "
+                                             " durata dichiarata dall'utente istante"),
+                                  validators = [MinValueValidator(0.01),])
+    punteggio_max = models.FloatField(help_text=("punteggio massimo attribuibile."
+                                                 " Deve essere un numero positivo"),
+                                      validators = [MinValueValidator(0.01),])
+    ordinamento = models.PositiveIntegerField(help_text="posizione nell'ordinamento", blank=True, default=0)
+
+    class Meta:
+        verbose_name = _('Punteggio per Bonus Anzianità di servizio')
+        verbose_name_plural = _('Punteggi per Bonus Anzianità di servizio')
+
+    def __str__(self):
+        return '{} - {} ogni mese'.format(self.posizione_economica,
+                                          self.punteggio)
+
+
+class Moltiplicatore_Anzianita_Servizio_Bonus(TimeStampedModel):
+    """
+    qui docstring :)
+    """
+    bando = models.ForeignKey(Bando, on_delete=models.CASCADE,
+                              blank=False, null=False, default=1)
+    posizione_economica = models.ForeignKey(PosizioneEconomica,
+	                                        verbose_name='Categoria',
+                                            on_delete=models.CASCADE)
+    agevolazione_soglia_anni = models.IntegerField( "Anni permanenza minimi per bonus"
+                                                    " punteggio anzianità",
+                                                    default=3,
+                                                    help_text=("Anzianità di servizio"
+                                                        " nella stessa posizione economica"
+                                                        " per usufruire del bonus"))
+    agevolazione_fatmol = models.IntegerField( "Fattore moltiplicazione per bonus"
+                                               " punteggio anzianità",
+                                               default=1,
+                                               help_text=("Fattore di moltiplicazione"
+                                                          " del punteggio relativo all'anzianità"
+                                                          " di servizio nel caso di permanenza"
+                                                          " maggiore o uguale alla soglia stabilita."
+                                                          "Serve per agevolare i dipendenti che da N anni"
+                                                          " non superano la progressione"))
+    range_applicazione = models.IntegerField('Applicazione bonus',
+                                             choices=RANGE_APPLICAZIONE_BONUS,
+                                             default=0,
+                                             help_text=("Specifica il range "
+                                                        "di applicazione del bonus"))
+    ordinamento = models.PositiveIntegerField(help_text="posizione nell'ordinamento", blank=True, default=0)
+
+    class Meta:
+        verbose_name = _('Fattore di moltiplicazione per Bonus Anzianità di servizio')
+        verbose_name_plural = _('Fattori di moltiplicazione per Bonus Anzianità di servizio')
+
+    def __str__(self):
+        return '{} - {}'.format(self.posizione_economica,
+                                self.agevolazione_fatmol)
 
 
 class CategorieDisabilitate_TitoloStudio(models.Model):

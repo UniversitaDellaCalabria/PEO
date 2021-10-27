@@ -6,8 +6,10 @@ from django.utils import timezone
 #from django.utils.dateparse import parse_date
 
 from django_form_builder.utils import get_as_dict
+
 from gestione_peo.models import Punteggio_TitoloStudio
 from gestione_peo.peo_formfields import _inizio_validita_titoli
+
 from unical_template.utils import (differenza_date_in_mesi_aru,
                                    parse_date_string as parse_date)
 
@@ -28,11 +30,6 @@ class PunteggioDomandaBando(object):
         punteggio = 0
         punteggio_categoria = 0
 
-        # mesi_anzianita = self.dipendente.get_anzianita_mesi()
-
-        # if not mesi_anzianita:
-            # return punteggio
-
         data_limite = self.bando.data_validita_titoli_fine
 
         # Presa servizio
@@ -46,36 +43,183 @@ class PunteggioDomandaBando(object):
         ultima_progressione = self.get_ultima_progressione_dipendente()
         mesi_permanenza = differenza_date_in_mesi_aru(ultima_progressione,
                                                       data_limite)
-        unita_temporale = "m"
+        # SI CONSIDERANO SEMPRE I MESI
+        # unita_temporale = "m"
 
         # Se nel bando è impostata l'assegnazione di punti per l'anzianità
         if self.bando.punteggio_anzianita_servizio_set.first():
             for fascia in self.bando.punteggio_anzianita_servizio_set.all():
-                unita_temporale = fascia.unita_temporale
+                # SI CONSIDERANO SEMPRE I MESI
+                # unita_temporale = fascia.unita_temporale
                 if fascia.posizione_economica == self.get_livello_dipendente().posizione_economica:
                     punteggio_categoria = fascia.punteggio
                     break
                 elif not fascia.posizione_economica:
                     punteggio_categoria = fascia.punteggio
 
-            if unita_temporale=="m":
-                punteggio += punteggio_categoria*mesi_servizio
-            elif unita_temporale=="y":
-                punteggio += punteggio_categoria*(mesi_servizio/12)
+            # SI CONSIDERANO SEMPRE I MESI
+            # if unita_temporale=="m":
+                # punteggio += punteggio_categoria*mesi_servizio
+            # elif unita_temporale=="y":
+                # punteggio += punteggio_categoria*(mesi_servizio/12)
+            punteggio += punteggio_categoria*mesi_servizio
 
-            # Se non è stata effettuata alcuna progressione e
-            # l'anzianità è maggiore o uguale alla soglia di bonus
-            if ultima_progressione == presa_servizio and \
-            mesi_servizio >= 12*self.bando.agevolazione_soglia_anni:
-                punteggio = punteggio*self.bando.agevolazione_fatmol
-            # Se la data di progressione è diversa dalla presa servizio
-            elif ultima_progressione != presa_servizio:
-                #Se è soddisfatta la condizione del bando, si applica il bonus di moltiplicazione
-                if mesi_permanenza >= 12*self.bando.agevolazione_soglia_anni:
-                    # Poichè i mesi di permanenza sono stati già considerati prima
-                    # la moltiplicazione la faccio per 'fatmol-1' e aggiungo il 'plus'
-                    bonus = punteggio_categoria*mesi_permanenza*(self.bando.agevolazione_fatmol-1)
-                    punteggio += bonus
+            # START BONUS
+            # Se è previsto un bonus per l'anzianità di servizio
+            if self.bando.agevolazione_modalita > 0:
+
+                # parametri da tenere in considerazione
+                # presenti nelle diverse modalità di bonus
+                # valorizzati nei successivi controlli
+                # se il bando lo prevede
+                anni_agevolazione = 0 # min anni nella stessa categoria economica
+                fattore_moltiplicazione = 1 # fattore di moltiplicazione del punteggio
+                punteggio_bonus_categoria = 0 # punteggio bonus per ogni anno
+                punteggio_max_bonus_categoria = 0 # max punteggio assegnabile
+                range_applicazione = 0 # range periodo a cui applicare la moltiplicazione
+                # SI CONSIDERANO SEMPRE I MESI
+                # unita_temporale_bonus = "m"
+                mesi_agevolazione = anni_agevolazione*12
+
+
+                fascia_attiva = None
+                # VALORIZZAZIONE DEI PARAMETRI
+
+                # se è la modalità è la moltiplicazione del punteggio,
+                # recupera i valori dell'eventuale
+                # punteggio da tenere in considerazione
+                if self.bando.agevolazione_modalita == 1:
+                    for fascia in self.bando.moltiplicatore_anzianita_servizio_bonus_set.all():
+                        if fascia.posizione_economica == self.get_livello_dipendente().posizione_economica:
+                            fascia_attiva = fascia
+                            break
+                        elif not fascia.posizione_economica:
+                            fascia_attiva = fascia
+                    if fascia_attiva:
+                        fattore_moltiplicazione = fascia_attiva.agevolazione_fatmol
+                        anni_agevolazione = fascia_attiva.agevolazione_soglia_anni
+                        range_applicazione = fascia.range_applicazione
+
+                # se è la modalità è l'assegnazione del punteggio
+                # per ogni anno, recupera i valori dell'eventuale
+                # punteggio da tenere in considerazione
+                elif self.bando.agevolazione_modalita == 2:
+                    for fascia in self.bando.punteggio_anzianita_servizio_bonus_set.all():
+                        # SI CONSIDERANO SEMPRE I MESI
+                        # unita_temporale_bonus = fascia.unita_temporale
+                        if fascia.posizione_economica == self.get_livello_dipendente().posizione_economica:
+                            fascia_attiva = fascia
+                            break
+                        elif not fascia.posizione_economica:
+                            fascia_attiva = fascia
+                    if fascia_attiva:
+                        punteggio_bonus_categoria = fascia_attiva.punteggio
+                        punteggio_max_bonus_categoria = fascia_attiva.punteggio_max
+                        anni_agevolazione = fascia_attiva.agevolazione_soglia_anni
+                        range_applicazione = fascia.range_applicazione
+
+                # END VALORIZZAZIONE DEI PARAMETRI
+
+                # Se non è stata effettuata alcuna progressione e
+                # l'anzianità è maggiore o uguale alla soglia di bonus
+                if ultima_progressione == presa_servizio and \
+                    mesi_servizio >= mesi_agevolazione:
+
+                    # se il bonus prevede la moltiplicazione del punteggio
+                    if self.bando.agevolazione_modalita == 1:
+                        # se la moltiplicazione si applica a tutto il punteggio
+                        # (in questo caso mesi di servizio e mesi nella
+                        # stessa categoria economica corrispondono)
+                        if range_applicazione == 0 or range_applicazione == 1:
+                            punteggio = punteggio*fattore_moltiplicazione
+
+                        # se la moltiplicazione si applica solo al periodo
+                        # che supera la permanenza minima
+                        elif range_applicazione == 2:
+                            mesi_effettivi = mesi_servizio - mesi_agevolazione
+                            punteggio += punteggio*(fattore_moltiplicazione-1)*mesi_effettivi
+
+                    # se il bonus assegna un punteggio per ogni anno/mese
+                    else:
+                        # se l'assegnazione si applica a tutti i mesi di servizio
+                        # che in questo caso corrispondono con tutti i mesi
+                        # nella stessa categoria economica
+                        if range_applicazione == 0 or range_applicazione == 1:
+                            mesi_da_calcolare = mesi_servizio
+
+                        # se l'assegnazione si applica solo al periodo
+                        # che supera la permanenza minima
+                        elif range_applicazione == 2:
+                            mesi_da_calcolare = mesi_servizio - mesi_agevolazione
+
+                        # SI CONSIDERANO SEMPRE I MESI
+                        # if unita_temporale_bonus=="m":
+                            # plus = punteggio_bonus_categoria*mesi_da_calcolare
+                        # elif unita_temporale_bonus=="y":
+                            # plus = punteggio_bonus_categoria*(mesi_da_calcolare/12)
+                        plus = punteggio_bonus_categoria*mesi_da_calcolare
+
+                        # se il bonus supera la soglia massima impostata
+                        if plus > punteggio_max_bonus_categoria:
+                            plus = punteggio_max_bonus_categoria
+                        punteggio += plus
+
+                # Se la data di progressione è diversa dalla presa servizio e
+                # l'anzianità è maggiore o uguale alla soglia di bonus
+                elif ultima_progressione != presa_servizio and \
+                     mesi_permanenza >= mesi_agevolazione:
+
+                    # se il bonus prevede la moltiplicazione del punteggio
+                    if self.bando.agevolazione_modalita == 1:
+                        return
+
+                        # Poichè i mesi di permanenza sono stati già considerati prima
+                        # la moltiplicazione la faccio per 'fatmol-1' e aggiungo il 'plus'
+                        # se la moltiplicazione si applica a tutto il punteggio
+                        if range_applicazione == 0:
+                            bonus = punteggio*(fattore_moltiplicazione-1)
+
+                        # se la moltiplicazione si applica al periodo
+                        # di permanenza nell'attuale categoria economica
+                        elif range_applicazione == 1:
+                            bonus = punteggio_categoria*mesi_permanenza*(fattore_moltiplicazione-1)
+
+                        # se la moltiplicazione si applica solo al periodo
+                        # che supera la permanenza minima
+                        elif range_applicazione == 2:
+                            mesi_effettivi = mesi_permanenza - mesi_agevolazione
+                            punteggio += punteggio*(fattore_moltiplicazione-1)*mesi_effettivi
+                        punteggio += bonus
+
+                    # se il bonus assegna un punteggio per ogni anno/mese
+                    else:
+                        # se l'assegnazione si applica a tutti i mesi di servizio
+                        if range_applicazione == 0:
+                            mesi_da_calcolare = mesi_servizio
+
+                        # se l'assegnazione si applica al periodo
+                        # di permanenza nell'attuale categoria economica
+                        if range_applicazione == 1:
+                            mesi_da_calcolare = mesi_permanenza
+
+                        # se l'assegnazione si applica solo al periodo
+                        # che supera la permanenza minima
+                        elif range_applicazione == 2:
+                            mesi_da_calcolare = mesi_permanenza - mesi_agevolazione
+
+                        # SI CONSIDERANO SEMPRE I MESI
+                        # if unita_temporale_bonus=="m":
+                            # plus = punteggio_bonus_categoria*mesi_da_calcolare
+                        # elif unita_temporale_bonus=="y":
+                            # plus = punteggio_bonus_categoria*(mesi_da_calcolare/12)
+                        plus = punteggio_bonus_categoria*mesi_da_calcolare
+
+                        # se il bonus supera la soglia massima impostata
+                        if plus > punteggio_max_bonus_categoria:
+                            plus = punteggio_max_bonus_categoria
+                        punteggio += plus
+            # END BONUS
+
         return punteggio
 
     def get_punteggio_anzianita(self):
