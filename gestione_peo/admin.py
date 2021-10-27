@@ -27,13 +27,18 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
     list_filter = ('redazione', 'collaudo', 'pubblicato')
     list_editable = ('collaudo', 'redazione', 'pubblicato')
     search_fields = ('nome',)
-    inlines = [ClausoleBandoNestedInline,
-               #IndicatorePonderatoInline,
-               Punteggio_TitoloStudioNestedInline,
-               CategorieDisabilitate_TitoloStudioNestedInline,
-               Punteggio_Anzianita_ServizioNestedInline,
-               AvvisoBandoBandoNestedInline,
-	       CommissioneGiudicatriceNestedInline]
+    inlines = [ Punteggio_Anzianita_ServizioNestedInline,
+                Moltiplicatore_Anzianita_Servizio_BonusNestedInline,
+                Punteggio_Anzianita_Servizio_BonusNestedInline,
+
+                #IndicatorePonderatoInline,
+                Punteggio_TitoloStudioNestedInline,
+                CategorieDisabilitate_TitoloStudioNestedInline,
+
+                ClausoleBandoNestedInline,
+                AvvisoBandoBandoNestedInline,
+
+                CommissioneGiudicatriceNestedInline]
 
     date_hierarchy = 'data_inizio'
 
@@ -62,18 +67,26 @@ class BandoAdmin(nested_admin.NestedModelAdmin):
              ('Date, termini, scadenze e soglie temporali specifiche',
                                 {
                                 'fields' : (
-                                            ('data_validita_titoli_inizio',
-                                             'considera_ultima_progressione',
-                                             'data_validita_titoli_fine'),
-                                            ('ultima_progressione', 'anni_servizio_minimi'),
+                                            ('data_validita_titoli_inizio'),
+                                            ('considera_ultima_progressione'),
+                                            ('data_validita_titoli_fine'),
+                                            ('ultima_progressione'),
+                                            ('anni_servizio_minimi'),
                                            )
                                 },
              ),
-             ('Modalità valutazione punteggio',
+             ('Modalità valutazione bonus punteggio anzianità',
                                 {
                                 'fields' : (
-                                             ('agevolazione_soglia_anni', 'agevolazione_fatmol'),
-                                              ( 'priorita_titoli_studio',),
+                                             ('agevolazione_modalita'),
+                                             # ('agevolazione_soglia_anni'),
+                                            )
+                                },
+              ),
+             ('Modalità aggiuntive valutazione punteggio',
+                                {
+                                'fields' : (
+                                             ( 'priorita_titoli_studio',),
                                             )
                                 },
               ),

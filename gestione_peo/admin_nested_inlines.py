@@ -224,6 +224,36 @@ class Punteggio_Anzianita_ServizioNestedInline(nested_admin.NestedTabularInline)
     classes = ['collapse',]
 
 
+class Moltiplicatore_Anzianita_Servizio_BonusModelForm(forms.ModelForm):
+    class Meta:
+        model = Moltiplicatore_Anzianita_Servizio_Bonus
+        fields = ('__all__')
+        widgets = {'ordinamento': forms.HiddenInput()}
+
+
+class Moltiplicatore_Anzianita_Servizio_BonusNestedInline(nested_admin.NestedTabularInline):
+    model = Moltiplicatore_Anzianita_Servizio_Bonus
+    form = Moltiplicatore_Anzianita_Servizio_BonusModelForm
+    sortable_field_name = "ordinamento"
+    extra = 0
+    classes = ['collapse',]
+
+
+class Punteggio_Anzianita_Servizio_BonusModelForm(forms.ModelForm):
+    class Meta:
+        model = Punteggio_Anzianita_Servizio_Bonus
+        fields = ('__all__')
+        widgets = {'ordinamento': forms.HiddenInput()}
+
+
+class Punteggio_Anzianita_Servizio_BonusNestedInline(nested_admin.NestedTabularInline):
+    model = Punteggio_Anzianita_Servizio_Bonus
+    form = Punteggio_Anzianita_Servizio_BonusModelForm
+    sortable_field_name = "ordinamento"
+    extra = 0
+    classes = ['collapse',]
+
+
 class CategorieDisabilitate_DescrizioneIndicatoreModelForm(forms.ModelForm):
     class Meta:
         model = CategorieDisabilitate_DescrizioneIndicatore

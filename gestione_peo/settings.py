@@ -1,3 +1,6 @@
+from django.utils.translation import ugettext_lazy as _
+
+
 NUMERAZIONI_CONSENTITE = [
                             'Protocollo',
                             'Decreto Rettorale (D.R.)',
@@ -34,3 +37,11 @@ di scadenza del bando.
 
 MOTIVAZIONE_DISABILITAZIONE_DUPLICAZIONE = "Disabilitazione per duplicazione in ({}) {}"
 LOG_DUPLICAZIONE_MESSAGE = "Inserimento {origine} disabilitato e duplicato nella destinazione {destinazione}"
+
+MODALITA_BONUS_ANZIANITA = ((0, _('Nessuna')),
+                            (1, _('Moltiplicazione')),
+                            (2, _('Punteggio aggiuntivo')))
+
+RANGE_APPLICAZIONE_BONUS = ((0, _('Tutto')),
+                            (1, _('Solo periodo attuale permanenza')),
+                            (2, _('Solo periodo oltre validità minima')))
