@@ -109,7 +109,7 @@ def dashboard_domanda(request, bando_id):
                       {'avviso': ("La tua Domanda è stata sospesa. Per avere "
                                   "informazioni contatta l' Area Risorse Umane.")})
 
-    page_title = 'Partecipazione Bando {}'.format(bando.nome)
+    page_title = 'Partecipazione Bando/Avviso {}'.format(bando.nome)
     page_url = reverse('domande_peo:dashboard_domanda',
                        args=[bando.slug])
     _breadcrumbs.reset()
@@ -157,7 +157,7 @@ def scelta_titolo_da_aggiungere(request, bando_id):
                       {'avviso': ("La tua Domanda è stata sospesa. Per avere "
                                   "informazioni contatta l' Area Risorse Umane.")})
 
-    dashboard_domanda_title = 'Partecipazione Bando {}'.format(bando.nome)
+    dashboard_domanda_title = 'Partecipazione Bando/Avviso {}'.format(bando.nome)
     dashboard_domanda_url = reverse('domande_peo:dashboard_domanda',
                                     args=[bando.slug])
 

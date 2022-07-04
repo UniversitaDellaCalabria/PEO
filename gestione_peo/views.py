@@ -69,7 +69,7 @@ def bandi_peo(request):
             excluded_pk.append(bando.pk)
     bandi_attivi = bandi_lista.exclude(pk__in=excluded_pk)
 
-    page_title = 'Bandi PEO'
+    page_title = 'Bandi/Avvisi'
     page_url = reverse('gestione_peo:bandi_peo')
     _breadcrumbs.reset()
     _breadcrumbs.add_url((page_url, page_title))
@@ -97,7 +97,7 @@ def dettaglio_bando_peo(request, bando_id):
     page_url = reverse('gestione_peo:dettaglio_bando_peo',
                       args=[bando.slug])
     _breadcrumbs.reset()
-    _breadcrumbs.add_url((url_bandi_peo,'Bandi PEO'))
+    _breadcrumbs.add_url((url_bandi_peo,'Bandi/Avvisi'))
     _breadcrumbs.add_url((page_url, page_title))
     d = {
          "page_title": page_title,

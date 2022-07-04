@@ -2,7 +2,7 @@
     <div class="ui fluid vertical menu">
         {% if bandi %}
         <div class="item">
-            <div class="header">Bandi attivi</div>
+            <div class="header">Bandi/Avvisi attivi</div>
             {% for bando in bandi %}
             <div class="menu">
                 <a class="active item green">
@@ -22,7 +22,7 @@
         {% endif %}
 
         <div class="item">
-            <div class="header">Tutti i Bandi</div>
+            <div class="header">Tutti i Bandi/Avvisi</div>
             <div class="menu">
                 <a class="item" href="{% url 'gestione_peo:bandi_peo' %}">
                     Vedi lista
